@@ -149,6 +149,32 @@ export const unblockUser = createAsyncThunk(
     }
 );
 
+export const uploadProfileImage = createAsyncThunk(
+    'user/uploadProfileImage',
+    async (image: string, { dispatch, rejectWithValue }) => {
+        try {
+            const { data } = await api.post('/users/profile-image', { image });
+            dispatch(updateCurrentUser({ profileImage: data.profileImage }));
+            return data.profileImage;
+        } catch (error: any) {
+            return rejectWithValue(error.response?.data?.error || error.response?.data?.message || 'Failed to upload profile image');
+        }
+    }
+);
+
+export const deleteProfileImage = createAsyncThunk(
+    'user/deleteProfileImage',
+    async (_, { dispatch, rejectWithValue }) => {
+        try {
+            const { data } = await api.delete('/users/profile-image');
+            dispatch(updateCurrentUser({ profileImage: data.profileImage }));
+            return data.profileImage;
+        } catch (error: any) {
+            return rejectWithValue(error.response?.data?.error || error.response?.data?.message || 'Failed to delete profile image');
+        }
+    }
+);
+
 const userSlice = createSlice({
     name: "user",
     initialState,

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -11,7 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { toast } from "sonner"; // import added
+import { toast } from "sonner";
+import ProfileImageUploader from "@/components/ProfileImageUploader";
 
 export default function ProfilePage() {
     const router = useRouter();
@@ -23,7 +23,6 @@ export default function ProfilePage() {
         email: currentUser?.email || "",
         phoneNumbers: currentUser?.phoneNumbers || [""],
         homeAddress: currentUser?.homeAddress || "",
-        profileImage: currentUser?.profileImage || "",
     });
 
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -55,14 +54,13 @@ export default function ProfilePage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Send only the fields that should be updated
+        // Send only the fields that should be updated (profileImage is handled separately)
         const updatedUser = {
             id: currentUser.id,
             fullName: formData.fullName,
             email: formData.email,
             phoneNumbers: formData.phoneNumbers.filter(p => p.trim() !== ""),
             homeAddress: formData.homeAddress,
-            profileImage: formData.profileImage,
         };
 
         try {
@@ -103,23 +101,8 @@ export default function ProfilePage() {
                         <form onSubmit={handleSubmit} className="space-y-4">
                             {/* Profile Image */}
                             <div className="space-y-2">
-                                <Label htmlFor="profileImage">Profile Image URL</Label>
-                                <Input
-                                    id="profileImage"
-                                    type="url"
-                                    placeholder="https://example.com/image.jpg"
-                                    value={formData.profileImage}
-                                    onChange={(e) => setFormData({ ...formData, profileImage: e.target.value })}
-                                />
-                                {formData.profileImage && (
-                                    <div className="mt-2">
-                                        <img
-                                            src={formData.profileImage}
-                                            alt="Profile preview"
-                                            className="w-24 h-24 rounded-full object-cover border-2 border-border"
-                                        />
-                                    </div>
-                                )}
+                                <Label>Profile Image</Label>
+                                <ProfileImageUploader currentImage={currentUser?.profileImage} />
                             </div>
 
                             {/* Full Name */}

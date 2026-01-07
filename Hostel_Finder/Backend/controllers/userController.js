@@ -236,6 +236,72 @@ const getAllUsers = asyncHandler(async (req, res) => {
     res.json(users);
 });
 
+// @desc    Upload profile image
+// @route   POST /api/users/profile-image
+// @access  Private
+const uploadProfileImage = asyncHandler(async (req, res) => {
+    const { image } = req.body;
+
+    if (!image) {
+        res.status(400);
+        throw new Error('No image provided');
+    }
+
+    // Validate Base64 format
+    const matches = image.match(/^data:image\/(jpeg|jpg|png|webp);base64,/);
+    if (!matches) {
+        res.status(400);
+        throw new Error('Invalid image format. Only JPEG, PNG, and WebP are allowed.');
+    }
+
+    // Check file size (Base64 is ~33% larger than original)
+    // Max 2MB original = ~2.67MB Base64
+    const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
+    const sizeInBytes = Buffer.from(base64Data, 'base64').length;
+    const maxSize = 2 * 1024 * 1024; // 2MB
+
+    if (sizeInBytes > maxSize) {
+        res.status(400);
+        throw new Error('Image size must be less than 2MB');
+    }
+
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+        res.status(404);
+        throw new Error('User not found');
+    }
+
+    user.profileImage = image;
+    await user.save();
+
+    res.json({
+        message: 'Profile image uploaded successfully',
+        profileImage: user.profileImage
+    });
+});
+
+// @desc    Delete profile image
+// @route   DELETE /api/users/profile-image
+// @access  Private
+const deleteProfileImage = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+        res.status(404);
+        throw new Error('User not found');
+    }
+
+    // Reset to default avatar
+    user.profileImage = 'https://cdn-icons-png.flaticon.com/512/9203/9203764.png';
+    await user.save();
+
+    res.json({
+        message: 'Profile image deleted successfully',
+        profileImage: user.profileImage
+    });
+});
+
 module.exports = {
     toggleFavorite,
     getFavorites,
@@ -244,9 +310,10 @@ module.exports = {
     getAllUsers,
     getArchivedUsers,
     permanentDeleteUser,
-    permanentDeleteUser,
     restoreUser,
     blockUser,
     unblockUser,
-    getBlockedUsers
+    getBlockedUsers,
+    uploadProfileImage,
+    deleteProfileImage
 };

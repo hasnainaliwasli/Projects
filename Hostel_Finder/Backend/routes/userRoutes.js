@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { toggleFavorite, getFavorites, updateUser, deleteUser, getAllUsers, getArchivedUsers, permanentDeleteUser, restoreUser, blockUser, unblockUser, getBlockedUsers } = require('../controllers/userController');
+const { toggleFavorite, getFavorites, updateUser, deleteUser, getAllUsers, getArchivedUsers, permanentDeleteUser, restoreUser, blockUser, unblockUser, getBlockedUsers, uploadProfileImage, deleteProfileImage } = require('../controllers/userController');
 const { protect } = require('../middleware/authMiddleware');
 const { admin } = require('../middleware/adminMiddleware');
 
@@ -11,6 +11,7 @@ router.route('/block').post(protect, admin, blockUser).get(protect, admin, getBl
 router.delete('/block/:id', protect, admin, unblockUser);
 router.post('/favorites/:id', protect, toggleFavorite);
 router.get('/favorites', protect, getFavorites);
+router.route('/profile-image').post(protect, uploadProfileImage).delete(protect, deleteProfileImage);
 router.put('/:id', protect, updateUser);
 router.delete('/:id', protect, deleteUser);
 router.delete('/permanent/:id', protect, admin, permanentDeleteUser);
