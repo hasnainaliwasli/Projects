@@ -28,6 +28,7 @@ export default function RegisterPage() {
     confirmPassword: "",
     role: "student" as UserRole,
     phoneNumber: "",
+    homeAddress: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -76,7 +77,8 @@ export default function RegisterPage() {
         email: formData.email,
         password: formData.password,
         role: formData.role,
-        phoneNumbers: [formData.phoneNumber],
+        phoneNumbers: formData.phoneNumber ? [formData.phoneNumber] : [],
+        homeAddress: formData.homeAddress,
         favoriteHostels: formData.role === "student" ? [] : undefined,
       }) as any
     );
@@ -140,7 +142,19 @@ export default function RegisterPage() {
                   value={formData.phoneNumber}
                   onChange={handleChange}
                   className="h-11"
-                  required
+                />
+              </div>
+
+              <div className="space-y-1">
+                <Label htmlFor="homeAddress">Home Address</Label>
+                <Input
+                  id="homeAddress"
+                  name="homeAddress"
+                  type="text"
+                  placeholder="Your home address"
+                  value={formData.homeAddress}
+                  onChange={handleChange}
+                  className="h-11"
                 />
               </div>
 

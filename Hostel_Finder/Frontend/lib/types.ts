@@ -15,7 +15,7 @@ export interface User {
     password: string;
     role: UserRole;
     profileImage?: string;
-    phoneNumbers: string[];
+    phoneNumbers?: string[];
     homeAddress?: string;
     favoriteHostels?: string[]; // For students
     createdAt: string;

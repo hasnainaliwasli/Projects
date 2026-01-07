@@ -7,7 +7,7 @@ const crypto = require('crypto');
 const sendEmail = require('../utils/sendEmail');
 
 const registerUser = asyncHandler(async (req, res) => {
-    const { fullName, email, password, role, phoneNumbers } = req.body;
+    const { fullName, email, password, role, phoneNumbers, homeAddress } = req.body;
 
     if (!fullName || !email || !password) {
         res.status(400);
@@ -34,7 +34,8 @@ const registerUser = asyncHandler(async (req, res) => {
         email,
         password,
         role: role || 'student',
-        phoneNumbers
+        phoneNumbers: phoneNumbers || [],
+        homeAddress: homeAddress || ''
     });
 
     if (user) {
@@ -44,6 +45,9 @@ const registerUser = asyncHandler(async (req, res) => {
             email: user.email,
             role: user.role,
             profileImage: user.profileImage,
+            phoneNumbers: user.phoneNumbers,
+            homeAddress: user.homeAddress,
+            createdAt: user.createdAt,
             token: generateToken(user._id)
         });
     } else {
@@ -71,6 +75,9 @@ const loginUser = asyncHandler(async (req, res) => {
             email: user.email,
             role: user.role,
             profileImage: user.profileImage,
+            phoneNumbers: user.phoneNumbers,
+            homeAddress: user.homeAddress,
+            createdAt: user.createdAt,
             token: generateToken(user._id)
         });
     } else {
@@ -89,6 +96,9 @@ const getMe = asyncHandler(async (req, res) => {
         email: user.email,
         role: user.role,
         profileImage: user.profileImage,
+        phoneNumbers: user.phoneNumbers,
+        homeAddress: user.homeAddress,
+        createdAt: user.createdAt,
         favoriteHostels: user.favoriteHostels
     });
 });

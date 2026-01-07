@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import DashboardLayout from "@/components/dashboard-layout";
 import { useAppSelector, useAppDispatch } from "@/lib/hooks";
@@ -19,11 +19,24 @@ export default function ProfilePage() {
     const { currentUser } = useAppSelector((state) => state.auth);
 
     const [formData, setFormData] = useState({
-        fullName: currentUser?.fullName || "",
-        email: currentUser?.email || "",
-        phoneNumbers: currentUser?.phoneNumbers || [""],
-        homeAddress: currentUser?.homeAddress || "",
+        fullName: "",
+        email: "",
+        phoneNumbers: [""],
+        homeAddress: "",
     });
+
+    // Sync form data when currentUser changes (e.g., after login or page refresh)
+    useEffect(() => {
+        if (currentUser) {
+            console.log('Profile - currentUser loaded:', currentUser);
+            setFormData({
+                fullName: currentUser.fullName || "",
+                email: currentUser.email || "",
+                phoneNumbers: currentUser.phoneNumbers?.length ? currentUser.phoneNumbers : [""],
+                homeAddress: currentUser.homeAddress || "",
+            });
+        }
+    }, [currentUser]);
 
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
@@ -123,6 +136,7 @@ export default function ProfilePage() {
                                     id="email"
                                     type="email"
                                     value={formData.email}
+                                    disabled
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                     required
                                 />
