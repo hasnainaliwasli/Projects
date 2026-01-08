@@ -44,6 +44,23 @@ export default function ProfilePage() {
         return null;
     }
 
+    // Check if any form data has changed from the original
+    const hasChanges = () => {
+        const originalPhones = currentUser.phoneNumbers?.length ? currentUser.phoneNumbers : [""];
+        const currentPhones = formData.phoneNumbers;
+
+        // Compare phone arrays
+        const phonesChanged =
+            originalPhones.length !== currentPhones.length ||
+            originalPhones.some((phone, i) => phone !== currentPhones[i]);
+
+        return (
+            formData.fullName !== (currentUser.fullName || "") ||
+            formData.homeAddress !== (currentUser.homeAddress || "") ||
+            phonesChanged
+        );
+    };
+
     const handleAddPhone = () => {
         setFormData({
             ...formData,
@@ -185,7 +202,7 @@ export default function ProfilePage() {
                                 />
                             </div>
 
-                            <Button type="submit" className="w-full">
+                            <Button type="submit" className="w-full" disabled={!hasChanges()}>
                                 Save Changes
                             </Button>
                         </form>
