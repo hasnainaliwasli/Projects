@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
+import HostelImageUploader from "@/components/HostelImageUploader";
 
 export default function AddHostelPage() {
     const router = useRouter();
@@ -32,7 +33,7 @@ export default function AddHostelPage() {
         address: "",
         latitude: 0,
         longitude: 0,
-        images: [""],
+        images: [] as string[],
         rent: 0,
         floors: 1,
         roomsPerFloor: 1,
@@ -56,23 +57,7 @@ export default function AddHostelPage() {
         return null;
     }
 
-    const handleAddImage = () => {
-        setFormData({
-            ...formData,
-            images: [...formData.images, ""],
-        });
-    };
-
-    const handleRemoveImage = (index: number) => {
-        setFormData({
-            ...formData,
-            images: formData.images.filter((_, i) => i !== index),
-        });
-    };
-
-    const handleImageChange = (index: number, value: string) => {
-        const newImages = [...formData.images];
-        newImages[index] = value;
+    const handleImagesChange = (newImages: string[]) => {
         setFormData({ ...formData, images: newImages });
     };
 
@@ -274,34 +259,14 @@ export default function AddHostelPage() {
                     {/* Images */}
                     <Card>
                         <CardHeader>
-                            <div className="flex items-center justify-between">
-                                <CardTitle className="text-lg md:text-xl">Hostel Images</CardTitle>
-                                <Button type="button" variant="outline" size="sm" onClick={handleAddImage}>
-                                    + Add Image
-                                </Button>
-                            </div>
+                            <CardTitle className="text-lg md:text-xl">Hostel Images</CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-2">
-                            {formData.images.map((image, index) => (
-                                <div key={index} className="flex gap-2">
-                                    <Input
-                                        type="url"
-                                        placeholder="https://example.com/image.jpg"
-                                        value={image}
-                                        onChange={(e) => handleImageChange(index, e.target.value)}
-                                    />
-                                    {formData.images.length > 1 && (
-                                        <Button
-                                            type="button"
-                                            variant="destructive"
-                                            size="icon"
-                                            onClick={() => handleRemoveImage(index)}
-                                        >
-                                            ×
-                                        </Button>
-                                    )}
-                                </div>
-                            ))}
+                        <CardContent>
+                            <HostelImageUploader
+                                images={formData.images}
+                                onImagesChange={handleImagesChange}
+                                maxImages={5}
+                            />
                         </CardContent>
                     </Card>
 
