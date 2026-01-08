@@ -107,12 +107,10 @@ const deleteUser = asyncHandler(async (req, res) => {
         await Review.deleteMany({ user: user._id });
     }
 
-    // Soft delete (Archive)
-    user.isArchived = true;
-    user.archivedAt = new Date();
-    await user.save();
+    // Permanently delete the user from the database
+    await user.deleteOne();
 
-    res.json({ message: 'User archived successfully' });
+    res.json({ message: 'Account deleted successfully' });
 });
 
 // @desc    Get archived users
