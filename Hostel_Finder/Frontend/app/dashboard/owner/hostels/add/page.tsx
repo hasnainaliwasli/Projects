@@ -40,7 +40,7 @@ export default function AddHostelPage() {
         availableBeds: 0,
         availability: "available" as "available" | "limited" | "full",
         isFor: "boys" as "boys" | "girls",
-        contactNumbers: [""],
+        contactNumbers: currentUser?.phoneNumbers?.length ? currentUser.phoneNumbers : [""],
         facilities: {
             fridge: false,
             water: false,
@@ -61,25 +61,7 @@ export default function AddHostelPage() {
         setFormData({ ...formData, images: newImages });
     };
 
-    const handleAddContact = () => {
-        setFormData({
-            ...formData,
-            contactNumbers: [...formData.contactNumbers, ""],
-        });
-    };
 
-    const handleRemoveContact = (index: number) => {
-        setFormData({
-            ...formData,
-            contactNumbers: formData.contactNumbers.filter((_, i) => i !== index),
-        });
-    };
-
-    const handleContactChange = (index: number, value: string) => {
-        const newContacts = [...formData.contactNumbers];
-        newContacts[index] = value;
-        setFormData({ ...formData, contactNumbers: newContacts });
-    };
 
     const handleFacilityChange = (facility: string) => {
         setFormData({
@@ -355,34 +337,27 @@ export default function AddHostelPage() {
                     {/* Contact Numbers */}
                     <Card>
                         <CardHeader>
-                            <div className="flex items-center justify-between">
-                                <CardTitle className="text-lg md:text-xl">Contact #</CardTitle>
-                                <Button type="button" variant="outline" size="sm" onClick={handleAddContact}>
-                                    + Add More
-                                </Button>
-                            </div>
+                            <CardTitle className="text-lg md:text-xl">Contact #</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-2">
+                            <p className="text-sm text-muted-foreground mb-3">
+                                Contact numbers are automatically filled from your profile.
+                            </p>
                             {formData.contactNumbers.map((contact, index) => (
-                                <div key={index} className="flex gap-2">
+                                <div key={index}>
                                     <Input
                                         type="tel"
-                                        placeholder="+92xxxxxxxxxx"
                                         value={contact}
-                                        onChange={(e) => handleContactChange(index, e.target.value)}
+                                        disabled
+                                        className="bg-muted"
                                     />
-                                    {formData.contactNumbers.length > 1 && (
-                                        <Button
-                                            type="button"
-                                            variant="destructive"
-                                            size="icon"
-                                            onClick={() => handleRemoveContact(index)}
-                                        >
-                                            ×
-                                        </Button>
-                                    )}
                                 </div>
                             ))}
+                            {formData.contactNumbers.length === 0 || (formData.contactNumbers.length === 1 && !formData.contactNumbers[0]) ? (
+                                <p className="text-sm text-destructive">
+                                    No phone numbers found. Please add phone numbers in your profile first.
+                                </p>
+                            ) : null}
                         </CardContent>
                     </Card>
 
