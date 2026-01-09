@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import DashboardLayout from "@/components/dashboard-layout";
 import { useAppSelector, useAppDispatch } from "@/lib/hooks";
@@ -84,6 +84,23 @@ export default function AdminHostelsPage() {
         }
     };
 
+    const hostelCount = useMemo(() => {
+        let pending = 0
+        let rejected = 0
+        let approved = 0
+
+        for (const hostel of hostels) {
+            const status = hostel.status || 'approved'
+
+            if (status === "pending") pending++
+            else if (status === "rejected") rejected++
+            else if (status === "approved") approved++
+        }
+        return { pending, rejected, approved }
+    }, [hostels])
+
+    console.log(hostelCount.pending)
+
     return (
         <DashboardLayout role="admin">
             <div className="space-y-6">
@@ -142,9 +159,9 @@ export default function AdminHostelsPage() {
 
                 <Tabs defaultValue="pending" value={statusTab} onValueChange={setStatusTab} className="w-full">
                     <TabsList className="grid w-full grid-cols-3">
-                        <TabsTrigger value="pending">Pending </TabsTrigger>
-                        <TabsTrigger value="approved">Approved </TabsTrigger>
-                        <TabsTrigger value="rejected">Rejected</TabsTrigger>
+                        <TabsTrigger value="pending">Pending <span className="text-xs ml-2 text-muted-foreground">({hostelCount.pending})</span> </TabsTrigger>
+                        <TabsTrigger value="approved">Approved <span className="text-xs ml-2 text-muted-foreground">({hostelCount.approved})</span> </TabsTrigger>
+                        <TabsTrigger value="rejected">Rejected <span className="text-xs ml-2 text-muted-foreground">({hostelCount.rejected})</span> </TabsTrigger>
                     </TabsList>
                 </Tabs>
 

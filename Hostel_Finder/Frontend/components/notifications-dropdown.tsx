@@ -16,10 +16,12 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
+
 export function NotificationsDropdown() {
     const dispatch = useAppDispatch();
     const { notifications, unreadCount, loading } = useAppSelector((state) => state.notification);
     const [open, setOpen] = useState(false);
+    const { isAuthenticated, currentUser } = useAppSelector((state) => state.auth);
 
     const handleMarkAsRead = (id: string) => {
         dispatch(markNotificationRead(id));
@@ -46,9 +48,9 @@ export function NotificationsDropdown() {
     const getLink = (notification: any) => {
         switch (notification.type) {
             case 'HOSTEL_STATUS': return `/hostels/${notification.relatedId}`;
-            case 'NEW_REVIEW': return `/dashboard/owner/reviews`;
-            case 'NEW_REPORT': return `/dashboard/admin/reports`;
-            case 'NEW_HOSTEL_REQUEST': return `/dashboard/admin/hostels`;
+            case 'NEW_REVIEW': return `/dashboard/${currentUser?.role}/reviews`;
+            case 'NEW_REPORT': return `/dashboard/${currentUser?.role}/reports`;
+            case 'NEW_HOSTEL_REQUEST': return `/dashboard/${currentUser?.role}/hostels`;
             default: return '#';
         }
     };

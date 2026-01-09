@@ -255,7 +255,7 @@ export default function ChatPage() {
                                             </h4>
                                             {chat.latestMessage && (
                                                 <p className="text-xs text-muted-foreground truncate">
-                                                    {chat.latestMessage.sender.fullName}: {chat.latestMessage.content}
+                                                    {chat.latestMessage.sender?.fullName}: {chat.latestMessage.content}
                                                 </p>
                                             )}
                                         </div>
@@ -317,7 +317,7 @@ export default function ChatPage() {
                             <ScrollArea className="flex-1 p-4">
                                 <div className="flex flex-col gap-6">
                                     {messages.map((m, i) => {
-                                        const isMyMessage = m.sender._id === currentUser?.id || m.sender._id === currentUser?._id;
+                                        const isMyMessage = m.sender._id === currentUser?.id || m.sender._id === currentUser?.id;
                                         const isEditing = editingMessageId === m._id;
 
                                         return (

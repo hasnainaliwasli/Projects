@@ -40,7 +40,7 @@ export default function AdminDashboardPage() {
                             <Users className="h-4 w-4 text-blue-100" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold">{users.length}</div>
+                            <div className="text-3xl font-bold">{users.length>0? users.length-1 : 0}</div>
                             <p className="text-xs text-blue-100/80 mt-1">
                                 {students.length} students • {owners.length} owners
                             </p>

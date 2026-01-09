@@ -123,17 +123,12 @@ export function Navbar() {
                                 {/* Notifications */}
                                 <NotificationsDropdown />
 
-                                {currentUser?.role === "student" ? (
-                                    <Link href="/dashboard/student/favorites">
+                                {currentUser?.role !== "admin" && (
+                                    <Link href={`/dashboard/${currentUser?.role}/favorites`}>
                                         <Button variant="ghost" size="icon" className="rounded-full text-muted-foreground hover:text-red-500 hover:bg-red-500/10 cursor-pointer">
                                             <Heart className="h-5 w-5" />
                                         </Button>
-                                    </Link>
-                                ) : <Link href="/dashboard/owner/favorites">
-                                    <Button variant="ghost" size="icon" className="rounded-full text-muted-foreground hover:text-red-500 hover:bg-red-500/10 cursor-pointer">
-                                        <Heart className="h-5 w-5" />
-                                    </Button>
-                                </Link>}
+                                    </Link>) }
 
                                 {/* User Profile Dropdown */}
                                 <div className="relative" ref={dropdownRef}>
