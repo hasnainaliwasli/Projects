@@ -7,6 +7,8 @@ import { fetchUserReports } from "@/lib/slices/reportSlice";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, AlertTriangle, FileText, Calendar, CheckCircle2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function MyReportsPage() {
     const dispatch = useAppDispatch();
@@ -35,7 +37,7 @@ export default function MyReportsPage() {
             <div className="space-y-6">
                 <div>
                     <h1 className="text-xl md:text-2xl font-bold mb-2">My Reports</h1>
-                    <p className="text-muted-foreground text-md">Track the status of your submitted reports</p>
+                    <span className="flex items-center justify-between"><p className="text-muted-foreground text-md">Track the status of your submitted reports</p> <Button variant="outline" size="sm"><Link href="/report">Submit New Report</Link></Button></span>
                 </div>
 
                 {loading ? (

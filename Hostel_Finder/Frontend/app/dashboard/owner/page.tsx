@@ -100,7 +100,7 @@ export default function OwnerDashboardPage() {
                             <Button>Add New Hostel</Button>
                         </Link>
                         <Link href="/dashboard/owner/hostels">
-                            <Button variant="outline">View All Hostels</Button>
+                            <Button variant="outline">View My Hostels</Button>
                         </Link>
                     </CardContent>
                 </Card>

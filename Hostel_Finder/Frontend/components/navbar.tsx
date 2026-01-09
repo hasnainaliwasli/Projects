@@ -123,14 +123,17 @@ export function Navbar() {
                                 {/* Notifications */}
                                 <NotificationsDropdown />
 
-                                {/* Favorites Icon (Student only) */}
-                                {currentUser?.role !== "admin" && (
+                                {currentUser?.role === "student" ? (
                                     <Link href="/dashboard/student/favorites">
                                         <Button variant="ghost" size="icon" className="rounded-full text-muted-foreground hover:text-red-500 hover:bg-red-500/10 cursor-pointer">
                                             <Heart className="h-5 w-5" />
                                         </Button>
                                     </Link>
-                                )}
+                                ) : <Link href="/dashboard/owner/favorites">
+                                    <Button variant="ghost" size="icon" className="rounded-full text-muted-foreground hover:text-red-500 hover:bg-red-500/10 cursor-pointer">
+                                        <Heart className="h-5 w-5" />
+                                    </Button>
+                                </Link>}
 
                                 {/* User Profile Dropdown */}
                                 <div className="relative" ref={dropdownRef}>
@@ -196,15 +199,15 @@ export function Navbar() {
                             </>
                         ) : (
                             <>
-                                    <Link href="/login">
-                                        <Button variant="ghost" className="cursor-pointer">Login</Button>
-                                    </Link>
-                                    <Link href="/register">
-                                        <Button className="cursor-pointer bg-gradient-to-r from-primary to-secondary hover:opacity-90">
-                                            Get Started
-                                        </Button>
-                                    </Link>
-                           
+                                <Link href="/login">
+                                    <Button variant="ghost" className="cursor-pointer">Login</Button>
+                                </Link>
+                                <Link href="/register">
+                                    <Button className="cursor-pointer bg-gradient-to-r from-primary to-secondary hover:opacity-90">
+                                        Get Started
+                                    </Button>
+                                </Link>
+
                             </>
                         )}
                     </div>
