@@ -48,12 +48,14 @@ export function NotificationsDropdown() {
     const getLink = (notification: any) => {
         switch (notification.type) {
             case 'HOSTEL_STATUS': return `/hostels/${notification.relatedId}`;
-            case 'NEW_REVIEW': return `/dashboard/${currentUser?.role}/reviews`;
+            case 'NEW_REVIEW': return `/hostels/${notification.recipient}`;
             case 'NEW_REPORT': return `/dashboard/${currentUser?.role}/reports`;
             case 'NEW_HOSTEL_REQUEST': return `/dashboard/${currentUser?.role}/hostels`;
             default: return '#';
         }
     };
+
+    console.log("Notification =============", notifications)
 
     return (
         <Popover open={open} onOpenChange={setOpen}>

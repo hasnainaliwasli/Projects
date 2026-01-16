@@ -91,7 +91,6 @@ export default function HostelDetailsPage() {
     }, [dispatch, hostelId, currentUser, hostels]);
 
     // Show loading state while fetching data for the first time
-    // Show loading state while fetching data for the first time
     if (!initialLoadDone || loading) {
         return <Loader fullScreen text="Loading Hostel Details..." />;
     }
@@ -184,7 +183,7 @@ export default function HostelDetailsPage() {
 
         try {
             await dispatch(accessChat(hostel.ownerId)).unwrap();
-            router.push("/dashboard/chat");
+            router.push(`/dashboard/chat?userId=${hostel.ownerId}`);
         } catch (error) {
             toast.error("Failed to access chat");
             console.error("Failed to access chat:", error);
@@ -214,6 +213,9 @@ export default function HostelDetailsPage() {
             }
         }
     };
+
+    console.log("hostelReviews =============", hostelReviews)
+    console.log("hostelId =============", hostelId)
 
     return (
         <div className="min-h-screen bg-background pb-20">

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { fetchChats, fetchMessages, sendMessage, editMessage, deleteMessage, deleteChat, setCurrentChat, addMessage, updateMessage, removeMessage, removeChat, addNotification } from "@/lib/slices/chatSlice";
+import { fetchChats, fetchMessages, sendMessage, editMessage, deleteMessage, deleteChat, setCurrentChat, addMessage, updateMessage, removeMessage, removeChat, addNotification, accessChat } from "@/lib/slices/chatSlice";
 import { useSocket } from "@/context/SocketProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,10 +51,15 @@ export default function ChatPage() {
     // Delete Chat State
     const [deleteChatDialogOpen, setDeleteChatDialogOpen] = useState(false);
 
-    // Fetch chats on mount
+    // Fetch chats on mount and handle deep linking
     useEffect(() => {
         dispatch(fetchChats());
-    }, [dispatch]);
+
+        const startChatUserId = searchParams.get("userId");
+        if (startChatUserId) {
+            dispatch(accessChat(startChatUserId));
+        }
+    }, [dispatch, searchParams]);
 
     // Handle Socket Events
     useEffect(() => {
@@ -70,7 +75,6 @@ export default function ChatPage() {
         });
 
         socket.on("message updated", (updatedMessage: any) => {
-            // Only update if it belongs to current chat context or we need to update list preview
             dispatch(updateMessage(updatedMessage));
         });
 
@@ -187,28 +191,39 @@ export default function ChatPage() {
     };
 
     const getChatDetails = (chat: any, currentUser: any) => {
-        if (!chat || !currentUser) return { name: "Unknown", image: "" };
-        if (chat.isGroupChat) return { name: chat.chatName, image: "" };
+        if (!chat || !currentUser) return { name: "Unknown", image: null };
+        if (chat.isGroupChat) return { name: chat.chatName, image: null };
 
         // Admin view of other's chats
         if (currentUser.role === 'admin') {
-            const isParticipant = chat.users.some((u: any) => u._id === currentUser.id || u._id === currentUser._id);
-            if (!isParticipant && chat.users.length >= 2) {
-                return {
-                    name: `${chat.users[0].fullName} & ${chat.users[1].fullName}`,
-                    image: chat.users[0].profileImage
-                };
+            const isParticipant = chat.users.some((u: any) => u._id === currentUser.id);
+            if (!isParticipant) {
+                if (chat.users.length >= 2) {
+                    return {
+                        name: `${chat.users[0].fullName} & ${chat.users[1].fullName}`,
+                        image: chat.users[0].profileImage || null
+                    };
+                }
+                // Fallback if admin views a broken chat
+                return { name: "Invalid Chat", image: null };
             }
         }
 
         // Standard 1-on-1 logic
-        const partner = (chat.users[0]._id === currentUser.id || chat.users[0]._id === currentUser._id)
-            ? chat.users[1]
-            : chat.users[0];
+        const u0 = chat.users[0];
+        const u1 = chat.users[1];
+
+        if (!u0) return { name: "Unknown User", image: null };
+
+        const partner = (u0._id === currentUser.id)
+            ? u1
+            : u0;
+
+        if (!partner) return { name: "Deleted User", image: null };
 
         return {
-            name: partner.fullName,
-            image: partner.profileImage
+            name: partner.fullName || "Unknown",
+            image: partner.profileImage || null
         };
     };
 
@@ -228,40 +243,48 @@ export default function ChatPage() {
                     <div className="p-4 border-b flex items-center justify-between">
                         <h2 className="font-semibold text-lg flex items-center gap-2">
                             <MessageSquare className="w-5 h-5 text-primary" />
-                            Messages
+                            Messages ({chats.length})
                         </h2>
+
                     </div>
 
                     <ScrollArea className="flex-1">
                         <div className="flex flex-col p-2 gap-1">
-                            {chats.map((chat) => {
-                                const details = getChatDetails(chat, currentUser);
-                                return (
-                                    <button
-                                        key={chat._id}
-                                        onClick={() => dispatch(setCurrentChat(chat))}
-                                        className={`flex items-center gap-3 p-3 rounded-lg text-left transition-colors ${currentChat?._id === chat._id
-                                            ? "bg-primary/10 hover:bg-primary/15"
-                                            : "hover:bg-muted"
-                                            }`}
-                                    >
-                                        <Avatar>
-                                            <AvatarImage src={details.image} />
-                                            <AvatarFallback>{details.name[0]}</AvatarFallback>
-                                        </Avatar>
-                                        <div className="overflow-hidden">
-                                            <h4 className="font-medium truncate">
-                                                {details.name}
-                                            </h4>
-                                            {chat.latestMessage && (
-                                                <p className="text-xs text-muted-foreground truncate">
-                                                    {chat.latestMessage.sender?.fullName}: {chat.latestMessage.content}
-                                                </p>
-                                            )}
-                                        </div>
-                                    </button>
-                                );
-                            })}
+                            {(() => {
+                                // Ensure currentChat is in the list
+                                let displayChats = [...chats];
+                                if (currentChat && !displayChats.find(c => c._id === currentChat._id)) {
+                                    displayChats.unshift(currentChat);
+                                }
+                                return displayChats.map((chat) => {
+                                    const details = getChatDetails(chat, currentUser);
+                                    return (
+                                        <button
+                                            key={chat._id}
+                                            onClick={() => dispatch(setCurrentChat(chat))}
+                                            className={`flex items-center gap-3 p-3 rounded-lg text-left transition-colors ${currentChat?._id === chat._id
+                                                ? "bg-primary/10 hover:bg-primary/15"
+                                                : "hover:bg-muted"
+                                                }`}
+                                        >
+                                            <Avatar>
+                                                <AvatarImage src={details.image || undefined} />
+                                                <AvatarFallback>{details.name[0]}</AvatarFallback>
+                                            </Avatar>
+                                            <div className="overflow-hidden">
+                                                <h4 className="font-medium truncate">
+                                                    {details.name}
+                                                </h4>
+                                                {chat.latestMessage && (
+                                                    <p className="text-xs text-muted-foreground truncate">
+                                                        {chat.latestMessage.sender?.fullName}: {chat.latestMessage.content}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </button>
+                                    );
+                                });
+                            })()}
                         </div>
                     </ScrollArea>
                 </div>
@@ -277,7 +300,7 @@ export default function ChatPage() {
                                         <Menu className="w-5 h-5" />
                                     </Button>
                                     <Avatar>
-                                        <AvatarImage src={getChatDetails(currentChat, currentUser).image} />
+                                        <AvatarImage src={getChatDetails(currentChat, currentUser).image || undefined} />
                                         <AvatarFallback>{getChatDetails(currentChat, currentUser).name[0]}</AvatarFallback>
                                     </Avatar>
                                     <div>
@@ -317,7 +340,8 @@ export default function ChatPage() {
                             <ScrollArea className="flex-1 p-4">
                                 <div className="flex flex-col gap-6">
                                     {messages.map((m, i) => {
-                                        const isMyMessage = m.sender._id === currentUser?.id || m.sender._id === currentUser?.id;
+                                        const sender = m.sender || { _id: "unknown", fullName: "Unknown", profileImage: null, role: "user" };
+                                        const isMyMessage = sender._id === currentUser?.id;
                                         const isEditing = editingMessageId === m._id;
 
                                         return (
@@ -327,8 +351,8 @@ export default function ChatPage() {
                                             >
                                                 {!isMyMessage && (
                                                     <Avatar className="w-8 h-8 mr-2 mt-1">
-                                                        <AvatarImage src={m.sender.profileImage} />
-                                                        <AvatarFallback>{m.sender.fullName[0]}</AvatarFallback>
+                                                        <AvatarImage src={sender.profileImage || undefined} />
+                                                        <AvatarFallback>{sender.fullName?.[0] || "?"}</AvatarFallback>
                                                     </Avatar>
                                                 )}
 
@@ -336,10 +360,10 @@ export default function ChatPage() {
                                                     <div className="flex items-center gap-2 mb-1">
                                                         {!isMyMessage && (
                                                             <span className="text-xs font-medium text-muted-foreground ml-1">
-                                                                {m.sender.fullName}
+                                                                {sender.fullName}
                                                             </span>
                                                         )}
-                                                        {m.sender.role === 'admin' && !isMyMessage && (
+                                                        {sender.role === 'admin' && !isMyMessage && (
                                                             <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-medium">
                                                                 ADMIN
                                                             </span>
@@ -357,7 +381,7 @@ export default function ChatPage() {
                                                                 : "bg-muted rounded-bl-none"
                                                             }
                                                             ${m.isDeleted ? "italic text-muted-foreground/80 bg-muted/50 border border-muted" : ""}
-                                                            ${m.sender.role === 'admin' && !isMyMessage ? "border-2 border-primary/20" : ""}
+                                                            ${sender.role === 'admin' && !isMyMessage ? "border-2 border-primary/20" : ""}
                                                         `}
                                                     >
                                                         {isEditing ? (

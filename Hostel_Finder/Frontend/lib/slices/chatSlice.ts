@@ -3,11 +3,14 @@ import axios from "axios";
 
 const API_URL = "http://localhost:5000/api/chat";
 
+import { UserRole } from "../types";
+
 export interface User {
     _id: string;
     fullName: string;
     email: string;
     profileImage?: string;
+    role?: UserRole;
 }
 
 export interface Chat {
@@ -26,6 +29,8 @@ export interface Message {
     content: string;
     chat: Chat;
     createdAt: string;
+    isDeleted?: boolean;
+    isEdited?: boolean;
 }
 
 interface ChatState {
@@ -196,6 +201,12 @@ const chatSlice = createSlice({
                 // Simply remove from view
                 state.messages = state.messages.filter(m => m._id !== messageId);
             }
+        },
+        removeChat: (state, action) => {
+            state.chats = state.chats.filter(c => c._id !== action.payload);
+            if (state.currentChat && state.currentChat._id === action.payload) {
+                state.currentChat = null;
+            }
         }
     },
     extraReducers: (builder) => {
@@ -224,6 +235,10 @@ const chatSlice = createSlice({
             .addCase(fetchChats.fulfilled, (state, action) => {
                 state.loading = false;
                 state.chats = action.payload;
+                // If we have a current chat (e.g. from accessChat) that isn't in the fetched list, add it
+                if (state.currentChat && !state.chats.find(c => c._id === state.currentChat?._id)) {
+                    state.chats.unshift(state.currentChat);
+                }
             })
             .addCase(fetchChats.rejected, (state, action) => {
                 state.loading = false;
