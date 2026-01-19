@@ -31,6 +31,7 @@ export interface Message {
     createdAt: string;
     isDeleted?: boolean;
     isEdited?: boolean;
+    readBy?: string[];
 }
 
 interface ChatState {
@@ -288,6 +289,25 @@ const chatSlice = createSlice({
                 if (state.currentChat && state.currentChat._id === chatId) {
                     state.currentChat = null;
                 }
+            })
+            // Mark Chat as Read
+            // Mark Chat as Read
+            .addCase(markChatAsRead.fulfilled, (state, action) => {
+                const { chatId, userId } = action.payload;
+                // remove notifications for this chat
+                state.notifications = state.notifications.filter(n => n.chat._id !== chatId);
+                
+                // Update latest message read status in chat list to reflect change immediately in UI
+                const chatIndex = state.chats.findIndex(c => c._id === chatId);
+                if (chatIndex !== -1 && state.chats[chatIndex].latestMessage) {
+                    if (!state.chats[chatIndex].latestMessage.readBy) {
+                        state.chats[chatIndex].latestMessage.readBy = [];
+                    }
+                     // Ensure we don't duplicate
+                    if (userId && !state.chats[chatIndex].latestMessage.readBy.includes(userId)) {
+                         state.chats[chatIndex].latestMessage.readBy.push(userId);
+                    }
+                }
             });
     },
 });
@@ -353,6 +373,30 @@ export const deleteChat = createAsyncThunk(
             };
             const response = await axios.delete(`${API_URL}/${chatId}`, config);
             return { chatId, mode, ...response.data };
+        } catch (error: any) {
+            return rejectWithValue(
+                error.response && error.response.data.message
+                    ? error.response.data.message
+                    : error.message
+            );
+        }
+    }
+);
+
+// Mark Messages as Read
+export const markChatAsRead = createAsyncThunk(
+    "chat/markChatAsRead",
+    async (chatId: string, { rejectWithValue, getState }) => {
+        try {
+            const token = localStorage.getItem("token");
+            const { auth } = getState() as any; // Access auth state to get userId
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            };
+            const response = await axios.put(`${API_URL}/${chatId}/read`, {}, config);
+            return { chatId, userId: auth.currentUser?.id, ...response.data };
         } catch (error: any) {
             return rejectWithValue(
                 error.response && error.response.data.message

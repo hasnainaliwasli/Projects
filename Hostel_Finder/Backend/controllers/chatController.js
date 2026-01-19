@@ -93,7 +93,10 @@ const fetchChats = asyncHandler(async (req, res) => {
 // @access  Protected
 const allMessages = asyncHandler(async (req, res) => {
     try {
-        const messages = await Message.find({ chat: req.params.chatId })
+        const messages = await Message.find({
+            chat: req.params.chatId,
+            deletedFor: { $ne: req.user._id }
+        })
             .populate("sender", "fullName profileImage email")
             .populate("chat");
         res.json(messages);
@@ -129,6 +132,15 @@ const sendMessage = asyncHandler(async (req, res) => {
             path: "chat.users",
             select: "fullName profileImage email",
         });
+
+        // Also, if the chat was "deleted" for the other user, we should probably "undelete" it for them so it reappears
+        // Check if chat is deleted for any user
+        const chat = await Chat.findById(chatId);
+        if (chat && chat.deletedFor.length > 0) {
+            // Remove all users from deletedFor array
+            chat.deletedFor = [];
+            await chat.save();
+        }
 
         await Chat.findByIdAndUpdate(req.body.chatId, { latestMessage: message });
 
@@ -286,13 +298,48 @@ const deleteChat = asyncHandler(async (req, res) => {
 
     } else {
         // Delete for Me
-        // Add user to deletedFor array if not already there
+        // 1. Add user to deletedFor array of the Chat (so it disappears from list)
         if (!chat.deletedFor.includes(req.user._id)) {
             chat.deletedFor.push(req.user._id);
             await chat.save();
         }
+
+        // 2. Add user to deletedFor array of ALL MESSAGES in this chat (so history is hidden)
+        await Message.updateMany(
+            { chat: id },
+            { $addToSet: { deletedFor: req.user._id } }
+        );
+
         res.json({ message: "Chat deleted for you" });
     }
+});
+
+// @desc    Mark all messages in a chat as read
+// @route   PUT /api/chat/:chatId/read
+// @access  Protected
+const markMessagesAsRead = asyncHandler(async (req, res) => {
+    const { chatId } = req.params;
+
+    if (!chatId) {
+        res.status(400);
+        throw new Error("Chat ID is required");
+    }
+
+    // Update all messages in the chat that haven't been read by the current user
+    await Message.updateMany(
+        { chat: chatId, readBy: { $ne: req.user._id } },
+        { $addToSet: { readBy: req.user._id } }
+    );
+
+    // Also update the latestMessage of the chat if it's the one being acted upon?
+    // Actually, latestMessage is a reference to a Message document. 
+    // Since we updated the Message document in the DB, fetching the chat again or populating it will show the updated data.
+    // However, for real-time consistency with the sidebar list (which uses chat.latestMessage), 
+    // we might want to ensure that specific message is updated in the Chat.latestMessage if it was unread.
+    // But since `latestMessage` in Chat schema is an ObjectId ref, updating the Message doc content is enough.
+    // When we fetchChats, we populate latestMessage, so it will pull the updated `readBy`.
+
+    res.json({ message: "Messages marked as read" });
 });
 
 module.exports = {
@@ -302,5 +349,6 @@ module.exports = {
     sendMessage,
     editMessage,
     deleteMessage,
-    deleteChat
+    deleteChat,
+    markMessagesAsRead
 };

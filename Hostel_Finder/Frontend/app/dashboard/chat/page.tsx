@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { fetchChats, fetchMessages, sendMessage, editMessage, deleteMessage, deleteChat, setCurrentChat, addMessage, updateMessage, removeMessage, removeChat, addNotification, accessChat } from "@/lib/slices/chatSlice";
+import { fetchChats, fetchMessages, sendMessage, editMessage, deleteMessage, deleteChat, setCurrentChat, addMessage, updateMessage, removeMessage, removeChat, addNotification, accessChat, markChatAsRead } from "@/lib/slices/chatSlice";
 import { useSocket } from "@/context/SocketProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -94,6 +94,7 @@ export default function ChatPage() {
     useEffect(() => {
         if (currentChat) {
             dispatch(fetchMessages(currentChat._id));
+            dispatch(markChatAsRead(currentChat._id));
             socket?.emit("join chat", currentChat._id);
             setShowSidebar(false); // On mobile, hide sidebar when chat opens
         }
@@ -258,30 +259,71 @@ export default function ChatPage() {
                                 }
                                 return displayChats.map((chat) => {
                                     const details = getChatDetails(chat, currentUser);
+                                    const isUnread = chat.latestMessage &&
+                                        !chat.latestMessage.readBy?.includes(currentUser?.id || "") &&
+                                        chat.latestMessage.sender?._id !== currentUser?.id;
+
                                     return (
-                                        <button
+                                        <div
                                             key={chat._id}
                                             onClick={() => dispatch(setCurrentChat(chat))}
-                                            className={`flex items-center gap-3 p-3 rounded-lg text-left transition-colors ${currentChat?._id === chat._id
+                                            role="button"
+                                            tabIndex={0}
+                                            className={`w-full flex items-center gap-3 p-3 cursor-pointer rounded-lg text-left transition-colors ${currentChat?._id === chat._id
                                                 ? "bg-primary/10 hover:bg-primary/15"
                                                 : "hover:bg-muted"
                                                 }`}
                                         >
-                                            <Avatar>
-                                                <AvatarImage src={details.image || undefined} />
-                                                <AvatarFallback>{details.name[0]}</AvatarFallback>
-                                            </Avatar>
-                                            <div className="overflow-hidden">
-                                                <h4 className="font-medium truncate">
-                                                    {details.name}
-                                                </h4>
-                                                {chat.latestMessage && (
-                                                    <p className="text-xs text-muted-foreground truncate">
-                                                        {chat.latestMessage.sender?.fullName}: {chat.latestMessage.content}
-                                                    </p>
+                                            <div className="relative">
+                                                <Avatar>
+                                                    <AvatarImage src={details.image || undefined} />
+                                                    <AvatarFallback>{details.name[0]}</AvatarFallback>
+                                                </Avatar>
+                                                {isUnread && (
+                                                    <span className="absolute top-0 right-0 h-3 w-3 rounded-full bg-primary ring-2 ring-background animate-pulse" />
                                                 )}
                                             </div>
-                                        </button>
+
+                                            <div className="flex w-full items-start gap-2 overflow-hidden">
+                                                {/* Left content */}
+                                                <div className="min-w-0 flex-1">
+                                                    <div className="flex items-center justify-between">
+                                                        <h4 className={`truncate ${isUnread ? "font-bold text-foreground" : "font-medium"}`}>
+                                                            {details.name}
+                                                        </h4>
+
+                                                        {chat.latestMessage && (
+                                                            <span className={`ml-2 text-[10px] shrink-0 ${isUnread ? "text-primary font-bold" : "text-muted-foreground"}`}>
+                                                                {format(new Date(chat.latestMessage.createdAt), "HH:mm")}
+                                                            </span>
+                                                        )}
+                                                    </div>
+
+                                                    {chat.latestMessage && (
+                                                        <p className={`text-xs truncate ${isUnread ? "font-bold text-foreground" : "text-muted-foreground"}`}>
+                                                            <span className="font-medium">
+                                                                {chat.latestMessage.sender?.fullName}:
+                                                            </span>{" "}
+                                                            {chat.latestMessage.content}
+                                                        </p>
+                                                    )}
+                                                </div>
+
+                                                {/* NOW it will be at the extreme right */}
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="ml-auto h-6 w-6 shrink-0 text-destructive hover:bg-destructive/10"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setDeleteChatDialogOpen(true);
+                                                    }}
+                                                >
+                                                    <Trash2 className="h-5 w-5" />
+                                                </Button>
+                                            </div>
+                                        </div>
+
                                     );
                                 });
                             })()}
