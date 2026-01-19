@@ -8,7 +8,7 @@ import { addNotification } from "@/lib/slices/chatSlice";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-const ENDPOINT = "http://localhost:5000";
+const ENDPOINT = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 interface SocketContextType {
     socket: Socket | null;
