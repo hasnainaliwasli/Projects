@@ -36,6 +36,7 @@ export default function ChatPage() {
     const { currentUser } = useAppSelector((state) => state.auth);
     const { socket } = useSocket();
     const [newMessage, setNewMessage] = useState("");
+    const [isSending, setIsSending] = useState(false);
     const [showSidebar, setShowSidebar] = useState(true);
     const scrollRef = useRef<HTMLDivElement>(null);
     const searchParams = useSearchParams();
@@ -108,8 +109,9 @@ export default function ChatPage() {
 
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!newMessage.trim() || !currentChat) return;
+        if (!newMessage.trim() || !currentChat || isSending) return;
 
+        setIsSending(true);
         try {
             const resultFn = await dispatch(sendMessage({
                 content: newMessage,
@@ -122,6 +124,8 @@ export default function ChatPage() {
             }
         } catch (error) {
             console.error("Failed to send message", error);
+        } finally {
+            setIsSending(false);
         }
     };
 
@@ -490,8 +494,9 @@ export default function ChatPage() {
                                     value={newMessage}
                                     onChange={(e) => setNewMessage(e.target.value)}
                                     className="flex-1 rounded-full pl-4"
+                                    disabled={isSending}
                                 />
-                                <Button type="submit" size="icon" className="rounded-full h-10 w-10 shrink-0">
+                                <Button type="submit" size="icon" className="rounded-full h-10 w-10 shrink-0" disabled={isSending}>
                                     <Send className="w-4 h-4" />
                                 </Button>
                             </form>
