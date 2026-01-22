@@ -5,20 +5,20 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { register, clearError } from "@/lib/slices/authSlice";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
 import { UserRole } from "@/lib/types";
-import { Loader } from "@/components/ui/loader";
-import { Eye, EyeOff } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  Mail,
+  Lock,
+  User,
+  Phone,
+  MapPin,
+  Briefcase,
+  ArrowRight,
+  ArrowLeft,
+  Loader2
+} from "lucide-react";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -85,171 +85,247 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10 px-4">
-      <Card className="w-full max-w-md shadow-xl border border-muted/60 rounded-2xl">
-        <CardHeader className="text-center space-y-2">
-          <CardTitle className="text-2xl font-extrabold tracking-tight">
-            Create your account
-          </CardTitle>
-          <CardDescription className="text-muted-foreground">
-            Start discovering the best hostels around you
-          </CardDescription>
-        </CardHeader>
+    <div className="h-[100dvh] w-full flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-0 relative overflow-hidden">
 
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-5">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-blue-400/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+      </div>
+
+      {/* Main Card Container */}
+      <div className="w-full max-w-6xl mx-auto relative z-10 grid lg:grid-cols-2 gap-0 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden h-full max-h-[90vh] border border-gray-100 dark:border-gray-700 transition-transform duration-500">
+
+        {/* Back to Home Button */}
+        <Link
+          href="/"
+          className="absolute top-6 left-6 z-50 flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-white transition-colors group"
+        >
+          <div className="p-2 rounded-full bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 group-hover:border-blue-500 transition-all">
+            <ArrowLeft className="w-4 h-4" />
+          </div>
+          <span className="hidden text-white sm:inline">Back to Home</span>
+        </Link>
+
+        {/* Left Side - Branding */}
+        <div className="hidden lg:flex flex-col justify-center pt-24 p-12 xl:p-16 bg-gradient-to-br from-blue-600 via-blue-700 to-purple-700 text-white relative overflow-hidden">
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 left-0 w-full h-full"
+              style={{
+                backgroundImage: `url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><path d="M54.627 0l.83.828-1.415 1.415L51.8 0h2.827zM5.373 0l-.83.828L5.96 2.243 8.2 0H5.374zM48.97 0l3.657 3.657-1.414 1.414L46.143 0h2.828zM11.03 0L7.372 3.657 8.787 5.07 13.857 0H11.03zm32.284 0L49.8 6.485 48.384 7.9l-7.9-7.9h2.83zM16.686 0L10.2 6.485 11.616 7.9l7.9-7.9h-2.83z" fill="white" fill-opacity="0.4" fill-rule="evenodd"/></svg>')`,
+              }}>
+            </div>
+          </div>
+
+          <div className="relative z-10 space-y-8">
+            <div className="space-y-4">
+              <h2 className="text-4xl xl:text-5xl font-bold leading-tight">
+                Join our community
+              </h2>
+              <p className="text-lg text-blue-100 leading-relaxed">
+                Create an account to discover the best hostels or manage your properties with ease.
+              </p>
+            </div>
+
+            <div className="space-y-4 pt-4">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0 mt-1">
+                  <User className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg">Personalized Profile</h3>
+                  <p className="text-blue-100 text-sm">Save your favorites and track your applications.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0 mt-1">
+                  <Briefcase className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg">Owner Tools</h3>
+                  <p className="text-blue-100 text-sm">List your hostel and reach thousands of students.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Side - Signup Form */}
+        <div className="p-5 flex flex-col overflow-y-auto h-full">
+          <div className="space-y-2 mb-8 mt-4 lg:mt-0 flex-shrink-0">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Create Account</h2>
+            <p className="text-gray-600 dark:text-gray-400">Fill in your details to get started</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
             {(errors || error) && (
-              <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-                {errors || error}
+              <div className="p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm flex items-start gap-3">
+                <span className="mt-0.5">⚠️</span>
+                <span>{errors || error}</span>
               </div>
             )}
 
-            <div className="grid grid-cols-1 gap-4">
-              <div className="space-y-1">
-                <Label htmlFor="fullName">Full name</Label>
-                <Input
-                  id="fullName"
-                  name="fullName"
-                  placeholder="John Doe"
-                  value={formData.fullName}
-                  onChange={handleChange}
-                  className="h-11"
-                  required
-                />
+            {/* Grid for compact fields */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Full Name */}
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Full Name</label>
+                <div className="relative group">
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-blue-600 transition-colors" />
+                  <input
+                    name="fullName"
+                    placeholder="John Doe"
+                    value={formData.fullName}
+                    onChange={handleChange}
+                    className="w-full pl-12 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-600 outline-none transition-all"
+                    required
+                  />
+                </div>
               </div>
 
-              <div className="space-y-1">
-                <Label htmlFor="email">Email address</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="you@example.com"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="h-11"
-                  required
-                />
+              {/* Email */}
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Email Address</label>
+                <div className="relative group">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-blue-600 transition-colors" />
+                  <input
+                    name="email"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="w-full pl-12 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-600 outline-none transition-all"
+                    required
+                  />
+                </div>
               </div>
 
-              <div className="space-y-1">
-                <Label htmlFor="phoneNumber">Phone number</Label>
-                <Input
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  type="tel"
-                  placeholder="+92xxxxxxxxxx"
-                  value={formData.phoneNumber}
-                  onChange={handleChange}
-                  className="h-11"
-                />
+              {/* Phone Number */}
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Phone Number</label>
+                <div className="relative group">
+                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-blue-600 transition-colors" />
+                  <input
+                    name="phoneNumber"
+                    type="tel"
+                    placeholder="+92..."
+                    value={formData.phoneNumber}
+                    onChange={handleChange}
+                    className="w-full pl-12 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-600 outline-none transition-all"
+                  />
+                </div>
               </div>
 
-              <div className="space-y-1">
-                <Label htmlFor="homeAddress">Home Address</Label>
-                <Input
-                  id="homeAddress"
+              {/* Role Select */}
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Register as</label>
+                <div className="relative group">
+                  <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-blue-600 transition-colors" />
+                  <select
+                    name="role"
+                    value={formData.role}
+                    onChange={handleChange}
+                    className="w-full pl-12 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-600 outline-none transition-all appearance-none"
+                  >
+                    <option value="student">Student</option>
+                    <option value="owner">Hostel Owner</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Home Address - Full Width */}
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Home Address</label>
+              <div className="relative group">
+                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-blue-600 transition-colors" />
+                <input
                   name="homeAddress"
-                  type="text"
-                  placeholder="Your home address"
+                  placeholder="Street, City, Country"
                   value={formData.homeAddress}
                   onChange={handleChange}
-                  className="h-11"
+                  className="w-full pl-12 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-600 outline-none transition-all"
                 />
               </div>
+            </div>
 
-              <div className="space-y-1">
-                <Label htmlFor="role">Register as</Label>
-                <select
-                  id="role"
-                  name="role"
-                  value={formData.role}
-                  onChange={handleChange}
-                  className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                >
-                  <option value="student">Student</option>
-                  <option value="owner">Hostel Owner</option>
-                </select>
-              </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="password">Password</Label>
-                <div className="relative">
-                  <Input
-                    id="password"
+            {/* Passwords */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+                <div className="relative group">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-blue-600 transition-colors" />
+                  <input
                     name="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     value={formData.password}
                     onChange={handleChange}
-                    className="h-11 pr-10"
+                    className="w-full pl-12 pr-12 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-600 outline-none transition-all"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                    tabIndex={-1}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <Label htmlFor="confirmPassword">Confirm password</Label>
-                <div className="relative">
-                  <Input
-                    id="confirmPassword"
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Confirm Password</label>
+                <div className="relative group">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-blue-600 transition-colors" />
+                  <input
                     name="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder="••••••••"
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="h-11 pr-10"
+                    className="w-full pl-12 pr-12 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-600 outline-none transition-all"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                    tabIndex={-1}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
-                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
               </div>
             </div>
-          </CardContent>
 
-          <CardFooter className="flex flex-col gap-4">
-            <Button
+            <button
               type="submit"
-              className="w-full h-11 text-base font-semibold"
               disabled={loading}
+              className="w-full py-3.5 mt-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/30 disabled:opacity-50 transition-all flex items-center justify-center gap-2 group"
             >
-              {loading ? <div className="flex items-center gap-2 justify-center"><Loader size="sm" /> Creating account...</div> : "Create account"}
-            </Button>
+              {loading ? (
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <span>Creating account...</span>
+                </>
+              ) : (
+                <>
+                  <span>Create Account</span>
+                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </>
+              )}
+            </button>
+          </form>
 
-            <p className="text-sm text-muted-foreground">
-              Already have an account?{" "}
-              <Link
-                href="/login"
-                className="font-medium text-primary hover:underline"
-              >
-                Sign in
-              </Link>
-            </p>
-
-            <Link
-              href="/"
-              className="text-sm text-primary hover:underline"
-            >
-              ← Back to home
+          <div className="mt-8 flex items-center justify-center gap-1.5 text-sm">
+            <span className="text-gray-500">Already have an account?</span>
+            <Link href="/login" className="font-bold text-blue-600 hover:underline">
+              Sign in
             </Link>
-          </CardFooter>
-        </form>
-      </Card>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -6,8 +6,9 @@ import { Navbar } from "@/components/navbar";
 export function NavbarWrapper() {
     const pathname = usePathname();
     const isDashboard = pathname.startsWith("/dashboard");
+    const isAuthPage = pathname === "/login" || pathname === "/register" || pathname === "/forgot-password";
 
-    if (isDashboard) {
+    if (isDashboard || isAuthPage) {
         return null;
     }
 
