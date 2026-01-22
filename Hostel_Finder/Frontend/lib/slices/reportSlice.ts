@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/reports";
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000") + "/api/reports";
 
 export interface Report {
     _id: string;

@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/chat";
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000") + "/api/chat";
 
 import { UserRole } from "../types";
 
@@ -296,16 +296,16 @@ const chatSlice = createSlice({
                 const { chatId, userId } = action.payload;
                 // remove notifications for this chat
                 state.notifications = state.notifications.filter(n => n.chat._id !== chatId);
-                
+
                 // Update latest message read status in chat list to reflect change immediately in UI
                 const chatIndex = state.chats.findIndex(c => c._id === chatId);
                 if (chatIndex !== -1 && state.chats[chatIndex].latestMessage) {
                     if (!state.chats[chatIndex].latestMessage.readBy) {
                         state.chats[chatIndex].latestMessage.readBy = [];
                     }
-                     // Ensure we don't duplicate
+                    // Ensure we don't duplicate
                     if (userId && !state.chats[chatIndex].latestMessage.readBy.includes(userId)) {
-                         state.chats[chatIndex].latestMessage.readBy.push(userId);
+                        state.chats[chatIndex].latestMessage.readBy.push(userId);
                     }
                 }
             });
