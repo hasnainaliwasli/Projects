@@ -138,9 +138,9 @@ export default function LoginPage() {
                                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                     Password
                                 </label>
-                                <a href="/forgot-password" className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 transition-colors">
+                                <Link href="/forgot-password" className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 transition-colors">
                                     Forgot password?
-                                </a>
+                                </Link>
                             </div>
                             <div className="relative group">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
