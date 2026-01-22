@@ -94,7 +94,7 @@ export default function RegisterPage() {
       </div>
 
       {/* Main Card Container */}
-      <div className="w-full max-w-6xl mx-auto relative z-10 grid lg:grid-cols-2 gap-0 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden h-full max-h-[90vh] border border-gray-100 dark:border-gray-700 transition-transform duration-500">
+      <div className="w-full max-w-6xl mx-auto relative z-10 grid lg:grid-cols-[40%_60%] gap-0 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden h-full max-h-[95vh] border border-gray-100 dark:border-gray-700 transition-transform duration-500">
 
         {/* Back to Home Button */}
         <Link
@@ -152,13 +152,13 @@ export default function RegisterPage() {
         </div>
 
         {/* Right Side - Signup Form */}
-        <div className="p-5 flex flex-col overflow-y-auto h-full">
-          <div className="space-y-2 mb-8 mt-4 lg:mt-0 flex-shrink-0">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Create Account</h2>
-            <p className="text-gray-600 dark:text-gray-400">Fill in your details to get started</p>
+        <div className="p-10 flex flex-col overflow-y-auto h-full">
+          <div className="space-y-2 lg:mt-0 flex-shrink-0">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2 dark:text-white">Create Account</h2>
+            <p className="text-gray-600 mb-2 pb-1 dark:text-gray-400">Fill in your details to get started</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3">
             {(errors || error) && (
               <div className="p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm flex items-start gap-3">
                 <span className="mt-0.5">⚠️</span>
@@ -166,8 +166,7 @@ export default function RegisterPage() {
               </div>
             )}
 
-            {/* Grid for compact fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {/* Full Name */}
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Full Name</label>
@@ -302,7 +301,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 mt-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/30 disabled:opacity-50 transition-all flex items-center justify-center gap-2 group"
+              className="w-full py-3.5 cursor-pointer mt-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/30 disabled:opacity-50 transition-all flex items-center justify-center gap-2 group"
             >
               {loading ? (
                 <>
@@ -318,7 +317,7 @@ export default function RegisterPage() {
             </button>
           </form>
 
-          <div className="mt-8 flex items-center justify-center gap-1.5 text-sm">
+          <div className="mt-4 flex items-center justify-center gap-1.5 text-sm">
             <span className="text-gray-500">Already have an account?</span>
             <Link href="/login" className="font-bold text-blue-600 hover:underline">
               Sign in

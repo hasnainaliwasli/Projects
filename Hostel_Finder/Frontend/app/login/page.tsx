@@ -46,7 +46,7 @@ export default function LoginPage() {
                 </Link>
 
                 {/* Left Side - Branding */}
-                <div className="hidden lg:flex flex-col justify-start pt-24 p-12 xl:p-16 bg-gradient-to-br from-blue-600 via-blue-700 to-purple-700 text-white relative overflow-hidden">
+                <div className="hidden lg:flex flex-col justify-center pt-24 p-12 xl:p-16 bg-gradient-to-br from-blue-600 via-blue-700 to-purple-700 text-white relative overflow-hidden">
                     <div className="absolute inset-0 opacity-10">
                         <div className="absolute top-0 left-0 w-full h-full"
                             style={{
@@ -168,7 +168,7 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-3.5 px-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/30 disabled:opacity-50 transition-all duration-300 flex items-center justify-center gap-2 group"
+                            className="w-full py-3.5 cursor-pointer px-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/30 disabled:opacity-50 transition-all duration-300 flex items-center justify-center gap-2 group"
                         >
                             {loading ? "Signing in..." : (
                                 <>
