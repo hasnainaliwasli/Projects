@@ -2,9 +2,6 @@
 
 import Link from "next/link";
 import { useAppSelector } from "@/lib/hooks";
-import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Navbar } from "@/components/navbar";
 import {
   Search,
   Shield,
@@ -15,409 +12,352 @@ import {
   TrendingUp,
   Heart,
   MessageSquare,
-  ArrowRight
+  ArrowRight,
+  MapPin,
+  Coffee,
+  Wifi
 } from "lucide-react";
 
 export default function HomePage() {
-  const { isAuthenticated, currentUser } = useAppSelector((state) => state.auth);
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+
+  const stats = [
+    { label: "Active Hostels", value: "500+", icon: Building2 },
+    { label: "Happy Students", value: "10K+", icon: Users },
+    { label: "Cities Covered", value: "50+", icon: MapPin },
+    { label: "Success Rate", value: "98%", icon: TrendingUp }
+  ];
 
   const features = [
     {
       icon: Search,
       title: "Smart Search",
-      description: "Advanced filters to find exactly what you need - location, price, amenities, and more.",
-      color: "text-blue-500"
+      description: "Filter by price, location, and amenities to find your perfect match instantly.",
+      color: "bg-blue-500"
     },
     {
       icon: Shield,
       title: "Verified Listings",
-      description: "All hostels are verified with real photos and authentic information you can trust.",
-      color: "text-green-500"
+      description: "Every hostel is physically verified to ensure safety and authenticity.",
+      color: "bg-green-500"
     },
     {
       icon: Star,
-      title: "Genuine Reviews",
-      description: "Read honest reviews from real students to make informed decisions.",
-      color: "text-yellow-500"
+      title: "Real Reviews",
+      description: "Unbiased reviews from verified students who have actually lived there.",
+      color: "bg-yellow-500"
     },
     {
-      icon: Users,
-      title: "Large Community",
-      description: "Join thousands of students and hostel owners on our trusted platform.",
-      color: "text-purple-500"
+      icon: Wifi,
+      title: "Modern Amenities",
+      description: "Detailed info on WiFi, backup power, food, and laundry facilities.",
+      color: "bg-purple-500"
     }
   ];
 
-  const stats = [
-    { label: "Active Hostels", value: "500+", icon: Building2 },
-    { label: "Happy Students", value: "10K+", icon: Users },
-    { label: "Cities Covered", value: "50+", icon: CheckCircle2 },
-    { label: "Success Rate", value: "95%", icon: TrendingUp }
-  ];
-
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden font-sans">
 
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+      </div>
 
-      {/* Hero Section with Background */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-white to-slate-50 dark:from-slate-950 dark:to-slate-900 py-14 md:py-16">
-        {/* Soft Warm Top-Left Blob */}
-        <div className="absolute -top-28 -left-28 w-[520px] h-[520px] rounded-full bg-amber-100/85 dark:bg-amber-900/20 blur-[120px] opacity-95 transform-gpu -rotate-12 pointer-events-none will-change-transform"></div>
+      {/* --- HERO SECTION --- */}
+      <section className="relative z-10 pt-15 md:pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <div className="absolute inset-0 -z-10">
+          <img
+            // src="https://img.freepik.com/free-photo/cinematic-film-location-decor_23-2151918969.jpg?semt=ais_hybrid&w=740&q=80"
+            src="https://cdn.qwenlm.ai/output/3e5c29e8-48be-4933-bc7d-19c7556beefe/t2i/3516911f-1a2a-4882-a6b3-2423830fc051/1769163268.png?key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXNvdXJjZV91c2VyX2lkIjoiM2U1YzI5ZTgtNDhiZS00OTMzLWJjN2QtMTljNzU1NmJlZWZlIiwicmVzb3VyY2VfaWQiOiIxNzY5MTYzMjY4IiwicmVzb3VyY2VfY2hhdF9pZCI6IjJiYzUxNjVkLTJlMmEtNDNlNC1iMDBhLTk0ZmY4NDFmMjJhNSJ9.gVyd3NhBjHtJvByhypPgAzZfF1yt7iOJaQjMh7Unhko"
+            alt="background"
+            className="w-full h-full object-cover"
+          />
 
-        {/* Pale Teal Top-Right Blob */}
-        <div className="absolute top-10 right-8 w-[420px] h-[420px] rounded-full bg-teal-50/85 dark:bg-teal-900/20 blur-[100px] opacity-90 mix-blend-multiply dark:mix-blend-normal pointer-events-none will-change-transform"></div>
-
-        {/* Center Frosted Highlight (glass shine) */}
-        <div className="absolute inset-0 mx-auto w-11/12 max-w-5xl h-[420px] bg-gradient-to-tr from-white/70 via-white/40 to-transparent dark:from-white/5 dark:via-white/5 dark:to-transparent opacity-70 blur-[18px] rounded-3xl shadow-2xl pointer-events-none"></div>
-
-        {/* Subtle Rose Accent below center */}
-        <div className="absolute left-1/2 -translate-x-1/2 top-28 w-[760px] h-[240px] bg-gradient-to-t from-rose-50/70 via-transparent to-transparent dark:from-rose-900/10 rounded-full blur-[140px] opacity-65 pointer-events-none"></div>
-
-        {/* Decorative faint rounded card shape with thin border */}
-        {/* <div className="absolute bottom-12 right-12 w-[340px] h-[200px] rounded-2xl bg-white/60 backdrop-blur-md border border-white/40 shadow-xl transform-gpu rotate-2 pointer-events-none"></div> */}
-
-        {/* Paper noise texture for tactile feel (optional file) */}
-        <div className="absolute inset-0 bg-[url('/noise-light.png')] opacity-[0.06] mix-blend-overlay dark:mix-blend-soft-light pointer-events-none"></div>
-
-        {/* Very subtle grid / mesh to add depth */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.02)_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px] opacity-[0.03] pointer-events-none"></div>
-
-        {/* Floating soft shadow under content */}
-        <div className="absolute inset-x-0 top-[55%] -translate-y-1/2 flex justify-center pointer-events-none">
-          <div className="w-[760px] h-6 rounded-full bg-gradient-to-r from-white/60 to-transparent dark:from-white/10 opacity-30 blur-xl"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-yellow-500/15 to-green-500/20" />
         </div>
 
-        {/* Content wrapper (place your hero elements here) */}
-        <div className="relative z-10 max-w-7xl mx-auto px-6">
-          {/* Content */}
-          <div className="mx-auto max-w-4xl text-center space-y-6 md:space-y-8 lg:space-y-10">
-            {/* Badge */}
-            {/* <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50/80 text-indigo-600 text-sm font-medium shadow-sm ring-1 ring-indigo-50">
-              <span className="h-2 w-2 rounded-full bg-indigo-500/90 inline-block" />
-              <span>Verified listings · Trusted hosts</span>
-            </div> */}
+        <div className="max-w-7xl mx-auto text-center">
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-serif font-semibold tracking-tight leading-tight text-white drop-shadow-2xl">
 
-            {/* Main Heading */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight text-slate-900 dark:text-slate-50">
-              Find Your Perfect{" "}
-              <span className="bg-gradient-to-r from-indigo-600 via-blue-500 to-green-600 bg-clip-text text-transparent dark:from-indigo-400 dark:via-blue-400 dark:to-green-400">
-                Hostel Home
+              Find Home <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-blue-100 to-white">
+                Away From Home
               </span>
             </h1>
 
-            {/* Quote */}
-            <p className="mx-auto max-w-2xl text-lg md:text-xl text-slate-600 dark:text-slate-300 italic">
-              &quot;Your comfort is our priority. Discover verified hostels with real reviews, transparent pricing,
-              and facilities that feel like home.&quot;
+            <p className="text-lg tracking-wide text-blue-100 max-w-2xl mx-auto leading-relaxed  drop-shadow-md">
+              Connecting students with <span className="font-medium text-white">safe</span>, <span className="font-medium text-white">comfortable</span>, and <span className="font-medium text-white">affordable</span> hostels.
+              Experience premium living with verified listings and zero hassle.
             </p>
+          </div>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-2 md:pt-4">
-              <Link href="/hostels" className="group">
-                <Button className="inline-flex items-center justify-center gap-1 px-8 py-3 rounded-xl text-md font-semibold shadow-lg bg-gradient-to-r from-primary to-secondary text-white transition-transform transform hover:-translate-y-0.5 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-primary/30">
-                  <Search className="h-4 w-4" />
-                  Browse Hostels
-                  <ArrowRight className="h-4 ml-2 w-4" />
-                </Button>
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
+
+            {/* PRIMARY CTA */}
+            <Link
+              href="/hostels"
+              className="group relative px-7 py-3.5 rounded-xl font-semibold text-base
+               bg-gradient-to-r from-white to-blue-50 text-blue-900
+               shadow-[0_10px_30px_-10px_rgba(255,255,255,0.6)]
+               hover:shadow-[0_15px_40px_-10px_rgba(255,255,255,0.9)]
+               hover:-translate-y-0.5
+               transition-all duration-300 ease-out
+               flex items-center justify-center gap-2
+               focus:outline-none focus:ring-2 focus:ring-white/40"
+            >
+              <Search className="w-4 h-4" />
+              <span>Start Searching</span>
+              <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1.5" />
+            </Link>
+
+            {/* SECONDARY CTA */}
+            {!isAuthenticated && (
+              <Link
+                href="/register"
+                className="group px-7 py-3.5 rounded-xl font-medium text-base text-white
+                 bg-white/10 backdrop-blur-lg
+                 border border-white/20
+                 hover:bg-white/20 hover:border-white/40
+                 transition-all duration-300 ease-out
+                 flex items-center justify-center gap-2
+                 focus:outline-none focus:ring-2 focus:ring-white/30"
+              >
+                <Building2 className="w-4 h-4 text-blue-200 group-hover:scale-105 transition-transform" />
+                <span>List Your Property</span>
               </Link>
+            )}
 
-              {!isAuthenticated && (
-                <Link href="/register" className="group">
-                  <Button className="inline-flex items-center justify-center gap-2 px-8 py-3 rounded-xl text-md font-semibold border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm text-slate-700 dark:text-slate-200 transition-all hover:scale-105 hover:shadow-md focus:outline-none focus:ring-4 focus:ring-primary/20">
-                    List Your Hostel
-                  </Button>
-                </Link>
-              )}
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-10">
-              {stats.map((stat, index) => {
-                const Icon = stat.icon;
-                return (
-                  <div
-                    key={index}
-                    className="p-4 rounded-2xl bg-white/70 dark:bg-slate-800/60 backdrop-blur-md border border-white/40 dark:border-slate-700/50 shadow-xl hover:shadow-2xl transition transform hover:-translate-y-1 duration-300"
-                  >
-                    <div className="flex items-center justify-center">
-                      <Icon className="h-8 w-8 text-primary" />
-                    </div>
-                    <div className="mt-3 text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-slate-50">
-                      <span className="bg-gradient-to-r from-indigo-600 via-pink-500 to-amber-400 bg-clip-text text-transparent dark:from-indigo-400 dark:via-pink-400 dark:to-amber-300">
-                        {stat.value}
-                      </span>
-                    </div>
-                    <div className="mt-1 text-sm text-slate-500 dark:text-slate-400">{stat.label}</div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </section>
-
-
-      {/* Features Section */}
-      <section className="py-24 bg-white dark:bg-card/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h3 className="text-2xl sm:text-4xl font-bold text-gray-900 dark:text-foreground mb-4">
-              Why Choose Hostel Finder?
-            </h3>
-            <p className="text-lg text-gray-600 dark:text-muted-foreground max-w-2xl mx-auto">
-              We make finding and managing hostels simple, transparent, and trustworthy
-            </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => {
-              const Icon = feature.icon;
+
+          {/* Stats Bar */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-26 max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700 delay-500">
+            {stats.map((stat, i) => {
+              const Icon = stat.icon;
               return (
-                <Card key={index} className="border-none shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 bg-gradient-to-br from-white to-gray-50 dark:from-card dark:to-card/80">
-                  <CardHeader>
-                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${index === 0 ? 'from-blue-500 to-blue-600' :
-                      index === 1 ? 'from-green-500 to-green-600' :
-                        index === 2 ? 'from-yellow-500 to-yellow-600' :
-                          'from-purple-500 to-purple-600'
-                      } flex items-center justify-center mb-4 shadow-lg`}>
-                      <Icon className="h-7 w-7 text-white" />
+                <>
+                  <div key={i} className="flex flex-col items-center p-4 gap-1 rounded-xl bg-white/5 backdrop-blur-sm border border-blue-500/40 hover:bg-black/20 transition-colors group">
+                    <div className="flex items-center justify-center gap-2">
+                      <Icon className="w-6 h-6 text-blue-300 mb-2 group-hover:scale-110 transition-transform" />
+                      <div className="text-2xl font-bold text-white mb-2">{stat.value}</div>
                     </div>
-                    <CardTitle className="text-xl">{feature.title}</CardTitle>
-                    <CardDescription className="text-base leading-relaxed">
-                      {feature.description}
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              );
+                    <div>
+                      <div className="text-xs font-medium text-blue-200 uppercase tracking-wider">{stat.label}</div>
+                    </div>
+                  </div>
+                </>
+              )
             })}
           </div>
         </div>
       </section>
 
-      {/* For Students Section */}
-      <section className="py-20 px-4">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6">
-              <div className="inline-block px-4 py-2 rounded-full bg-secondary/10 text-secondary font-semibold text-sm">
-                FOR STUDENTS
+      {/* --- FEATURES SECTION --- */}
+      <section className="py-24 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16 space-y-4">
+            <h2 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white">Why Choose Us?</h2>
+            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">We're revolutionizing the way students find accommodation.</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {features.map((feature, i) => {
+              const Icon = feature.icon;
+              return (
+                <div key={i} className="group p-8 rounded-3xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 relative overflow-hidden">
+                  <div className={`absolute top-0 right-0 w-32 h-32 ${feature.color} opacity-5 rounded-bl-full pointer-events-none`}></div>
+                  <div className={`w-14 h-14 rounded-2xl ${feature.color} flex items-center justify-center text-white shadow-lg mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                    <Icon className="w-7 h-7" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{feature.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{feature.description}</p>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* --- FOR STUDENTS & OWNERS SPLIT --- */}
+      <section className="py-20 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-24">
+
+          {/* Students Row */}
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <div className="relative order-2 lg:order-1">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-purple-600 rounded-3xl rotate-3 opacity-20 blur-lg"></div>
+              <img
+                src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=2670&auto=format&fit=crop"
+                alt="Happy Students"
+                className="relative rounded-3xl shadow-2xl w-full object-cover h-[500px] hover:rotate-1 transition-transform duration-500"
+              />
+
+              {/* Floating Card 1 */}
+              <div className="absolute -bottom-6 -right-6 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 flex items-center gap-3 animate-bounce" style={{ animationDuration: '3s' }}>
+                <div className="p-2 bg-red-100 text-red-600 rounded-full">
+                  <Heart className="w-5 h-5 fill-current" />
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500">Favorites</div>
+                  <div className="font-bold text-gray-900 dark:text-white">Saved Hostels</div>
+                </div>
               </div>
-              <h2 className="text-responsive-lg font-bold">
-                Find Your Ideal Living Space
+            </div>
+
+            <div className="space-y-8 order-1 lg:order-2">
+              <div className="inline-flex px-4 py-1.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 text-sm font-bold tracking-wide uppercase">
+                For Students
+              </div>
+              <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white leading-tight">
+                Live Your Best <br />Student Life
               </h2>
-              <p className="text-lg text-muted-foreground">
-                Search from hundreds of verified hostels, compare amenities, read genuine reviews,
-                and make informed decisions about your accommodation.
+              <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
+                Struggling to find a place? We make it easy. Compare prices, check distance from your university,
+                and see what other students are saying before you book.
+              </p>
+              <ul className="space-y-4">
+                {[
+                  "Verify availability in real-time",
+                  "Compare amenities (AC, WiFi, Mess)",
+                  "Direct chat with hostel owners"
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3 text-gray-700 dark:text-gray-300 font-medium">
+                    <CheckCircle2 className="w-6 h-6 text-green-500 flex-shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/register">
+                <button className="mt-4 px-8 py-3.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold rounded-xl hover:opacity-90 transition-all flex items-center gap-2">
+                  Join for Free <ArrowRight className="w-5 h-5" />
+                </button>
+              </Link>
+            </div>
+          </div>
+
+          {/* Owners Row */}
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <div className="space-y-8">
+              <div className="inline-flex px-4 py-1.5 rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 text-sm font-bold tracking-wide uppercase">
+                For Hostel Owners
+              </div>
+              <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white leading-tight">
+                Fill Your Rooms <br />Faster Than Ever
+              </h2>
+              <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
+                Stop relying on posters and word of-mouth. List your property on Hostel Finder
+                and get direct inquiries from thousands of students looking for a place right now.
               </p>
 
-              <div className="space-y-4">
-                <div className="flex items-start gap-4 p-4 rounded-xl bg-card border">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <Search className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">Advanced Filtering</h3>
-                    <p className="text-sm text-muted-foreground">Find hostels by budget, location, gender type, and facilities</p>
-                  </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-4 rounded-xl bg-purple-50 dark:bg-purple-900/10 border border-purple-100 dark:border-purple-800/30">
+                  <h4 className="font-bold text-purple-700 dark:text-purple-300 text-lg mb-1">Zero Fees</h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">List your property for free. No hidden charges.</p>
                 </div>
-
-                <div className="flex items-start gap-4 p-4 rounded-xl bg-card border">
-                  <div className="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
-                    <Heart className="h-5 w-5 text-secondary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">Save Favorites</h3>
-                    <p className="text-sm text-muted-foreground">Create a shortlist and compare your top choices</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4 p-4 rounded-xl bg-card border">
-                  <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
-                    <MessageSquare className="h-5 w-5 text-accent" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">Share Reviews</h3>
-                    <p className="text-sm text-muted-foreground">Help others with honest feedback about your experience</p>
-                  </div>
+                <div className="p-4 rounded-xl bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/30">
+                  <h4 className="font-bold text-blue-700 dark:text-blue-300 text-lg mb-1">Direct Chat</h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Talk directly to students. No middlemen.</p>
                 </div>
               </div>
 
               <Link href="/register">
-                <Button size="lg" className="gap-2">
-                  Join as Student
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
+                <button className="mt-4 px-8 py-3.5 border-2 border-gray-900 dark:border-white text-gray-900 dark:text-white font-bold rounded-xl hover:bg-gray-900 hover:text-white dark:hover:bg-white dark:hover:text-gray-900 transition-all flex items-center gap-2">
+                  List Property <ArrowRight className="w-5 h-5" />
+                </button>
               </Link>
             </div>
 
             <div className="relative">
-              <div className="aspect-square rounded-2xl overflow-hidden shadow-2xl">
-                <img
-                  src="/student-life.png"
-                  alt="Student Life"
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                />
+              <div className="absolute inset-0 bg-gradient-to-bl from-purple-600 to-blue-600 rounded-3xl -rotate-3 opacity-20 blur-lg"></div>
+              <img
+                src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=2670&auto=format&fit=crop"
+                alt="Hostel Owner Dashboard"
+                className="relative rounded-3xl shadow-2xl w-full object-cover h-[500px] hover:rotate-1 transition-transform duration-500"
+              />
+              {/* Floating Card 2 */}
+              <div className="absolute -top-6 -left-6 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 flex items-center gap-3 animate-bounce" style={{ animationDuration: '4s' }}>
+                <div className="p-2 bg-green-100 text-green-600 rounded-full">
+                  <TrendingUp className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500">Weekly Views</div>
+                  <div className="font-bold text-gray-900 dark:text-white">1.2k+ Students</div>
+                </div>
               </div>
-              <div className="absolute -top-6 -right-6 w-32 h-32 bg-primary/20 rounded-full blur-2xl -z-10"></div>
-              <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-secondary/20 rounded-full blur-2xl -z-10"></div>
             </div>
           </div>
+
         </div>
       </section>
 
-      {/* For Hostel Owners Section */}
-      <section className="py-20 px-4 bg-muted/30">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="relative order-2 md:order-1">
-              <div className="aspect-square rounded-2xl overflow-hidden shadow-2xl">
-                <img
-                  src="/hostel-owner.png"
-                  alt="Hostel Owner"
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-              <div className="absolute -top-6 -left-6 w-32 h-32 bg-secondary/20 rounded-full blur-2xl -z-10"></div>
-              <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-accent/20 rounded-full blur-2xl -z-10"></div>
-            </div>
+      {/* --- FOOTER --- */}
+      <footer className="bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 pt-16 pb-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
 
-            <div className="space-y-6 order-1 md:order-2">
-              <div className="inline-block px-4 py-2 rounded-full bg-primary/10 text-primary font-semibold text-sm">
-                FOR HOSTEL OWNERS
+            <div className="col-span-2 md:col-span-1">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="p-2 bg-blue-600 rounded-lg text-white">
+                  <Building2 className="w-6 h-6" />
+                </div>
+                <span className="font-extrabold text-xl text-gray-900 dark:text-white">HostelFinder</span>
               </div>
-              <h2 className="text-responsive-lg font-bold">
-                Grow Your Business
-              </h2>
-              <p className="text-lg text-muted-foreground">
-                List your hostels for free, manage bookings easily, and connect with students
-                actively searching for accommodation.
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 leading-relaxed">
+                The most trusted platform for students to find affordable and safe hostels near their universities.
               </p>
-
-              <div className="space-y-4">
-                <div className="flex items-start gap-4 p-4 rounded-xl bg-card border">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <Building2 className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">Easy Listing Management</h3>
-                    <p className="text-sm text-muted-foreground">Update availability, prices, and details anytime</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4 p-4 rounded-xl bg-card border">
-                  <div className="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
-                    <TrendingUp className="h-5 w-5 text-secondary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">Reach More Students</h3>
-                    <p className="text-sm text-muted-foreground">Get discovered by thousands of potential tenants</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4 p-4 rounded-xl bg-card border">
-                  <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
-                    <Star className="h-5 w-5 text-accent" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">Build Your Reputation</h3>
-                    <p className="text-sm text-muted-foreground">Earn trust through verified reviews and ratings</p>
-                  </div>
-                </div>
+              <div className="flex gap-4">
+                {/* Social Placeholders */}
+                {[1, 2, 3].map((_, i) => (
+                  <div key={i} className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors cursor-pointer"></div>
+                ))}
               </div>
-
-              <Link href="/register">
-                <Button size="lg" variant="outline" className="gap-2 border-2">
-                  Join as Owner
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
             </div>
+
+            <div>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-4">Platform</h4>
+              <ul className="space-y-2 text-sm text-gray-500 dark:text-gray-400">
+                <li><Link href="/hostels" className="hover:text-blue-600 transition-colors">Browse Hostels</Link></li>
+                <li><Link href="/map" className="hover:text-blue-600 transition-colors">Map View</Link></li>
+                <li><Link href="/register" className="hover:text-blue-600 transition-colors">List Property</Link></li>
+                <li><Link href="/login" className="hover:text-blue-600 transition-colors">Login</Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-4">Support</h4>
+              <ul className="space-y-2 text-sm text-gray-500 dark:text-gray-400">
+                <li><Link href="/contact" className="hover:text-blue-600 transition-colors">Help Center</Link></li>
+                <li><Link href="/safety" className="hover:text-blue-600 transition-colors">Safety Guide</Link></li>
+                <li><Link href="/terms" className="hover:text-blue-600 transition-colors">Terms of Service</Link></li>
+                <li><Link href="/privacy" className="hover:text-blue-600 transition-colors">Privacy Policy</Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-4">Contact</h4>
+              <ul className="space-y-3 text-sm text-gray-500 dark:text-gray-400">
+                <li className="flex items-start gap-3">
+                  <MapPin className="w-5 h-5 text-blue-600 flex-shrink-0" />
+                  <span>123 University Road, Islamabad, Pakistan</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <MessageSquare className="w-5 h-5 text-blue-600 flex-shrink-0" />
+                  <span>support@hostelfinder.com</span>
+                </li>
+              </ul>
+            </div>
+
+          </div>
+
+          <div className="border-t border-gray-100 dark:border-gray-800 pt-8 text-center">
+            <p className="text-sm text-gray-500">
+              &copy; {new Date().getFullYear()} Hostel Finder. Made with ❤️ for Students.
+            </p>
           </div>
         </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 px-4">
-        <div className="container mx-auto max-w-4xl">
-          <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-secondary/5">
-            <CardContent className="text-center p-12">
-              <h2 className="text-responsive-lg font-bold mb-4">
-                Ready to Find Your Perfect Hostel?
-              </h2>
-              <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-                Join thousands of students who have found their ideal accommodation through our platform
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/hostels">
-                  <Button size="lg" className="gap-2 bg-gradient-to-r from-primary to-secondary">
-                    Start Searching
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </Link>
-                <Link href="/about">
-                  <Button size="lg" variant="outline" className="border-2">
-                    Learn More
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      {/* Footer */}
-     <footer className="border-t bg-card">
-  <div className="container mx-auto px-4 py-12">
-    
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-      
-      {/* Brand */}
-      <div className="col-span-2 lg:col-span-1 text-center lg:text-left">
-        <div className="flex items-center justify-center lg:justify-start gap-2 mb-4">
-          <Building2 className="h-6 w-6 text-primary" />
-          <span className="font-bold text-lg">Hostel Finder</span>
-        </div>
-        <p className="text-sm text-muted-foreground mb-4">
-          Your trusted platform for finding and managing hostel accommodations.
-        </p>
-      </div>
-
-      {/* Students */}
-      <div className="text-center lg:text-left">
-        <h3 className="font-semibold mb-4">For Students</h3>
-        <ul className="space-y-2 text-sm text-muted-foreground">
-          <li><Link href="/hostels">Browse Hostels</Link></li>
-          <li><Link href="/register">Create Account</Link></li>
-        </ul>
-      </div>
-
-      {/* Owners */}
-      <div className="text-center lg:text-left">
-        <h3 className="font-semibold mb-4">For Owners</h3>
-        <ul className="space-y-2 text-sm text-muted-foreground">
-          <li><Link href="/register">List Your Hostel</Link></li>
-          <li><Link href="/login">Owner Login</Link></li>
-        </ul>
-      </div>
-
-      {/* Support */}
-      <div className="text-center lg:text-left">
-        <h3 className="font-semibold mb-4">Support</h3>
-        <ul className="space-y-2 text-sm text-muted-foreground">
-          <li><Link href="/about">About Us</Link></li>
-          <li><Link href="/contact">Contact</Link></li>
-          <li><Link href="/report">Report Issue</Link></li>
-        </ul>
-      </div>
-
-    </div>
-
-    <div className="pt-8 border-t text-center text-sm text-muted-foreground">
-      <p>Hasnain Ali &copy; All rights reserved. Made with ❤️ for students.</p>
-    </div>
-
-  </div>
-</footer>
+      </footer>
 
     </div>
   );
