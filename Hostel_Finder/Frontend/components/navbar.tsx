@@ -72,17 +72,36 @@ export function Navbar() {
         return pathname.startsWith(href);
     };
 
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > 20);
+        };
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    const isTransparentPage = ["/", "/hostels", "/about", "/contact", "/report"].includes(pathname);
+    const showTransparent = isTransparentPage && !isScrolled;
+
     return (
-        <nav className="sticky top-0 z-[100] w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <nav className={`fixed top-0 left-0 right-0 z-[100] w-full transition-all duration-300 border-b ${showTransparent
+            ? "bg-transparent border-transparent"
+            : "bg-background/80 backdrop-blur-xl border-border/40 shadow-sm supports-[backdrop-filter]:bg-background/60"
+            }`}>
             <div className="container mx-auto px-4">
                 <div className="flex h-16 items-center justify-between">
                     {/* Logo */}
                     <Link href="/" className="flex cursor-pointer items-center space-x-2">
                         <div className="relative">
-                            <Building2 className="h-8 w-8 text-primary" />
-                            <div className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-secondary" />
+                            <Building2 className={`h-8 w-8 ${showTransparent ? "text-white" : "text-primary"}`} />
+                            <div className={`absolute -top-1 -right-1 h-3 w-3 rounded-full ${showTransparent ? "bg-blue-400" : "bg-secondary"}`} />
                         </div>
-                        <span className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                        <span className={`text-xl font-bold bg-clip-text text-transparent ${showTransparent
+                            ? "bg-gradient-to-r from-white to-blue-200"
+                            : "bg-gradient-to-r from-primary to-secondary"
+                            }`}>
                             Hostel Finder
                         </span>
                     </Link>
@@ -94,8 +113,13 @@ export function Navbar() {
                             return (
                                 <Link key={item.name} href={item.href}>
                                     <Button
-                                        variant={isActive(item.href) ? "default" : "ghost"}
-                                        className="gap-2 cursor-pointer"
+                                        variant={isActive(item.href) ? "secondary" : "ghost"}
+                                        className={`gap-2 cursor-pointer transition-colors ${showTransparent && !isActive(item.href)
+                                            ? "text-white hover:text-white hover:bg-white/10"
+                                            : !showTransparent && !isActive(item.href)
+                                                ? "text-muted-foreground hover:text-white"
+                                                : ""
+                                            }`}
                                     >
                                         <Icon className="h-4 w-4" />
                                         {item.name}
@@ -107,12 +131,17 @@ export function Navbar() {
 
                     {/* Right Side Actions */}
                     <div className="hidden md:flex items-center space-x-2">
-                        <ThemeToggle />
+                        <div className={showTransparent ? "text-white" : ""}>
+                            <ThemeToggle />
+                        </div>
                         {isAuthenticated ? (
                             <>
                                 {/* Message Icon */}
                                 <Link href="/dashboard/chat">
-                                    <Button variant="ghost" size="icon" className="group rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10 cursor-pointer relative">
+                                    <Button variant="ghost" size="icon" className={`group rounded-full cursor-pointer relative ${showTransparent
+                                        ? "text-white hover:text-white hover:bg-white/10"
+                                        : "text-muted-foreground hover:text-primary hover:bg-primary/10"
+                                        }`}>
                                         <MessageCircle className="h-5 w-5 group-hover:scale-110 transition-transform" />
                                         {notifications.length > 0 && (
                                             <span className="absolute top-1 right-1 h-2.5 w-2.5 rounded-full bg-red-600 ring-2 ring-background animate-pulse" />
@@ -121,20 +150,26 @@ export function Navbar() {
                                 </Link>
 
                                 {/* Notifications */}
-                                <NotificationsDropdown />
+                                <NotificationsDropdown className={showTransparent ? "text-white hover:text-white hover:bg-white/10" : "text-muted-foreground"} />
 
                                 {currentUser?.role !== "admin" && (
                                     <Link href={`/dashboard/${currentUser?.role}/favorites`}>
-                                        <Button variant="ghost" size="icon" className="rounded-full text-muted-foreground hover:text-red-500 hover:bg-red-500/10 cursor-pointer">
+                                        <Button variant="ghost" size="icon" className={`rounded-full cursor-pointer ${showTransparent
+                                            ? "text-white hover:text-white hover:bg-white/10"
+                                            : "text-muted-foreground hover:text-red-500 hover:bg-red-500/10"
+                                            }`}>
                                             <Heart className="h-5 w-5" />
                                         </Button>
-                                    </Link>) }
+                                    </Link>)}
 
                                 {/* User Profile Dropdown */}
                                 <div className="relative" ref={dropdownRef}>
                                     <button
                                         onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                                        className="flex items-center gap-2 px-2 py-1.5 rounded-full hover:bg-muted transition-colors cursor-pointer outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                                        className={`flex items-center gap-2 px-2 py-1.5 rounded-full transition-colors cursor-pointer outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${showTransparent
+                                            ? "hover:bg-white/10 text-white"
+                                            : "hover:bg-muted"
+                                            }`}
                                     >
                                         <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden border border-border">
                                             {currentUser?.profileImage ? (
@@ -154,14 +189,15 @@ export function Navbar() {
                                                 {currentUser?.fullName}
                                             </span>
                                         </div>
-                                        <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${isUserMenuOpen ? "rotate-180" : ""}`} />
+                                        <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isUserMenuOpen ? "rotate-180" : ""} ${showTransparent ? "text-white" : "text-muted-foreground"
+                                            }`} />
                                     </button>
 
                                     {/* Dropdown Menu */}
                                     {isUserMenuOpen && (
                                         <div className="absolute right-0 mt-2 w-56 origin-top-right rounded-md border bg-popover p-1 shadow-md animate-in fade-in-0 zoom-in-95 z-1000">
                                             <div className="px-2 py-1.5 text-sm font-semibold">
-                                                My Account
+                                                My Account <span className="text-muted-foreground font-normal text-xs ml-1">({currentUser?.role ? currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1) : ''})</span>
                                             </div>
                                             <div className="h-px bg-muted my-1" />
 
@@ -183,10 +219,10 @@ export function Navbar() {
 
                                             <div
                                                 onClick={handleLogout}
-                                                className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-destructive hover:text-destructive-foreground text-destructive focus:bg-destructive focus:text-destructive-foreground"
+                                                className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-destructive/80 bg-destructive text-destructive-foreground text-destructive focus:bg-destructive focus:text-destructive-foreground"
                                             >
                                                 <LogOut className="mr-2 h-4 w-4" />
-                                                <span>Log out</span>
+                                                <span>Log Out</span>
                                             </div>
                                         </div>
                                     )}
@@ -195,7 +231,8 @@ export function Navbar() {
                         ) : (
                             <>
                                 <Link href="/login">
-                                    <Button variant="ghost" className="cursor-pointer">Login</Button>
+                                    <Button variant="ghost" className={`cursor-pointer ${showTransparent ? "text-white hover:text-white hover:bg-white/10" : ""
+                                        }`}>Login</Button>
                                 </Link>
                                 <Link href="/register">
                                     <Button className="cursor-pointer bg-gradient-to-r from-primary to-secondary hover:opacity-90">
@@ -215,6 +252,7 @@ export function Navbar() {
                             size="icon"
                             onClick={() => setIsOpen(!isOpen)}
                             aria-label="Toggle menu"
+                            className={showTransparent ? "text-white hover:text-white hover:bg-white/10" : ""}
                         >
                             {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
                         </Button>
@@ -223,7 +261,7 @@ export function Navbar() {
 
                 {/* Mobile Navigation */}
                 {isOpen && (
-                    <div className="md:hidden py-4 space-y-2 border-t animate-in slide-in-from-top">
+                    <div className="md:hidden py-4 space-y-2 border-t animate-in slide-in-from-top bg-background/95 backdrop-blur-md rounded-b-xl px-2 shadow-xl border-x border-b border-border/40 absolute left-0 right-0 top-16">
                         {navigation.map((item) => {
                             const Icon = item.icon;
                             return (

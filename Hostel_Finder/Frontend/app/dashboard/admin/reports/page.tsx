@@ -33,6 +33,8 @@ export default function ReportsPage() {
     const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [activeTab, setActiveTab] = useState("all");
+    const [reportToDelete, setReportToDelete] = useState<string | null>(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     useEffect(() => {
         dispatch(fetchReports());
@@ -51,16 +53,23 @@ export default function ReportsPage() {
         }
     };
 
-    const handleDelete = async (id: string, e: React.MouseEvent) => {
+    const handleDeleteClick = (id: string, e: React.MouseEvent) => {
         e.stopPropagation();
-        if (confirm("Are you sure you want to delete this report?")) {
-            try {
-                await dispatch(deleteReport(id)).unwrap();
-                toast.success("Report deleted");
-                if (selectedReportId === id) setSelectedReportId(null);
-            } catch (error) {
-                toast.error("Failed to delete report");
-            }
+        setReportToDelete(id);
+        setShowDeleteModal(true);
+    };
+
+    const confirmDelete = async () => {
+        if (!reportToDelete) return;
+
+        try {
+            await dispatch(deleteReport(reportToDelete)).unwrap();
+            toast.success("Report deleted");
+            if (selectedReportId === reportToDelete) setSelectedReportId(null);
+            setShowDeleteModal(false);
+            setReportToDelete(null);
+        } catch (error) {
+            toast.error("Failed to delete report");
         }
     };
 
@@ -81,7 +90,9 @@ export default function ReportsPage() {
             report.type.toLowerCase().includes(searchTerm.toLowerCase());
 
         if (activeTab === 'all') return matchesSearch;
-        return matchesSearch && report.status === activeTab;
+        if (activeTab === 'resolved') return matchesSearch && report.status === 'resolved';
+        if (activeTab === 'unresolved') return matchesSearch && report.status !== 'resolved';
+        return matchesSearch;
     });
 
     const selectedReport = reports.find(r => r._id === selectedReportId);
@@ -123,8 +134,8 @@ export default function ReportsPage() {
                             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                                 <TabsList className="grid w-full grid-cols-3">
                                     <TabsTrigger value="all">All</TabsTrigger>
-                                    <TabsTrigger value="unread">Unread</TabsTrigger>
-                                    <TabsTrigger value="read">Read</TabsTrigger>
+                                    <TabsTrigger value="unresolved">Unresolved</TabsTrigger>
+                                    <TabsTrigger value="resolved">Resolved</TabsTrigger>
                                 </TabsList>
                             </Tabs>
                         </div>
@@ -199,7 +210,7 @@ export default function ReportsPage() {
                                             <CheckCircle className="mr-2 h-4 w-4" /> Resolve
                                         </Button>
                                     )}
-                                    <Button size="sm" variant="ghost" className="text-destructive hover:bg-destructive/10" onClick={(e) => handleDelete(selectedReport._id, e)}>
+                                    <Button size="sm" variant="ghost" className="text-destructive hover:bg-destructive/10" onClick={(e) => handleDeleteClick(selectedReport._id, e)}>
                                         <Trash2 className="h-4 w-4" />
                                     </Button>
                                 </div>
@@ -281,6 +292,44 @@ export default function ReportsPage() {
                     )}
                 </div>
             </div>
+            {/* Delete Confirmation Modal */}
+            {showDeleteModal && (
+                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                    <Card className="w-full max-w-md my-0 shadow-lg border-0">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-destructive">
+                                <Trash2 className="h-5 w-5" />
+                                Delete Report
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-gray-600 mb-4">
+                                Are you sure you want to delete this report?
+                            </p>
+                            <p className="text-sm text-muted-foreground mb-6">
+                                This action is permanent and cannot be undone.
+                            </p>
+                            <div className="flex gap-3 justify-end">
+                                <Button
+                                    variant="ghost"
+                                    onClick={() => {
+                                        setShowDeleteModal(false);
+                                        setReportToDelete(null);
+                                    }}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    onClick={confirmDelete}
+                                    variant="destructive"
+                                >
+                                    Delete Report
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
         </DashboardLayout>
     );
 }

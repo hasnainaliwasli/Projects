@@ -6,8 +6,8 @@ import { Upload, X, ImagePlus } from "lucide-react";
 import { toast } from "sonner";
 
 interface HostelImageUploaderProps {
-    images: string[];
-    onImagesChange: (images: string[]) => void;
+    images: (string | File)[];
+    onImagesChange: (images: (string | File)[]) => void;
     maxImages?: number;
     maxSizeMB?: number;
 }
@@ -33,7 +33,7 @@ export default function HostelImageUploader({
         }
 
         setUploading(true);
-        const newImages: string[] = [];
+        const newImages: File[] = [];
 
         for (const file of files) {
             // Validate file type
@@ -48,13 +48,7 @@ export default function HostelImageUploader({
                 continue;
             }
 
-            // Convert to base64
-            try {
-                const base64 = await fileToBase64(file);
-                newImages.push(base64);
-            } catch (error) {
-                toast.error(`${file.name}: Failed to process image`);
-            }
+            newImages.push(file);
         }
 
         if (newImages.length > 0) {
@@ -68,21 +62,19 @@ export default function HostelImageUploader({
         }
     };
 
-    const fileToBase64 = (file: File): Promise<string> => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result as string);
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-        });
-    };
-
     const handleRemoveImage = (index: number) => {
         const newImages = images.filter((_, i) => i !== index);
         onImagesChange(newImages);
     };
 
     const canAddMore = images.length < maxImages;
+
+    const getImageUrl = (image: string | File) => {
+        if (image instanceof File) {
+            return URL.createObjectURL(image);
+        }
+        return image;
+    };
 
     return (
         <div className="space-y-4">
@@ -92,7 +84,7 @@ export default function HostelImageUploader({
                     {images.map((image, index) => (
                         <div key={index} className="relative group aspect-video rounded-lg overflow-hidden border border-border bg-muted">
                             <img
-                                src={image}
+                                src={getImageUrl(image)}
                                 alt={`Hostel image ${index + 1}`}
                                 className="w-full h-full object-cover"
                             />

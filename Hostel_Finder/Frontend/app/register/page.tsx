@@ -29,6 +29,7 @@ export default function RegisterPage() {
     role: "student" as UserRole,
     phoneNumber: "",
     homeAddress: "",
+    profileImage: null as File | null,
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -56,6 +57,12 @@ export default function RegisterPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFormData({ ...formData, profileImage: e.target.files[0] });
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrors("");
@@ -71,26 +78,26 @@ export default function RegisterPage() {
       return;
     }
 
-    dispatch(
-      register({
-        fullName: formData.fullName,
-        email: formData.email,
-        password: formData.password,
-        role: formData.role,
-        phoneNumbers: formData.phoneNumber ? [formData.phoneNumber] : [],
-        homeAddress: formData.homeAddress,
-        favoriteHostels: formData.role === "student" ? [] : undefined,
-      }) as any
-    );
+    const data = new FormData();
+    data.append("fullName", formData.fullName);
+    data.append("email", formData.email);
+    data.append("password", formData.password);
+    data.append("role", formData.role);
+    if (formData.phoneNumber) data.append("phoneNumbers[]", formData.phoneNumber);
+    if (formData.homeAddress) data.append("homeAddress", formData.homeAddress);
+    if (formData.profileImage) data.append("profileImage", formData.profileImage);
+    if (formData.role === "student") data.append("favoriteHostels", JSON.stringify([]));
+
+    dispatch(register(data) as any);
   };
 
   return (
-    <div className="h-[100dvh] w-full flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-0 relative overflow-hidden">
+    <div className="h-[100dvh] w-full flex items-center justify-center bg-slate-100 dark:bg-gray-900 p-0 relative overflow-hidden">
 
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-blue-400/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-slate-200/50 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gray-200/50 rounded-full blur-3xl"></div>
       </div>
 
       {/* Main Card Container */}
@@ -108,7 +115,12 @@ export default function RegisterPage() {
         </Link>
 
         {/* Left Side - Branding */}
-        <div className="hidden lg:flex flex-col justify-center pt-24 p-12 xl:p-16 bg-gradient-to-br from-blue-600 via-blue-700 to-purple-700 text-white relative overflow-hidden">
+        <div className="hidden lg:flex flex-col justify-center pt-24 p-12 xl:p-16 bg-[#020817] text-white relative overflow-hidden border-r border-gray-800">
+          {/* Hero Glow Effects */}
+          <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
+            <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-600/20 rounded-full blur-[80px]"></div>
+            <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-purple-600/20 rounded-full blur-[80px]"></div>
+          </div>
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-0 left-0 w-full h-full"
               style={{
@@ -119,32 +131,32 @@ export default function RegisterPage() {
 
           <div className="relative z-10 space-y-8">
             <div className="space-y-4">
-              <h2 className="text-4xl xl:text-5xl font-bold leading-tight">
+              <h2 className="text-4xl xl:text-5xl font-bold leading-tight bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent">
                 Join our community
               </h2>
-              <p className="text-lg text-blue-100 leading-relaxed">
+              <p className="text-lg text-gray-400 leading-relaxed">
                 Create an account to discover the best hostels or manage your properties with ease.
               </p>
             </div>
 
             <div className="space-y-4 pt-4">
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0 mt-1">
+                <div className="w-10 h-10 rounded-full bg-slate-800/50 border border-slate-700 flex items-center justify-center flex-shrink-0 mt-1">
                   <User className="w-5 h-5" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-lg">Personalized Profile</h3>
-                  <p className="text-blue-100 text-sm">Save your favorites and track your applications.</p>
+                  <p className="text-gray-400 text-sm">Save your favorites and track your applications.</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0 mt-1">
+                <div className="w-10 h-10 rounded-full bg-slate-800/50 border border-slate-700 flex items-center justify-center flex-shrink-0 mt-1">
                   <Briefcase className="w-5 h-5" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-lg">Owner Tools</h3>
-                  <p className="text-blue-100 text-sm">List your hostel and reach thousands of students.</p>
+                  <p className="text-gray-400 text-sm">List your hostel and reach thousands of students.</p>
                 </div>
               </div>
             </div>
@@ -180,6 +192,19 @@ export default function RegisterPage() {
                     className="w-full pl-12 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-600 outline-none transition-all"
                     required
                   />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Profile Image</label>
+                  <div className="relative group">
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-blue-600 transition-colors" />
+                    <input
+                      type="file"
+                      name="profileImage"
+                      onChange={handleFileChange}
+                      className="w-full pl-12 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-600 outline-none transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                      accept="image/*"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -301,7 +326,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 cursor-pointer mt-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/30 disabled:opacity-50 transition-all flex items-center justify-center gap-2 group"
+              className="w-full py-3.5 cursor-pointer mt-4 bg-[#020817] hover:bg-[#020817]/90 text-white font-semibold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 group"
             >
               {loading ? (
                 <>

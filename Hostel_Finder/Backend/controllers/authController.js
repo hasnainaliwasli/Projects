@@ -28,6 +28,17 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new Error('User already exists');
     }
 
+    // Debug logging
+    if (req.file) {
+        console.log('CLOUDINARY UPLOAD DEBUG:', {
+            path: req.file.path,
+            filename: req.file.filename,
+            mimetype: req.file.mimetype
+        });
+    } else {
+        console.log('CLOUDINARY UPLOAD DEBUG: No file received in req.file');
+    }
+
     // Create user
     const user = await User.create({
         fullName,
@@ -35,7 +46,8 @@ const registerUser = asyncHandler(async (req, res) => {
         password,
         role: role || 'student',
         phoneNumbers: phoneNumbers || [],
-        homeAddress: homeAddress || ''
+        homeAddress: homeAddress || '',
+        profileImage: req.file ? req.file.path : ''
     });
 
     if (user) {

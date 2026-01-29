@@ -1,34 +1,48 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Eye, EyeOff, Mail, Lock, ArrowRight, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { login, clearError } from "@/lib/slices/authSlice";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
 
-    const handleSubmit = (e:any) => {
+    const dispatch = useAppDispatch();
+    const router = useRouter();
+    const { loading, error, isAuthenticated, currentUser } = useAppSelector((state) => state.auth);
+
+    useEffect(() => {
+        if (isAuthenticated && currentUser) {
+            if (currentUser.role === 'owner') {
+                router.push("/dashboard/owner");
+            } else if (currentUser.role === 'student') {
+                router.push("/dashboard/student");
+            } else if (currentUser.role === 'admin') {
+                router.push("/dashboard/admin");
+            } else {
+                router.push("/dashboard");
+            }
+        }
+        return () => {
+            dispatch(clearError());
+        }
+    }, [isAuthenticated, currentUser, router, dispatch]);
+
+    const handleSubmit = async (e: any) => {
         e.preventDefault();
-        setLoading(true);
-        setError("");
-        setTimeout(() => {
-            setLoading(false);
-            setError("Invalid credentials. Please try again.");
-        }, 1500);
+        dispatch(login({ email, password }));
     };
 
     return (
-        /* Added overflow-x-hidden to prevent horizontal scroll from blur elements */
-        <div className="h-[100dvh] w-full flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4 relative overflow-hidden">
-
-            {/* Animated Background Elements */}
+        <div className="h-[100dvh] w-full flex items-center justify-center bg-slate-100 dark:bg-gray-900 p-4 relative overflow-hidden">
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-blue-400/20 rounded-full blur-3xl animate-pulse"></div>
-                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+                <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-slate-200/50 rounded-full blur-3xl"></div>
+                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gray-200/50 rounded-full blur-3xl"></div>
             </div>
 
             {/* Main Card Container - Added -translate-y-10 to move it up */}
@@ -46,7 +60,12 @@ export default function LoginPage() {
                 </Link>
 
                 {/* Left Side - Branding */}
-                <div className="hidden lg:flex flex-col justify-center pt-24 p-12 xl:p-16 bg-gradient-to-br from-blue-600 via-blue-700 to-purple-700 text-white relative overflow-hidden">
+                <div className="hidden lg:flex flex-col justify-center pt-24 p-12 xl:p-16 bg-[#020817] text-white relative overflow-hidden border-r border-gray-800">
+                    {/* Hero Glow Effects */}
+                    <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
+                        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-600/20 rounded-full blur-[80px]"></div>
+                        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-purple-600/20 rounded-full blur-[80px]"></div>
+                    </div>
                     <div className="absolute inset-0 opacity-10">
                         <div className="absolute top-0 left-0 w-full h-full"
                             style={{
@@ -57,36 +76,36 @@ export default function LoginPage() {
 
                     <div className="relative z-10 space-y-8">
                         <div className="space-y-4">
-                            <h2 className="text-4xl xl:text-5xl font-bold leading-tight">
+                            <h2 className="text-4xl xl:text-5xl font-bold leading-tight bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent">
                                 Login to Access your dashboard
                             </h2>
-                            <p className="text-lg text-blue-100 leading-relaxed">
+                            <p className="text-lg text-gray-400 leading-relaxed">
                                 Find the Perfect Hostel for you, or the perfect client for your hostel in an easy way.
                             </p>
                         </div>
 
                         <div className="space-y-4 pt-4">
                             <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0 mt-1">
+                                <div className="w-10 h-10 rounded-full bg-slate-800/50 border border-slate-700 flex items-center justify-center flex-shrink-0 mt-1">
                                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                     </svg>
                                 </div>
                                 <div>
                                     <h3 className="font-semibold text-lg">Secure & Reliable</h3>
-                                    <p className="text-blue-100 text-sm">Your data is protected with security</p>
+                                    <p className="text-gray-400 text-sm">Your data is protected with security</p>
                                 </div>
                             </div>
 
                             <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0 mt-1">
+                                <div className="w-10 h-10 rounded-full bg-slate-800/50 border border-slate-700 flex items-center justify-center flex-shrink-0 mt-1">
                                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                     </svg>
                                 </div>
                                 <div>
                                     <h3 className="font-semibold text-lg">Easy to approach</h3>
-                                    <p className="text-blue-100 text-sm">Contact by using the in-app chat</p>
+                                    <p className="text-gray-400 text-sm">Contact by using the in-app chat</p>
                                 </div>
                             </div>
                         </div>
@@ -94,7 +113,6 @@ export default function LoginPage() {
                 </div>
 
                 {/* Right Side - Login Form */}
-                {/* Changed p-0 to p-8 sm:p-12 for better spacing and to avoid overflow issues */}
                 <div className="p-8 sm:p-12 lg:p-16 flex flex-col justify-center">
                     <div className="space-y-2 mb-8">
                         <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
@@ -168,7 +186,7 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-3.5 cursor-pointer px-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/30 disabled:opacity-50 transition-all duration-300 flex items-center justify-center gap-2 group"
+                            className="w-full py-3.5 cursor-pointer px-6 bg-[#020817] hover:bg-[#020817]/90 text-white font-semibold rounded-xl shadow-lg transition-all duration-300 flex items-center justify-center gap-2 group"
                         >
                             {loading ? "Signing in..." : (
                                 <>

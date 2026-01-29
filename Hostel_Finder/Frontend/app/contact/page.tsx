@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
-import { Mail, Phone, MapPin, Send, CheckCircle2, ArrowLeft } from "lucide-react";
+import { Mail, Phone, MapPin, Send, CheckCircle2, MessageSquare } from "lucide-react";
 
 export default function ContactPage() {
     const [formData, setFormData] = useState({
@@ -22,67 +22,73 @@ export default function ContactPage() {
     const handleSubmit = (e: React.MouseEvent) => {
         e.preventDefault();
         setIsLoading(true);
+        // Simulate API call
         setTimeout(() => {
             setIsLoading(false);
             setIsSubmitted(true);
-        }, 1000);
+        }, 1500);
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-background">
-            <div className="container mx-auto px-4 py-12 max-w-6xl">
-                {/* Hero Section */}
-                <div className="text-center mb-12">
-                    <h1 className="text-3xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-foreground">
+        <div className="min-h-screen bg-slate-50 dark:bg-background">
+            {/* Hero Section */}
+            <section className="relative bg-[#020817] text-white pt-32 pb-40 overflow-hidden">
+                <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+                <div className="absolute top-20 left-20 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px]" />
+
+                <div className="container mx-auto px-4 relative z-10 text-center">
+                    <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent">
                         Get In Touch
                     </h1>
-                    <p className="text-md text-muted-foreground max-w-2xl mx-auto">
-                        Have questions about finding the perfect hostel? We're here to help you every step of the way.
+                    <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
+                        Have questions about finding the perfect hostel or listing your property?
+                        Our team is here to help you every step of the way.
                     </p>
                 </div>
+            </section>
 
+            {/* Main Content (Overlapping Hero) */}
+            <div className="container mx-auto px-4 -mt-20 relative z-20 pb-20">
                 <div className="grid lg:grid-cols-3 gap-8">
-                    {/* Contact Form */}
+                    {/* Left Column: Contact Form */}
                     <div className="lg:col-span-2">
-                        {isSubmitted ? (
-                            <Card className="shadow-lg border-border">
-                                <CardContent className="text-center py-16 px-6">
-                                    <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-green-100 dark:bg-green-900/20 flex items-center justify-center">
-                                        <CheckCircle2 className="w-8 h-8 text-green-600 dark:text-green-500" />
+                        <Card className="shadow-2xl border-0 ring-1 ring-border/50 bg-background/95 backdrop-blur-sm overflow-hidden">
+                            {isSubmitted ? (
+                                <CardContent className="text-center py-20 px-6 animate-in fade-in zoom-in-95">
+                                    <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-green-500/10 flex items-center justify-center">
+                                        <CheckCircle2 className="w-10 h-10 text-green-500" />
                                     </div>
-                                    <h2 className="text-2xl font-bold mb-3 text-gray-900 dark:text-foreground">
-                                        Message Sent Successfully!
-                                    </h2>
-                                    <p className="text-muted-foreground mb-8">
-                                        Thank you for reaching out. Our team will get back to you within 24 hours.
+                                    <h2 className="text-3xl font-bold mb-4">Message Sent!</h2>
+                                    <p className="text-muted-foreground mb-8 text-lg max-w-md mx-auto">
+                                        Thank you for reaching out. We've received your message and will get back to you shortly.
                                     </p>
                                     <Link href="/">
-                                        <Button className="px-8">
-                                            Back to Home
+                                        <Button size="lg" className="rounded-full px-8">
+                                            Return Home
                                         </Button>
                                     </Link>
                                 </CardContent>
-                            </Card>
-                        ) : (
-                            <Card className="shadow-lg border-border">
-                                <CardHeader className="pb-4">
-                                    <CardTitle className="text-2xl font-bold">
-                                        Send us a message
-                                    </CardTitle>
-                                    <CardDescription>
-                                        Fill out the form below and we'll respond as soon as possible
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="space-y-6">
+                            ) : (
+                                <div className="p-2">
+                                    <CardHeader className="pb-2">
+                                        <CardTitle className="text-2xl font-bold flex items-center gap-2">
+                                            <MessageSquare className="h-6 w-6 text-primary" />
+                                            Send us a message
+                                        </CardTitle>
+                                        <CardDescription className="text-base">
+                                            Fill out the form below and we'll respond within 24 hours.
+                                        </CardDescription>
+                                    </CardHeader>
+                                    <CardContent className="space-y-6 pt-6">
                                         <div className="grid md:grid-cols-2 gap-6">
                                             <div className="space-y-2">
-                                                <Label htmlFor="name">Full Name</Label>
+                                                <Label htmlFor="name" className="text-sm font-medium">Full Name</Label>
                                                 <Input
                                                     id="name"
                                                     value={formData.name}
                                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                                     placeholder="John Doe"
+                                                    className="h-11 bg-muted/30"
                                                     required
                                                 />
                                             </div>
@@ -95,6 +101,7 @@ export default function ContactPage() {
                                                     value={formData.email}
                                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                                     placeholder="john@example.com"
+                                                    className="h-11 bg-muted/30"
                                                     required
                                                 />
                                             </div>
@@ -106,7 +113,8 @@ export default function ContactPage() {
                                                 id="subject"
                                                 value={formData.subject}
                                                 onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                                                placeholder="How can we help you?"
+                                                placeholder="How can we help?"
+                                                className="h-11 bg-muted/30"
                                                 required
                                             />
                                         </div>
@@ -118,7 +126,7 @@ export default function ContactPage() {
                                                 rows={6}
                                                 value={formData.message}
                                                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                                                className="resize-none"
+                                                className="resize-none bg-muted/30 min-h-[150px]"
                                                 placeholder="Tell us more about your inquiry..."
                                                 required
                                             />
@@ -126,14 +134,14 @@ export default function ContactPage() {
 
                                         <Button
                                             onClick={handleSubmit}
-                                            className="w-full"
+                                            className="w-full h-12 text-base rounded-lg"
                                             disabled={isLoading}
                                             size="lg"
                                         >
                                             {isLoading ? (
                                                 <>
-                                                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                                                    Sending...
+                                                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
+                                                    Sending Message...
                                                 </>
                                             ) : (
                                                 <>
@@ -142,55 +150,63 @@ export default function ContactPage() {
                                                 </>
                                             )}
                                         </Button>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        )}
+                                    </CardContent>
+                                </div>
+                            )}
+                        </Card>
                     </div>
 
-                    {/* Contact Info Cards */}
-                    <div className="space-y-6">
-                        <Card className="shadow-md hover:shadow-lg transition-shadow">
-                            <CardContent className="p-6">
-                                <div className="w-10 h-10 mb-4 rounded-lg bg-primary/10 flex items-center justify-center">
-                                    <Mail className="w-5 h-5 text-primary" />
+                    {/* Right Column: Contact Info */}
+                    <div className="space-y-6 lg:pt-10">
+                        <Card className="shadow-lg border-0 bg-background/80 backdrop-blur-sm hover:translate-x-1 transition-transform duration-300">
+                            <CardContent className="p-6 flex items-start gap-4">
+                                <div className="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0">
+                                    <Mail className="w-6 h-6" />
                                 </div>
-                                <h3 className="text-lg font-bold mb-2">Email Us</h3>
-                                <p className="text-sm text-muted-foreground mb-2">
-                                    Send us an email anytime
-                                </p>
-                                <a href="mailto:support@hostelfinder.com" className="text-primary hover:underline font-medium">
-                                    support@hostelfinder.com
-                                </a>
+                                <div>
+                                    <h3 className="text-lg font-bold mb-1">Email Us</h3>
+                                    <p className="text-sm text-muted-foreground mb-2">
+                                        For general inquiries and support
+                                    </p>
+                                    <a href="mailto:support@hostelfinder.com" className="text-primary hover:underline font-medium block">
+                                        support@hostelfinder.com
+                                    </a>
+                                </div>
                             </CardContent>
                         </Card>
 
-                        <Card className="shadow-md hover:shadow-lg transition-shadow">
-                            <CardContent className="p-6">
-                                <div className="w-10 h-10 mb-4 rounded-lg bg-secondary/10 flex items-center justify-center">
-                                    <Phone className="w-5 h-5 text-secondary" />
+                        <Card className="shadow-lg border-0 bg-background/80 backdrop-blur-sm hover:translate-x-1 transition-transform duration-300 delay-100">
+                            <CardContent className="p-6 flex items-start gap-4">
+                                <div className="w-12 h-12 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400 shrink-0">
+                                    <Phone className="w-6 h-6" />
                                 </div>
-                                <h3 className="text-lg font-bold mb-2">Call Us</h3>
-                                <p className="text-sm text-muted-foreground mb-2">
-                                    Mon-Fri from 9am to 6pm
-                                </p>
-                                <a href="tel:+923001234567" className="text-primary hover:underline font-medium">
-                                    +92 300 1234567
-                                </a>
+                                <div>
+                                    <h3 className="text-lg font-bold mb-1">Call Us</h3>
+                                    <p className="text-sm text-muted-foreground mb-2">
+                                        Mon-Fri from 9am to 6pm
+                                    </p>
+                                    <a href="tel:+923001234567" className="text-primary hover:underline font-medium block">
+                                        +92 300 1234567
+                                    </a>
+                                </div>
                             </CardContent>
                         </Card>
 
-                        <Card className="shadow-md hover:shadow-lg transition-shadow">
-                            <CardContent className="p-6">
-                                <div className="w-10 h-10 mb-4 rounded-lg bg-accent/10 flex items-center justify-center">
-                                    <MapPin className="w-5 h-5 text-accent" />
+                        <Card className="shadow-lg border-0 bg-background/80 backdrop-blur-sm hover:translate-x-1 transition-transform duration-300 delay-200">
+                            <CardContent className="p-6 flex items-start gap-4">
+                                <div className="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400 shrink-0">
+                                    <MapPin className="w-6 h-6" />
                                 </div>
-                                <h3 className="text-lg font-bold mb-2">Visit Us</h3>
-                                <p className="text-sm text-muted-foreground">
-                                    123 Hostel Street<br />
-                                    Lahore, Punjab<br />
-                                    Pakistan
-                                </p>
+                                <div>
+                                    <h3 className="text-lg font-bold mb-1">Visit Us</h3>
+                                    <p className="text-sm text-muted-foreground mb-2">
+                                        Come say hello at our HQ
+                                    </p>
+                                    <p className="text-sm font-medium">
+                                        123 Hostel Street, Tech Hub<br />
+                                        Lahore, Pakistan
+                                    </p>
+                                </div>
                             </CardContent>
                         </Card>
                     </div>

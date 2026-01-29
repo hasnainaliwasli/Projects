@@ -42,7 +42,9 @@ export const addHostel = createAsyncThunk(
     'hostels/add',
     async (hostelData: any, { rejectWithValue }) => {
         try {
-            const { data } = await api.post('/hostels', hostelData);
+            const { data } = await api.post('/hostels', hostelData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
             return { ...data, id: data._id, ownerId: data.owner, reviewIds: data.reviews || [] };
         } catch (error: any) {
             return rejectWithValue(error.response?.data?.error || error.response?.data?.message || 'Failed to add hostel');
@@ -52,10 +54,11 @@ export const addHostel = createAsyncThunk(
 
 export const modifyHostel = createAsyncThunk(
     'hostels/modify',
-    async (hostelData: any, { rejectWithValue }) => {
+    async ({ id, data }: { id: string, data: any }, { rejectWithValue }) => {
         try {
-            const { id, ...data } = hostelData;
-            const response = await api.put(`/hostels/${id}`, data);
+            const response = await api.put(`/hostels/${id}`, data, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
             return { ...response.data, id: response.data._id, ownerId: response.data.owner, reviewIds: response.data.reviews || [] };
         } catch (error: any) {
             return rejectWithValue(error.response?.data?.error || error.response?.data?.message || 'Failed to update hostel');

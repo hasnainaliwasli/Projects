@@ -118,7 +118,7 @@ export default function ProfilePage() {
         <DashboardLayout role={currentUser.role}>
             <div className="max-w-3xl space-y-6">
                 <div>
-                    <h1 className="text-xl md:text-2xl font-bold mb-2">Profile Settings</h1>
+                    <h1 className="text-xl md:text-2xl font-bold">Profile Settings</h1>
                     <p className="text-muted-foreground">Manage your account information</p>
                 </div>
 
@@ -263,7 +263,7 @@ export default function ProfilePage() {
                                         <Button
                                             variant="secondary"
                                             onClick={() => handleDeleteAccount(false)}
-                                            className="w-full justify-start hover:bg-destructive/20 text-destructive"
+                                            className="w-full justify-start text-white hover:bg-destructive/20"
                                         >
                                             Yes, Delete Account Only (Keep Data)
                                         </Button>

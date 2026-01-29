@@ -256,12 +256,16 @@ export default function ChatPage() {
                     <ScrollArea className="flex-1">
                         <div className="flex flex-col p-2 gap-1">
                             {(() => {
-                                // Ensure currentChat is in the list
+                                // Ensure currentChat is in the list and deduplicate
                                 let displayChats = [...chats];
                                 if (currentChat && !displayChats.find(c => c._id === currentChat._id)) {
                                     displayChats.unshift(currentChat);
                                 }
-                                return displayChats.map((chat) => {
+
+                                // Deduplicate by ID
+                                const uniqueChats = Array.from(new Map(displayChats.map(item => [item._id, item])).values());
+
+                                return uniqueChats.map((chat) => {
                                     const details = getChatDetails(chat, currentUser);
                                     const isUnread = chat.latestMessage &&
                                         !chat.latestMessage.readBy?.includes(currentUser?.id || "") &&
@@ -385,7 +389,7 @@ export default function ChatPage() {
                             {/* Messages List */}
                             <ScrollArea className="flex-1 p-4">
                                 <div className="flex flex-col gap-6">
-                                    {messages.map((m, i) => {
+                                    {Array.from(new Map(messages.map(m => [m._id, m])).values()).map((m, i) => {
                                         const sender = m.sender || { _id: "unknown", fullName: "Unknown", profileImage: null, role: "user" };
                                         const isMyMessage = sender._id === currentUser?.id;
                                         const isEditing = editingMessageId === m._id;

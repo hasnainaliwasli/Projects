@@ -11,7 +11,9 @@ router.route('/block').post(protect, admin, blockUser).get(protect, admin, getBl
 router.delete('/block/:id', protect, admin, unblockUser);
 router.post('/favorites/:id', protect, toggleFavorite);
 router.get('/favorites', protect, getFavorites);
-router.route('/profile-image').post(protect, uploadProfileImage).delete(protect, deleteProfileImage);
+const upload = require('../middleware/upload');
+
+router.route('/profile-image').post(protect, upload.single('profileImage'), uploadProfileImage).delete(protect, deleteProfileImage);
 router.put('/:id', protect, updateUser);
 router.delete('/:id', protect, deleteUser);
 router.delete('/permanent/:id', protect, admin, permanentDeleteUser);

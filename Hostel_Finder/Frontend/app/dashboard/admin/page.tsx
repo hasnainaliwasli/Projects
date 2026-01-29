@@ -21,88 +21,85 @@ export default function AdminDashboardPage() {
 
     const students = users.filter((u) => u.role === "student");
     const owners = users.filter((u) => u.role === "owner");
+    const approvedHostels = hostels.filter(h => h.status === 'approved' || !h.status);
 
     return (
         <DashboardLayout role="admin">
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-xl md:text-3xl font-bold mb-2">Admin Dashboard</h1>
+                    <h1 className="text-2xl font-bold tracking-tight">Admin Dashboard</h1>
                     <p className="text-muted-foreground">Manage all platform resources</p>
                 </div>
 
                 {/* Stats Cards */}
                 <div className="grid md:grid-cols-4 gap-6">
-                    <Card className="relative overflow-hidden border-none shadow-lg bg-gradient-to-br from-blue-500 to-blue-600 text-white card-hover">
+                    <Card className="relative overflow-hidden shadow-sm hover:shadow-md transition-all">
                         <CardHeader className="flex flex-row items-center justify-between pb-2">
-                            <CardTitle className="text-sm font-medium text-blue-100">
+                            <CardTitle className="text-sm font-medium text-muted-foreground">
                                 Total Users
                             </CardTitle>
-                            <Users className="h-4 w-4 text-blue-100" />
+                            <Users className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold">{users.length>0? users.length-1 : 0}</div>
-                            <p className="text-xs text-blue-100/80 mt-1">
+                            <div className="text-3xl font-bold">{users.length > 0 ? users.length - 1 : 0}</div>
+                            <p className="text-xs text-muted-foreground mt-1">
                                 {students.length} students • {owners.length} owners
                             </p>
-                            <div className="absolute -bottom-4 -right-4 bg-white/10 w-24 h-24 rounded-full blur-2xl pointer-events-none" />
                         </CardContent>
                     </Card>
 
-                    <Card className="relative overflow-hidden border-none shadow-lg bg-gradient-to-br from-indigo-500 to-indigo-600 text-white card-hover">
+                    <Card className="relative overflow-hidden shadow-sm hover:shadow-md transition-all">
                         <CardHeader className="flex flex-row items-center justify-between pb-2">
-                            <CardTitle className="text-sm font-medium text-indigo-100">
+                            <CardTitle className="text-sm font-medium text-muted-foreground">
                                 Total Hostels
                             </CardTitle>
-                            <Building2 className="h-4 w-4 text-indigo-100" />
+                            <Building2 className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold">{hostels.length}</div>
-                            <p className="text-xs text-indigo-100/80 mt-1">
-                                Across {new Set(hostels.map(h => h.location.city)).size} cities
+                            <div className="text-3xl font-bold">{approvedHostels.length}</div>
+                            <p className="text-xs text-muted-foreground mt-1">
+                                Across {new Set(approvedHostels.map(h => h.location.city)).size} cities
                             </p>
-                            <div className="absolute -bottom-4 -right-4 bg-white/10 w-24 h-24 rounded-full blur-2xl pointer-events-none" />
                         </CardContent>
                     </Card>
 
-                    <Card className="relative overflow-hidden border-none shadow-lg bg-gradient-to-br from-orange-400 to-orange-500 text-white card-hover">
+                    <Card className="relative overflow-hidden shadow-sm hover:shadow-md transition-all">
                         <CardHeader className="flex flex-row items-center justify-between pb-2">
-                            <CardTitle className="text-sm font-medium text-orange-100">
+                            <CardTitle className="text-sm font-medium text-muted-foreground">
                                 Total Reviews
                             </CardTitle>
-                            <Star className="h-4 w-4 text-orange-100" />
+                            <Star className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-3xl font-bold">{reviews.length}</div>
-                            <p className="text-xs text-orange-100/80 mt-1">
+                            <p className="text-xs text-muted-foreground mt-1">
                                 Avg Rating: {(reviews.reduce((acc, r) => acc + r.rating, 0) / (reviews.length || 1)).toFixed(1)}
                             </p>
-                            <div className="absolute -bottom-4 -right-4 bg-white/10 w-24 h-24 rounded-full blur-2xl pointer-events-none" />
                         </CardContent>
                     </Card>
 
-                    <Card className="relative overflow-hidden border-none shadow-lg bg-gradient-to-br from-emerald-500 to-emerald-600 text-white card-hover">
+                    <Card className="relative overflow-hidden shadow-sm hover:shadow-md transition-all">
                         <CardHeader className="flex flex-row items-center justify-between pb-2">
-                            <CardTitle className="text-sm font-medium text-emerald-100">
+                            <CardTitle className="text-sm font-medium text-muted-foreground">
                                 Available Beds
                             </CardTitle>
-                            <Bed className="h-4 w-4 text-emerald-100" />
+                            <Bed className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-3xl font-bold">
-                                {hostels.reduce((sum, h) => sum + h.availableBeds, 0)}
+                                {approvedHostels.reduce((sum, h) => sum + h.availableBeds, 0)}
                             </div>
-                            <p className="text-xs text-emerald-100/80 mt-1">
-                                In {hostels.length} active hostels
+                            <p className="text-xs text-muted-foreground mt-1">
+                                In {approvedHostels.length} active hostels
                             </p>
-                            <div className="absolute -bottom-4 -right-4 bg-white/10 w-24 h-24 rounded-full blur-2xl pointer-events-none" />
                         </CardContent>
                     </Card>
                 </div>
 
                 {/* Quick Actions */}
-                <Card>
+                {/* <Card>
                     <CardHeader>
-                        <CardTitle className="text-xl md:text-2xl font-bold mb-2">Admin Actions</CardTitle>
+                        <CardTitle className="text-lg font-semibold">Admin Actions</CardTitle>
                     </CardHeader>
                     <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 place-items-center">
                         <Link href="/dashboard/admin/users" className="w-full">
@@ -122,11 +119,11 @@ export default function AdminDashboardPage() {
                         </Link>
                     </CardContent>
 
-                </Card>
+                </Card> */}
 
                 {/* Recent Activity */}
                 <div className="grid md:grid-cols-2 gap-6">
-                    <Card className="border-none shadow-md">
+                    <Card className="border shadow-md  shadow-sm hover:shadow-md transition-all">
                         <CardHeader className="flex flex-row items-center justify-between">
                             <CardTitle className="text-xl">Recent Hostels</CardTitle>
                             <Link href="/dashboard/admin/hostels" className="text-sm text-primary hover:underline flex items-center gap-1">
@@ -156,7 +153,7 @@ export default function AdminDashboardPage() {
                         </CardContent>
                     </Card>
 
-                    <Card className="border-none shadow-md">
+                    <Card className="border shadow-md  shadow-sm hover:shadow-md transition-all">
                         <CardHeader className="flex flex-row items-center justify-between">
                             <CardTitle className="text-xl">Recent Reviews</CardTitle>
                             <Link href="/dashboard/admin/reviews" className="text-sm text-primary hover:underline flex items-center gap-1">

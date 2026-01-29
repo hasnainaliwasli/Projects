@@ -60,8 +60,29 @@ const createHostel = asyncHandler(async (req, res) => {
         throw new Error('Not authorized to create a hostel');
     }
 
+    if (req.files) {
+        console.log('HOSTEL UPLOAD DEBUG (Create):', req.files.map(f => ({ path: f.path, filename: f.filename })));
+    } else {
+        console.log('HOSTEL UPLOAD DEBUG (Create): No files received');
+    }
+
+    const images = req.files ? req.files.map(file => file.path) : [];
+
+    // Parse nested fields if they are strings (from FormData)
+    let body = { ...req.body };
+    ['location', 'facilities', 'rooms', 'contactNumber'].forEach(field => {
+        if (typeof body[field] === 'string') {
+            try {
+                body[field] = JSON.parse(body[field]);
+            } catch (e) {
+                console.error(`Failed to parse ${field}:`, e);
+            }
+        }
+    });
+
     const hostel = await Hostel.create({
-        ...req.body,
+        ...body,
+        images,
         status: 'pending', // Establish default status explicitly
         owner: req.user.id,
         ownerName: req.user.fullName
@@ -109,6 +130,28 @@ const updateHostel = asyncHandler(async (req, res) => {
     const updates = { ...req.body };
     if (req.user.role !== 'admin') {
         updates.status = 'pending';
+    }
+
+    // Parse nested fields for FormData
+    ['location', 'facilities', 'rooms', 'contactNumber'].forEach(field => {
+        if (typeof updates[field] === 'string') {
+            try {
+                updates[field] = JSON.parse(updates[field]);
+            } catch (e) {
+                console.error(`Failed to parse ${field}:`, e);
+            }
+        }
+    });
+
+    // Handle image updates
+    if (req.files && req.files.length > 0) {
+        console.log('HOSTEL UPLOAD DEBUG (Update):', req.files.map(f => ({ path: f.path, filename: f.filename })));
+        const newImages = req.files.map(file => file.path);
+        // If there are existing images in body (as strings), combine them
+        let currentImages = updates.images ? (Array.isArray(updates.images) ? updates.images : [updates.images]) : [];
+        // Filter out any base64 strings (starting with data:) and only keep URLs
+        currentImages = currentImages.filter(img => typeof img === 'string' && img.startsWith('http'));
+        updates.images = [...currentImages, ...newImages];
     }
 
     const updatedHostel = await Hostel.findByIdAndUpdate(req.params.id, updates, {

@@ -38,8 +38,10 @@ export default function EditHostelPage() {
         address: "",
         latitude: 0,
         longitude: 0,
-        images: [] as string[],
+
+        images: [] as (string | File)[],
         rent: 0,
+
         floors: 1,
         roomsPerFloor: 1,
         availableBeds: 0,
@@ -119,7 +121,7 @@ export default function EditHostelPage() {
         );
     }
 
-    const handleImagesChange = (newImages: string[]) => {
+    const handleImagesChange = (newImages: (string | File)[]) => {
         setFormData({ ...formData, images: newImages });
     };
 
@@ -156,35 +158,49 @@ export default function EditHostelPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const updatedHostel = {
-            ...hostel,
-            name: formData.name,
-            description: formData.description,
-            genderType: formData.genderType,
-            location: {
-                city: formData.city,
-                area: formData.area,
-                address: formData.address,
-                latitude: formData.latitude,
-                longitude: formData.longitude,
-            },
-            images: formData.images.filter(img => img.trim() !== ""),
-            rooms: [
-                { type: "Single", capacity: 1, rentPerRoom: formData.rent },
-                { type: "Double", capacity: 2, rentPerBed: formData.rent * 0.7 },
-            ],
-            floors: formData.floors,
-            roomsPerFloor: formData.roomsPerFloor,
-            rent: formData.rent,
-            facilities: formData.facilities,
-            availableBeds: formData.availableBeds,
-            availability: formData.availability,
-            contactNumber: formData.contactNumbers.filter(c => c.trim() !== ""),
-            isFor: formData.isFor,
-        };
+        const data = new FormData();
+        data.append("id", hostelId); // Ensure ID is passed if needed by slice (slice extracts it)
+        data.append("name", formData.name);
+        data.append("description", formData.description);
+        data.append("genderType", formData.genderType);
+
+        data.append("location", JSON.stringify({
+            city: formData.city,
+            area: formData.area,
+            address: formData.address,
+            latitude: formData.latitude,
+            longitude: formData.longitude,
+        }));
+
+        data.append("rooms", JSON.stringify([
+            { type: "Single", capacity: 1, rentPerRoom: formData.rent },
+            { type: "Double", capacity: 2, rentPerBed: formData.rent * 0.7 },
+        ]));
+
+        data.append("floors", formData.floors.toString());
+        data.append("roomsPerFloor", formData.roomsPerFloor.toString());
+        data.append("rent", formData.rent.toString());
+        data.append("facilities", JSON.stringify(formData.facilities));
+        data.append("availableBeds", formData.availableBeds.toString());
+        data.append("availability", formData.availability);
+        data.append("contactNumber", JSON.stringify(formData.contactNumbers.filter(c => c.trim() !== "")));
+        data.append("isFor", formData.isFor);
+
+        formData.images.forEach((image) => {
+            if (image instanceof File) {
+                // New file upload
+                data.append("images", image);
+            } else {
+                // Existing image URL
+                data.append("images", image);
+            }
+        });
 
         try {
-            await dispatch(modifyHostel(updatedHostel)).unwrap();
+
+
+
+            await dispatch(modifyHostel({ id: hostelId, data }) as any).unwrap();
             toast.success("Hostel updated successfully!");
             setTimeout(() => {
                 router.push(currentUser?.role === "admin" ? "/dashboard/admin/hostels" : "/dashboard/owner/hostels");
@@ -193,7 +209,7 @@ export default function EditHostelPage() {
             toast.error(typeof error === 'string' ? error : "Failed to update hostel");
             console.error("Update hostel error:", error);
         }
-    };
+    }
 
     return (
         <DashboardLayout role={currentUser?.role as "owner" | "admin" || "owner"}>

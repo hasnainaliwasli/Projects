@@ -26,6 +26,8 @@ export default function BlockedUsersPage() {
     const { blockedUsers, loading } = useAppSelector((state) => state.user);
     const [isUnblocking, setIsUnblocking] = useState<string | null>(null);
     const [showAddModal, setShowAddModal] = useState(false);
+    const [showUnblockModal, setShowUnblockModal] = useState(false);
+    const [userToUnblock, setUserToUnblock] = useState<{ id: string, email: string } | null>(null);
 
     // Form state
     const [email, setEmail] = useState("");
@@ -35,17 +37,24 @@ export default function BlockedUsersPage() {
         dispatch(fetchBlockedUsers());
     }, [dispatch]);
 
-    const handleUnblock = async (id: string, email: string) => {
-        if (confirm(`Are you sure you want to unblock ${email}?`)) {
-            setIsUnblocking(id);
-            try {
-                await dispatch(unblockUser(id)).unwrap();
-                toast.success("User unblocked successfully");
-            } catch (error: any) {
-                toast.error("Failed to unblock user");
-            } finally {
-                setIsUnblocking(null);
-            }
+    const handleUnblockClick = (id: string, email: string) => {
+        setUserToUnblock({ id, email });
+        setShowUnblockModal(true);
+    };
+
+    const confirmUnblock = async () => {
+        if (!userToUnblock) return;
+
+        setIsUnblocking(userToUnblock.id);
+        try {
+            await dispatch(unblockUser(userToUnblock.id)).unwrap();
+            toast.success("User unblocked successfully");
+            setShowUnblockModal(false);
+            setUserToUnblock(null);
+        } catch (error: any) {
+            toast.error("Failed to unblock user");
+        } finally {
+            setIsUnblocking(null);
         }
     };
 
@@ -66,16 +75,15 @@ export default function BlockedUsersPage() {
 
     return (
         <DashboardLayout role="admin">
-            <div className="space-y-0">
+            <div className="space-y-6">
                 <div className="flex justify-between items-center">
                     <div>
                         <h1 className="text-xl md:text-2xl font-bold flex items-center gap-2">
-                            <ShieldAlert className="h-6 w-6 hidden md:block md:h-8 md:w-8 text-destructive" />
                             Blocked Users
                         </h1>
                         <p className="text-muted-foreground">Manage blocked emails and users</p>
                     </div>
-                    <Button onClick={() => setShowAddModal(true)}>
+                    <Button size="sm" onClick={() => setShowAddModal(true)}>
                         <Plus className="mr-2 h-4 w-4" /> Block User
                     </Button>
                 </div>
@@ -145,7 +153,7 @@ export default function BlockedUsersPage() {
                                                         variant="ghost"
                                                         size="sm"
                                                         disabled={isUnblocking === user._id}
-                                                        onClick={() => handleUnblock(user._id, user.email)}
+                                                        onClick={() => handleUnblockClick(user._id, user.email)}
                                                         className="text-green-600 hover:text-green-700 hover:bg-green-50"
                                                     >
                                                         {isUnblocking === user._id ? (
@@ -214,7 +222,7 @@ export default function BlockedUsersPage() {
                                                     size="sm"
                                                     className="w-full text-green-600 hover:text-green-700 hover:bg-green-50 border-green-200"
                                                     disabled={isUnblocking === user._id}
-                                                    onClick={() => handleUnblock(user._id, user.email)}
+                                                    onClick={() => handleUnblockClick(user._id, user.email)}
                                                 >
                                                     {isUnblocking === user._id ? (
                                                         <Loader size="sm" />
@@ -270,6 +278,45 @@ export default function BlockedUsersPage() {
                                     <Button type="submit" variant="destructive">Block Email</Button>
                                 </div>
                             </form>
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
+
+            {/* Unblock Confirmation Modal */}
+            {showUnblockModal && userToUnblock && (
+                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                    <Card className="w-full max-w-md my-0 shadow-lg border-0">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-green-600">
+                                <Unlock className="h-5 w-5" />
+                                Unblock User
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-gray-600 mb-4">
+                                Are you sure you want to unblock <strong>{userToUnblock.email}</strong>?
+                            </p>
+                            <p className="text-sm text-muted-foreground mb-6">
+                                They will explicitly regain access to login and use platform features.
+                            </p>
+                            <div className="flex gap-3 justify-end">
+                                <Button
+                                    variant="ghost"
+                                    onClick={() => {
+                                        setShowUnblockModal(false);
+                                        setUserToUnblock(null);
+                                    }}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    onClick={confirmUnblock}
+                                    className="bg-green-600 hover:bg-green-700 text-white"
+                                >
+                                    Unblock User
+                                </Button>
+                            </div>
                         </CardContent>
                     </Card>
                 </div>

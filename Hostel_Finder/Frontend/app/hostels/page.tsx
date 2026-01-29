@@ -12,18 +12,23 @@ import {
     Search,
     SlidersHorizontal,
     X,
-    MapPin,
     Filter,
     Star,
     Check,
     BedDouble,
-    Wifi,
-    ShieldCheck,
-    Utensils,
     Zap,
-    Trash
+    MapPin,
+    Building2
 } from "lucide-react";
 import { Loader } from "@/components/ui/loader";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 
 export default function HostelsPage() {
     const dispatch = useAppDispatch();
@@ -36,11 +41,11 @@ export default function HostelsPage() {
     const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
     const [filters, setFilters] = useState({
         searchQuery: "",
-        city: "",
-        genderType: "",
+        city: "All Cities", // Default value for Select
+        genderType: "All Genders", // Default value for Select
         minRent: "",
         maxRent: "",
-        rating: 0,
+        rating: "0", // String for Select compatibility
         roomTypes: {
             Single: false,
             Double: false,
@@ -61,7 +66,7 @@ export default function HostelsPage() {
     // Get unique cities
     const cities = useMemo(() => Array.from(new Set(hostels.map((h) => h.location.city))), [hostels]);
 
-    // 2. Enhanced Filter Logic
+    // Enhanced Filter Logic
     const filteredHostels = useMemo(() => {
         return hostels.filter((hostel) => {
             // Search query (Name, City, Area)
@@ -75,40 +80,38 @@ export default function HostelsPage() {
             }
 
             // City filter
-            if (filters.city && hostel.location.city !== filters.city) {
+            if (filters.city && filters.city !== "All Cities" && hostel.location.city !== filters.city) {
                 return false;
             }
 
             // Gender filter
-            if (filters.genderType && hostel.isFor !== filters.genderType) {
+            if (filters.genderType && filters.genderType !== "All Genders" && hostel.isFor !== filters.genderType) {
                 return false;
             }
 
-            // Rent Range Filter (Checks if hostel rent falls within range)
+            // Rent Range Filter
             const rent = hostel.rent;
             if (filters.minRent && rent < parseInt(filters.minRent)) return false;
             if (filters.maxRent && rent > parseInt(filters.maxRent)) return false;
 
             // Rating Filter
-            if (filters.rating > 0 && hostel.rating < filters.rating) {
+            if (parseInt(filters.rating) > 0 && hostel.rating < parseInt(filters.rating)) {
                 return false;
             }
 
             // Room Type Filter
-            // Checks if the hostel has AT LEAST one of the selected room types
             const selectedRoomTypes = Object.entries(filters.roomTypes)
                 .filter(([_, enabled]) => enabled)
                 .map(([type]) => type);
 
             if (selectedRoomTypes.length > 0) {
-                // Look inside the hostel's rooms array
                 const hasMatchingRoom = hostel.rooms.some(room =>
                     selectedRoomTypes.includes(room.type)
                 );
                 if (!hasMatchingRoom) return false;
             }
 
-            // Facilities filter (Strict: Must have ALL selected)
+            // Facilities filter
             const selectedFacilities = Object.entries(filters.facilities)
                 .filter(([_, enabled]) => enabled)
                 .map(([name]) => name);
@@ -127,11 +130,11 @@ export default function HostelsPage() {
     const clearFilters = () => {
         setFilters({
             searchQuery: "",
-            city: "",
-            genderType: "",
+            city: "All Cities",
+            genderType: "All Genders",
             minRent: "",
             maxRent: "",
-            rating: 0,
+            rating: "0",
             roomTypes: { Single: false, Double: false, Triple: false },
             facilities: {
                 wifi: false, fridge: false, laundry: false, parking: false,
@@ -140,58 +143,60 @@ export default function HostelsPage() {
         });
     };
 
-    // Count active filters for the badge
     const activeFilterCount = [
-        filters.city,
-        filters.genderType,
+        filters.city !== "All Cities",
+        filters.genderType !== "All Genders",
         filters.minRent,
         filters.maxRent,
-        filters.rating > 0,
+        parseInt(filters.rating) > 0,
         ...Object.values(filters.facilities).filter(Boolean),
         ...Object.values(filters.roomTypes).filter(Boolean),
     ].filter(Boolean).length;
 
     if (loading && hostels.length === 0) {
-        return <Loader fullScreen text="Loading hostels..." />;
+        return <Loader fullScreen text="Finding the best spots..." />;
     }
 
     return (
-        <div className="min-h-screen bg-background">
-
-
+        <div className="min-h-screen bg-slate-50 dark:bg-background">
             {/* --- Filter Modal Overlay --- */}
             {isFilterModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-                    <Card className="w-full max-w-2xl max-h-[80vh] overflow-y-auto shadow-2xl animate-in mt-16 zoom-in-95 duration-200">
-                        <div className="sticky top-0 bg-card border-b p-4 flex items-center justify-between z-10">
-                            <h2 className="text-xl font-bold flex items-center gap-2">
-                                <SlidersHorizontal className="h-5 w-5" />
-                                All Filters
-                            </h2>
-                            <Button variant="ghost" size="icon" onClick={() => setIsFilterModalOpen(false)}>
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+                    <Card className="w-full max-w-2xl max-h-[85vh] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200 flex flex-col">
+                        <div className="flex items-center justify-between p-5 border-b bg-muted/30">
+                            <div>
+                                <h2 className="text-xl font-bold flex items-center gap-2">
+                                    <SlidersHorizontal className="h-5 w-5 text-primary" />
+                                    Advanced Filters
+                                </h2>
+                                <p className="text-sm text-muted-foreground">Refine your search results</p>
+                            </div>
+                            <Button variant="ghost" size="icon" onClick={() => setIsFilterModalOpen(false)} className="rounded-full hover:bg-muted">
                                 <X className="h-5 w-5" />
                             </Button>
                         </div>
 
-                        <CardContent className="p-6 space-y-8">
-                            {/* Section 1: Price Range */}
-                            <div className="space-y-3">
+                        <div className="flex-1 overflow-y-auto p-6 space-y-8">
+                            {/* Price Range */}
+                            <div className="space-y-4">
                                 <Label className="text-base font-semibold">Price Range (PKR)</Label>
                                 <div className="flex items-center gap-4">
-                                    <div className="flex-1 space-y-1">
-                                        <span className="text-xs text-muted-foreground">Min Rent</span>
+                                    <div className="flex-1 relative">
+                                        <span className="absolute left-3 top-2.5 text-muted-foreground text-sm">Min</span>
                                         <Input
                                             type="number"
+                                            className="pl-12"
                                             placeholder="0"
                                             value={filters.minRent}
                                             onChange={(e) => setFilters({ ...filters, minRent: e.target.value })}
                                         />
                                     </div>
-                                    <span className="pt-4">-</span>
-                                    <div className="flex-1 space-y-1">
-                                        <span className="text-xs text-muted-foreground">Max Rent</span>
+                                    <span className="text-muted-foreground font-medium">-</span>
+                                    <div className="flex-1 relative">
+                                        <span className="absolute left-3 top-2.5 text-muted-foreground text-sm">Max</span>
                                         <Input
                                             type="number"
+                                            className="pl-12"
                                             placeholder="Any"
                                             value={filters.maxRent}
                                             onChange={(e) => setFilters({ ...filters, maxRent: e.target.value })}
@@ -201,231 +206,209 @@ export default function HostelsPage() {
                             </div>
 
                             <div className="grid md:grid-cols-2 gap-8">
-                                {/* Section 2: Room Types */}
-                                <div className="space-y-3">
+                                {/* Room Types */}
+                                <div className="space-y-4">
                                     <Label className="text-base font-semibold flex items-center gap-2">
-                                        <BedDouble className="h-4 w-4" /> Room Type
+                                        <BedDouble className="h-4 w-4 text-primary" /> Room Options
                                     </Label>
-                                    <div className="space-y-2">
+                                    <div className="grid grid-cols-1 gap-2">
                                         {Object.keys(filters.roomTypes).map((type) => (
-                                            <label key={type} className="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-muted/50 transition-colors border">
+                                            <label key={type} className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all hover:bg-muted/50 ${filters.roomTypes[type as keyof typeof filters.roomTypes] ? "border-primary bg-primary/5" : ""}`}>
+                                                <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${filters.roomTypes[type as keyof typeof filters.roomTypes] ? "bg-primary border-primary" : "border-muted-foreground"}`}>
+                                                    {filters.roomTypes[type as keyof typeof filters.roomTypes] && <Check className="h-3.5 w-3.5 text-white" />}
+                                                </div>
                                                 <input
                                                     type="checkbox"
-                                                    className="rounded border-gray-300 h-4 w-4 text-primary focus:ring-primary"
+                                                    className="hidden"
                                                     checked={filters.roomTypes[type as keyof typeof filters.roomTypes]}
                                                     onChange={(e) => setFilters({
                                                         ...filters,
                                                         roomTypes: { ...filters.roomTypes, [type]: e.target.checked }
                                                     })}
                                                 />
-                                                <span className="text-sm font-medium">{type} Bed</span>
+                                                <span className="font-medium">{type} Bed</span>
                                             </label>
                                         ))}
                                     </div>
                                 </div>
 
-                                {/* Section 3: Star Rating */}
-                                <div className="space-y-3">
+                                {/* Amenities */}
+                                <div className="space-y-4">
                                     <Label className="text-base font-semibold flex items-center gap-2">
-                                        <Star className="h-4 w-4" /> Rating
+                                        <Zap className="h-4 w-4 text-primary" /> Key Amenities
                                     </Label>
-                                    <div className="flex flex-wrap gap-2">
-                                        {[3, 4, 4.5].map((rating) => (
-                                            <button
-                                                key={rating}
-                                                onClick={() => setFilters({ ...filters, rating: filters.rating === rating ? 0 : rating })}
-                                                className={`flex items-center gap-1 px-4 py-2 rounded-full border text-sm transition-all
-                          ${filters.rating === rating
-                                                        ? "bg-primary text-primary-foreground border-primary"
-                                                        : "hover:bg-muted"}`}
-                                            >
-                                                {rating}+ <Star className="h-3 w-3 fill-current" />
-                                            </button>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {Object.keys(filters.facilities).slice(0, 6).map((facility) => (
+                                            <label key={facility} className={`flex items-center gap-2 p-2 rounded-md cursor-pointer transition-colors hover:bg-muted ${filters.facilities[facility as keyof typeof filters.facilities] ? "text-primary font-medium" : "text-muted-foreground"}`}>
+                                                <div className={`w-4 h-4 rounded border flex items-center justify-center ${filters.facilities[facility as keyof typeof filters.facilities] ? "bg-primary border-primary" : "border-muted-foreground"}`}>
+                                                    {filters.facilities[facility as keyof typeof filters.facilities] && <Check className="h-3 w-3 text-white" />}
+                                                </div>
+                                                <input
+                                                    type="checkbox"
+                                                    className="hidden"
+                                                    checked={filters.facilities[facility as keyof typeof filters.facilities]}
+                                                    onChange={(e) => setFilters({
+                                                        ...filters,
+                                                        facilities: { ...filters.facilities, [facility]: e.target.checked }
+                                                    })}
+                                                />
+                                                <span className="text-sm capitalize">{facility}</span>
+                                            </label>
                                         ))}
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            {/* Section 4: Facilities */}
-                            <div className="space-y-3">
-                                <Label className="text-base font-semibold flex items-center gap-2">
-                                    <Zap className="h-4 w-4" /> Amenities & Facilities
-                                </Label>
-                                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                    {Object.keys(filters.facilities).map((facility) => (
-                                        <label key={facility} className={`
-                      flex items-center gap-2 p-3 rounded-lg border cursor-pointer transition-all
-                      ${filters.facilities[facility as keyof typeof filters.facilities]
-                                                ? "border-primary bg-primary/5 ring-1 ring-primary"
-                                                : "hover:border-primary/50"}
-                    `}>
-                                            <input
-                                                type="checkbox"
-                                                className="hidden" // Hiding default checkbox for cleaner UI
-                                                checked={filters.facilities[facility as keyof typeof filters.facilities]}
-                                                onChange={(e) => setFilters({
-                                                    ...filters,
-                                                    facilities: { ...filters.facilities, [facility]: e.target.checked }
-                                                })}
-                                            />
-                                            <div className={`w-4 h-4 rounded-full border flex items-center justify-center
-                        ${filters.facilities[facility as keyof typeof filters.facilities]
-                                                    ? "bg-primary border-primary"
-                                                    : "border-gray-400"}`}>
-                                                {filters.facilities[facility as keyof typeof filters.facilities] &&
-                                                    <Check className="h-3 w-3 text-white" />
-                                                }
-                                            </div>
-                                            <span className="text-sm capitalize">{facility}</span>
-                                        </label>
-                                    ))}
-                                </div>
-                            </div>
-                        </CardContent>
-
-                        <div className="sticky bottom-0 bg-card border-t p-4 flex gap-4 z-10">
+                        <div className="p-5 border-t bg-muted/30 flex gap-4">
                             <Button variant="outline" className="flex-1" onClick={clearFilters}>
-                                Clear All
+                                Reset Filters
                             </Button>
                             <Button className="flex-1" onClick={() => setIsFilterModalOpen(false)}>
-                                Show {filteredHostels.length} Hostels
+                                Apply Filters ({activeFilterCount})
                             </Button>
                         </div>
                     </Card>
                 </div>
             )}
 
-            {/* Hero Section with Search */}
-            <div className="bg-gradient-to-br from-primary/10 via-background to-secondary/10 border-b">
-                <div className="container mx-auto px-4 py-12">
-                    <div className="max-w-2xl mx-auto text-center space-y-6">
-                        <h1 className="text-3xl md:text-5xl font-bold">Discover Your Perfect Hostel</h1>
-                        <p className="text-muted-foreground">
-                            Browse through {hostels.length} verified hostels and find your ideal accommodation
-                        </p>
+            {/* --- Hero Section --- */}
+            <div className="relative bg-[#020817] text-white pt-24 pb-20 overflow-hidden">
+                {/* Decorative background elements */}
+                <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+                <div className="absolute -top-40 -right-40 w-96 h-96 bg-primary/20 rounded-full blur-[100px]" />
+                <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-500/20 rounded-full blur-[100px]" />
 
-                        <div className="relative">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-
-                            <input
-                                value={filters.searchQuery}
-                                onChange={(e) =>
-                                    setFilters({ ...filters, searchQuery: e.target.value })
-                                }
-                                placeholder="Search hostels..."
-                                className="w-full pl-11 pr-11 py-2 rounded-full border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                            />
-
-                            {filters.searchQuery && (
-                                <X
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground cursor-pointer hover:text-foreground"
-                                    onClick={() => setFilters({ ...filters, searchQuery: "" })}
-                                />
-                            )}
-                        </div>
-
-                    </div>
+                <div className="container mx-auto px-4 relative z-10 text-center space-y-6">
+                    <Badge variant="secondary" className="bg-white/10 text-white hover:bg-white/20 border-0 mb-4 px-4 py-1.5 backdrop-blur-sm">
+                        ✨ Over {hostels.length} verified listings
+                    </Badge>
+                    <h1 className="text-4xl md:text-6xl font-bold tracking-tight bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent">
+                        Find Your Perfect Student Home
+                    </h1>
+                    <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
+                        Discover comfortable, safe, and affordable hostels near your university.
+                        Book instantly with trusted owners.
+                    </p>
                 </div>
             </div>
 
-            <div className="container mx-auto px-4 py-8">
+            {/* --- Main Content --- */}
+            <div className="container mx-auto px-4 -mt-8 relative z-20 pb-20">
+                {/* Search & Filter Bar */}
+                <div className="bg-background rounded-xl shadow-lg border p-4 flex flex-col md:flex-row gap-4 items-center">
 
-                {/* Top Filter Bar */}
-                <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-8 bg-card p-4 rounded-xl border shadow-sm top-4 z-30">
+                    {/* Search Input */}
+                    <div className="relative flex-1 w-full">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                        <input
+                            value={filters.searchQuery}
+                            onChange={(e) => setFilters({ ...filters, searchQuery: e.target.value })}
+                            placeholder="Search by name, area, or city..."
+                            className="w-full pl-10 pr-4 h-12 rounded-lg border bg-muted/30 focus:bg-background transition-all focus:ring-2 ring-primary/20 outline-none text-base"
+                        />
+                    </div>
 
-                    <div className="flex flex-wrap gap-3 w-full md:w-auto">
-                        {/* Quick Filter: City */}
-                        <select
-                            value={filters.city}
-                            onChange={(e) => setFilters({ ...filters, city: e.target.value })}
-                            className="h-10 px-3 rounded-md border bg-background text-sm focus:ring-2 ring-primary outline-none"
-                        >
-                            <option value="">All Cities</option>
-                            {cities.map((city) => (
-                                <option key={city} value={city}>{city}</option>
-                            ))}
-                        </select>
+                    <div className="flex w-full md:w-auto gap-3 overflow-x-auto pb-2 md:pb-0 hide-scrollbar">
+                        {/* City Select */}
+                        <Select value={filters.city} onValueChange={(val) => setFilters({ ...filters, city: val })}>
+                            <SelectTrigger className="w-[140px] h-12">
+                                <div className="flex items-center gap-2">
+                                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                                    <SelectValue placeholder="City" />
+                                </div>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="All Cities">All Cities</SelectItem>
+                                {cities.map((city) => (
+                                    <SelectItem key={city} value={city}>{city}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
 
-                        {/* Quick Filter: Gender */}
-                        <select
-                            value={filters.genderType}
-                            onChange={(e) => setFilters({ ...filters, genderType: e.target.value })}
-                            className="h-10 px-3 rounded-md border bg-background text-sm focus:ring-2 ring-primary outline-none"
-                        >
-                            <option value="">All Genders</option>
-                            <option value="boys">Boys</option>
-                            <option value="girls">Girls</option>
-                        </select>
+                        {/* Gender Select */}
+                        <Select value={filters.genderType} onValueChange={(val) => setFilters({ ...filters, genderType: val })}>
+                            <SelectTrigger className="w-[140px] h-12">
+                                <div className="flex items-center gap-2">
+                                    <Building2 className="h-4 w-4 text-muted-foreground" />
+                                    <SelectValue placeholder="Type" />
+                                </div>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="All Genders">All Types</SelectItem>
+                                <SelectItem value="boys">Boys Hostel</SelectItem>
+                                <SelectItem value="girls">Girls Hostel</SelectItem>
+                            </SelectContent>
+                        </Select>
 
-                        {/* Quick Filter: Rating */}
-                        <select
-                            value={filters.rating}
-                            onChange={(e) =>
-                                setFilters({
-                                    ...filters,
-                                    rating: Number(e.target.value),
-                                })
-                            }
-                            className="h-10 px-3 rounded-md border bg-background text-sm focus:ring-2 ring-primary outline-none"
-                        >
-                            <option value={0}>Any rating</option>
-                            <option value={3}>3+ stars</option>
-                            <option value={4}>4+ stars</option>
-                            <option value={4.5}>4.5+ stars</option>
-                        </select>
+                        {/* Rating Select */}
+                        <Select value={filters.rating} onValueChange={(val) => setFilters({ ...filters, rating: val })}>
+                            <SelectTrigger className="w-[130px] h-12">
+                                <div className="flex items-center gap-2">
+                                    <Star className="h-4 w-4 text-muted-foreground" />
+                                    <SelectValue placeholder="Rating" />
+                                </div>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="0">Any Rating</SelectItem>
+                                <SelectItem value="3">3+ Stars</SelectItem>
+                                <SelectItem value="4">4+ Stars</SelectItem>
+                                <SelectItem value="4.5">4.5+ Stars</SelectItem>
+                            </SelectContent>
+                        </Select>
 
-
-                        {/* The Modal Trigger Button */}
+                        {/* More Filters Button */}
                         <Button
+                            variant="outline"
+                            className={`h-12 px-4 gap-2 ${activeFilterCount > 0 ? "border-primary text-primary bg-primary/5" : "border-dashed"}`}
                             onClick={() => setIsFilterModalOpen(true)}
-                            className="gap-2 w-full md:w-auto"
-                            variant={activeFilterCount > 0 ? "default" : "outline"}
                         >
-                            <Filter className="h-4 w-4" />
-                            <span className="hidden sm:inline">Filters</span>
+                            <SlidersHorizontal className="h-4 w-4" />
+                            Filters
                             {activeFilterCount > 0 && (
-                                <span className="bg-primary text-primary-foreground text-xs w-5 h-5 flex items-center justify-center rounded-full ml-1">
+                                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
                                     {activeFilterCount}
                                 </span>
                             )}
                         </Button>
                     </div>
-
                 </div>
 
-                {/* Results Grid */}
-                <div className="space-y-6 ">
-                    <div className="flex items-center gap-5">
-                        <div className="text-sm font-semibold text-muted-foreground hidden md:inline">
-                            {filteredHostels.length} results found
-                        </div>
-                        {activeFilterCount > 0 && <div onClick={clearFilters} className="items-center gap-1 text-green-500/100 hover:bg-muted-foreground/20 rounded-full p-1 cursor-pointer text-sm font-semibold hidden md:flex">
-                            <X className="h-4 w-4" /> Clear Filters
-                        </div>}
-                    </div>
-                    {filteredHostels.length === 0 ? (
-                        <Card className="border-2 border-dashed bg-muted/20">
-                            <CardContent className="text-center py-16">
-                                <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mx-auto mb-6">
-                                    <Search className="h-10 w-10 text-muted-foreground" />
-                                </div>
-                                <h3 className="text-2xl font-bold mb-2">No hostels match your filters</h3>
-                                <p className="text-muted-foreground mb-8 max-w-sm mx-auto">
-                                    We couldn't find any hostels matching your specific criteria. Try removing some filters or expanding your search.
-                                </p>
-                                <Button onClick={clearFilters} size="lg">
-                                    Clear All Filters
-                                </Button>
-                            </CardContent>
-                        </Card>
-                    ) : (
-                        <div className="grid md:grid-cols-2 mt-2  xl:grid-cols-3 gap-6 animate-in slide-in-from-bottom-4 duration-500">
-                            {filteredHostels.map((hostel) => (
-                                <HostelCard key={hostel.id} hostel={hostel} />
-                            ))}
-                        </div>
+                {/* Results Stats */}
+                <div className="mt-8 mb-6 flex items-center justify-between">
+                    <h2 className="text-xl font-semibold text-foreground">
+                        Available Hostels
+                        <span className="ml-2 text-sm font-normal text-muted-foreground">({filteredHostels.length} found)</span>
+                    </h2>
+
+                    {activeFilterCount > 0 && (
+                        <Button variant="ghost" size="sm" onClick={clearFilters} className="text-muted-foreground hover:text-foreground">
+                            Clear all filters
+                        </Button>
                     )}
                 </div>
+
+                {/* Grid */}
+                {filteredHostels.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-20 bg-background rounded-xl border border-dashed text-center animate-in fade-in zoom-in-95 duration-500">
+                        <div className="bg-muted p-4 rounded-full mb-4">
+                            <Search className="h-8 w-8 text-muted-foreground" />
+                        </div>
+                        <h3 className="text-xl font-semibold">No hostels found</h3>
+                        <p className="text-muted-foreground max-w-md mt-2 mb-6">
+                            We couldn't find any hostels matching your criteria. Try adjusting your filters or search for a different city.
+                        </p>
+                        <Button onClick={clearFilters}>Reset Search</Button>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {filteredHostels.map((hostel, index) => (
+                            <div key={hostel.id} className="animate-in fade-in slide-in-from-bottom-4 fill-mode-forwards" style={{ animationDelay: `${index * 50}ms` }}>
+                                <HostelCard hostel={hostel} />
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     );

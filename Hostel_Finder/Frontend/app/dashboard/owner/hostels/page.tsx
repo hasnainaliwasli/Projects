@@ -9,9 +9,18 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner"; // import added
+import { toast } from "sonner"; 
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function OwnerHostelsPage() {
     const { hostels, loading, viewMode, error } = useAppSelector((state) => state.hostel);
@@ -19,6 +28,7 @@ export default function OwnerHostelsPage() {
     const dispatch = useAppDispatch();
 
     const [statusTab, setStatusTab] = useState("active");
+    const [hostelToDelete, setHostelToDelete] = useState<string | null>(null);
 
     const myHostels = hostels.filter((h) => h.ownerId === currentUser?.id);
 
@@ -41,6 +51,18 @@ export default function OwnerHostelsPage() {
 
     const isLoading = (loading || (viewMode !== 'owner' && hostels.length > 0)) && !error;
 
+    const confirmDelete = async () => {
+        if (!hostelToDelete) return;
+        try {
+            await dispatch(removeHostel(hostelToDelete)).unwrap();
+            toast.success("Hostel removed successfully");
+        } catch (error: any) {
+            toast.error(typeof error === 'string' ? error : "Failed to remove hostel");
+        } finally {
+            setHostelToDelete(null);
+        }
+    };
+
     if (error) {
         return (
             <DashboardLayout role="owner">
@@ -54,17 +76,6 @@ export default function OwnerHostelsPage() {
             </DashboardLayout>
         );
     }
-
-    const handleRemoveHostel = async (hostelId: string) => {
-        if (confirm("Are you sure you want to remove this hostel?")) {
-            try {
-                await dispatch(removeHostel(hostelId)).unwrap();
-                toast.success("Hostel removed successfully");
-            } catch (error: any) {
-                toast.error(typeof error === 'string' ? error : "Failed to remove hostel");
-            }
-        }
-    };
 
     return (
         <DashboardLayout role="owner">
@@ -135,7 +146,7 @@ export default function OwnerHostelsPage() {
                                                     hostel.status === "pending" ? "outline" :
                                                         hostel.status === "rejected" ? "destructive" :
                                                             "default"
-                                                } className="bg-background/80 backdrop-blur-sm">
+                                                } className="backdrop-blur-sm">
                                                     {hostel.status || "Active"}
                                                 </Badge>
                                             </div>
@@ -179,7 +190,7 @@ export default function OwnerHostelsPage() {
                                                     variant="ghost"
                                                     size="icon"
                                                     className="h-8 w-8 border border-destructive text-destructive hover:bg-destructive/10"
-                                                    onClick={() => handleRemoveHostel(hostel.id)}
+                                                    onClick={() => setHostelToDelete(hostel.id)}
                                                     title="Delete"
                                                 >
                                                     <span className="sr-only">Delete</span>
@@ -192,7 +203,23 @@ export default function OwnerHostelsPage() {
                             ))}
                         </div>
                     )}
+
                 </Tabs>
+
+                <Dialog open={!!hostelToDelete} onOpenChange={(open) => !open && setHostelToDelete(null)}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Delete Hostel?</DialogTitle>
+                            <DialogDescription>
+                                Are you sure you want to delete this hostel? This action cannot be undone.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter>
+                            <Button variant="outline" onClick={() => setHostelToDelete(null)}>Cancel</Button>
+                            <Button variant="destructive" onClick={confirmDelete}>Delete</Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </div>
         </DashboardLayout>
     );

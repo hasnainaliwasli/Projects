@@ -78,6 +78,10 @@ export default function AdminUsersPage() {
     const [showBlockModal, setShowBlockModal] = useState(false);
     const [blockReason, setBlockReason] = useState("");
 
+    // Unblock state
+    const [showUnblockModal, setShowUnblockModal] = useState(false);
+    const [unblockTarget, setUnblockTarget] = useState<{ id: string, email: string } | null>(null);
+
     // Fetch all users when component mounts
     useEffect(() => {
         dispatch(fetchUsers());
@@ -137,18 +141,25 @@ export default function AdminUsersPage() {
             const blockedRecord = blockedUsers.find((u: any) => u.email === user.email);
             if (!blockedRecord) return; // Should not happen given check above
 
-            if (confirm(`Are you sure you want to unblock ${user.email}?`)) {
-                try {
-                    await dispatch(unblockUser(blockedRecord._id)).unwrap();
-                    toast.success("User unblocked successfully");
-                    dispatch(fetchBlockedUsers()); // Refresh list
-                } catch (error: any) {
-                    toast.error("Failed to unblock user");
-                }
-            }
+            setUnblockTarget({ id: blockedRecord._id, email: user.email });
+            setShowUnblockModal(true);
         } else {
             // Show block modal
             setShowBlockModal(true);
+        }
+    };
+
+    const handleConfirmUnblock = async () => {
+        if (!unblockTarget) return;
+
+        try {
+            await dispatch(unblockUser(unblockTarget.id)).unwrap();
+            toast.success("User unblocked successfully");
+            dispatch(fetchBlockedUsers()); // Refresh list
+            setShowUnblockModal(false);
+            setUnblockTarget(null);
+        } catch (error: any) {
+            toast.error("Failed to unblock user");
         }
     };
 
@@ -174,9 +185,9 @@ export default function AdminUsersPage() {
 
     return (
         <DashboardLayout role="admin">
-            <div className="space-y-6">
+            <div className="space-y-6 ">
                 <div>
-                    <h1 className="text-xl md:text-2xl font-bold mb-2">Manage Users</h1>
+                    <h1 className="text-xl md:text-2xl font-bold">Manage Users</h1>
                     <p className="text-muted-foreground">
                         {filteredUsers.length} user{filteredUsers.length !== 1 ? "s" : ""} found
                     </p>
@@ -224,14 +235,14 @@ export default function AdminUsersPage() {
                                 setSearchQuery("");
                                 setRoleFilter("all");
                             }}
-                            className="text-muted-foreground border hover:text-foreground"
+                            className="text-muted-foreground border hover:text-white"
                         >
                             Reset
                         </Button>
                     </div>
                 </div>
 
-                <div className="flex flex-col lg:grid lg:grid-cols-3 gap-6 h-[calc(100vh-12rem)]">
+                <div className="flex border rounded-lg flex-col lg:grid lg:grid-cols-3 gap-6 h-[calc(100vh-12rem)]">
                     {/* Users Table - Hidden on mobile if user selected */}
                     <div className={`lg:col-span-2 overflow-hidden flex flex-col ${selectedUser ? 'hidden lg:flex' : 'flex'}`}>
                         <Card className="border-none shadow-md overflow-hidden flex flex-col flex-1">
@@ -572,6 +583,44 @@ export default function AdminUsersPage() {
                                     <Button variant="ghost" onClick={() => setShowBlockModal(false)}>Cancel</Button>
                                     <Button variant="destructive" onClick={handleBlockUser}>Confirm Block</Button>
                                 </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
+            {/* Unblock Confirmation Modal */}
+            {showUnblockModal && unblockTarget && (
+                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                    <Card className="w-full max-w-md my-0 shadow-lg border-0">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-green-600">
+                                <CheckCircle className="h-5 w-5" />
+                                Unblock User
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-gray-600 mb-4">
+                                Are you sure you want to unblock <strong>{unblockTarget.email}</strong>?
+                            </p>
+                            <p className="text-sm text-muted-foreground mb-6">
+                                They will explicitly regain access to login and use platform features.
+                            </p>
+                            <div className="flex gap-3 justify-end">
+                                <Button
+                                    variant="ghost"
+                                    onClick={() => {
+                                        setShowUnblockModal(false);
+                                        setUnblockTarget(null);
+                                    }}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    onClick={handleConfirmUnblock}
+                                    className="bg-green-600 hover:bg-green-700 text-white"
+                                >
+                                    Unblock User
+                                </Button>
                             </div>
                         </CardContent>
                     </Card>

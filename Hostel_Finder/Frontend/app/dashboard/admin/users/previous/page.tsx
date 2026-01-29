@@ -24,33 +24,48 @@ export default function ArchivedUsersPage() {
     const dispatch = useAppDispatch();
     const { archivedUsers, loading } = useAppSelector((state) => state.user);
     const [isDeleting, setIsDeleting] = useState<string | null>(null);
+    const [showRestoreModal, setShowRestoreModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [selectedUser, setSelectedUser] = useState<string | null>(null);
 
     useEffect(() => {
         dispatch(fetchArchivedUsers());
     }, [dispatch]);
 
-    const handleRestoreUser = async (userId: string) => {
-        if (confirm("Are you sure you want to restore this user?")) {
-            try {
-                await dispatch(restoreUser(userId)).unwrap();
-                toast.success("User restored successfully");
-            } catch (error) {
-                toast.error("Failed to restore user");
-            }
+    const handleRestoreClick = (userId: string) => {
+        setSelectedUser(userId);
+        setShowRestoreModal(true);
+    };
+
+    const confirmRestore = async () => {
+        if (!selectedUser) return;
+        try {
+            await dispatch(restoreUser(selectedUser)).unwrap();
+            toast.success("User restored successfully");
+            setShowRestoreModal(false);
+            setSelectedUser(null);
+        } catch (error) {
+            toast.error("Failed to restore user");
         }
     };
 
-    const handleDelete = async (userId: string) => {
-        if (confirm("Are you sure you want to PERMANENTLY delete this user? This action cannot be undone.")) {
-            setIsDeleting(userId);
-            try {
-                await dispatch(permanentDeleteUser(userId)).unwrap();
-                toast.success("User permanently deleted");
-            } catch (error: any) {
-                toast.error("Failed to delete user");
-            } finally {
-                setIsDeleting(null);
-            }
+    const handleDeleteClick = (userId: string) => {
+        setSelectedUser(userId);
+        setShowDeleteModal(true);
+    };
+
+    const confirmDelete = async () => {
+        if (!selectedUser) return;
+        setIsDeleting(selectedUser);
+        try {
+            await dispatch(permanentDeleteUser(selectedUser)).unwrap();
+            toast.success("User permanently deleted");
+            setShowDeleteModal(false);
+            setSelectedUser(null);
+        } catch (error: any) {
+            toast.error("Failed to delete user");
+        } finally {
+            setIsDeleting(null);
         }
     };
 
@@ -60,7 +75,6 @@ export default function ArchivedUsersPage() {
                 <div className="flex justify-between items-center">
                     <div>
                         <h1 className="text-xl md:text-2xl font-bold flex items-center gap-2">
-                            <Archive className="h-6 w-6 hidden md:block md:h-8 md:w-8 text-primary" />
                             Archived Users
                         </h1>
                         <p className="text-muted-foreground">Manage previously deleted accounts</p>
@@ -139,7 +153,7 @@ export default function ArchivedUsersPage() {
                                                         <Button
                                                             variant="ghost"
                                                             size="sm"
-                                                            onClick={() => handleRestoreUser(user.id)}
+                                                            onClick={() => handleRestoreClick(user.id)}
                                                             className="h-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                                                         >
                                                             <RotateCcw className="h-4 w-4 mr-1" /> Restore
@@ -148,7 +162,7 @@ export default function ArchivedUsersPage() {
                                                             variant="ghost"
                                                             size="sm"
                                                             disabled={isDeleting === user.id}
-                                                            onClick={() => handleDelete(user.id)}
+                                                            onClick={() => handleDeleteClick(user.id)}
                                                             className="h-8 text-destructive hover:text-destructive hover:bg-destructive/10"
                                                         >
                                                             {isDeleting === user.id ? (
@@ -215,7 +229,7 @@ export default function ArchivedUsersPage() {
                                                     variant="outline"
                                                     size="sm"
                                                     className="flex-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50 border-blue-100"
-                                                    onClick={() => handleRestoreUser(user.id)}
+                                                    onClick={() => handleRestoreClick(user.id)}
                                                 >
                                                     <RotateCcw className="h-4 w-4 mr-2" /> Restore
                                                 </Button>
@@ -224,7 +238,7 @@ export default function ArchivedUsersPage() {
                                                     size="sm"
                                                     className="flex-1 text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/20"
                                                     disabled={isDeleting === user.id}
-                                                    onClick={() => handleDelete(user.id)}
+                                                    onClick={() => handleDeleteClick(user.id)}
                                                 >
                                                     {isDeleting === user.id ? (
                                                         <Loader size="sm" />
@@ -243,6 +257,83 @@ export default function ArchivedUsersPage() {
                     </div>
                 </Card>
             </div>
+            {/* Restore Confirmation Modal */}
+            {showRestoreModal && (
+                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                    <Card className="w-full max-w-md my-0 shadow-lg border-0">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-blue-600">
+                                <RotateCcw className="h-5 w-5" />
+                                Restore User
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-gray-600 mb-4">
+                                Are you sure you want to restore this user?
+                            </p>
+                            <p className="text-sm text-muted-foreground mb-6">
+                                They will be moved back to the active users list and regain access.
+                            </p>
+                            <div className="flex gap-3 justify-end">
+                                <Button
+                                    variant="ghost"
+                                    onClick={() => {
+                                        setShowRestoreModal(false);
+                                        setSelectedUser(null);
+                                    }}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    onClick={confirmRestore}
+                                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                                >
+                                    Restore User
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
+
+            {/* Permanent Delete Confirmation Modal */}
+            {showDeleteModal && (
+                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                    <Card className="w-full max-w-md my-0 shadow-lg border-0">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-destructive">
+                                <Trash2 className="h-5 w-5" />
+                                Permanent Delete
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-gray-600 mb-4">
+                                Are you sure you want to <strong className="text-destructive">permanently</strong> delete this user?
+                            </p>
+                            <p className="text-sm text-muted-foreground mb-6">
+                                This action is <strong>irreversible</strong>. All user data will be completely removed from the database unlike archiving.
+                            </p>
+                            <div className="flex gap-3 justify-end">
+                                <Button
+                                    variant="ghost"
+                                    onClick={() => {
+                                        setShowDeleteModal(false);
+                                        setSelectedUser(null);
+                                    }}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    onClick={confirmDelete}
+                                    variant="destructive"
+                                >
+                                    Permanently Delete
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
         </DashboardLayout>
     );
 }

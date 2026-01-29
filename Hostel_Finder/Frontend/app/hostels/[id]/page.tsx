@@ -28,7 +28,8 @@ import {
     Building2,
     BedDouble,
     LayoutDashboard,
-    MessageSquare
+    MessageSquare,
+    Trash2
 } from "lucide-react";
 import { accessChat } from "@/lib/slices/chatSlice";
 import { Loader } from "@/components/ui/loader";
@@ -61,6 +62,8 @@ export default function HostelDetailsPage() {
     });
     const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
     const [initialLoadDone, setInitialLoadDone] = useState(false);
+    const [reviewToDelete, setReviewToDelete] = useState<string | null>(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     // Fetch hostels and reviews when component mounts
     useEffect(() => {
@@ -135,6 +138,23 @@ export default function HostelDetailsPage() {
                 console.error("Failed to toggle favorite:", error);
                 toast.error("Failed to update favorites. Please try again.");
             }
+        }
+    };
+
+    const handleDeleteReviewClick = (reviewId: string) => {
+        setReviewToDelete(reviewId);
+        setShowDeleteModal(true);
+    };
+
+    const confirmDeleteReview = async () => {
+        if (!reviewToDelete) return;
+        try {
+            await dispatch(deleteReview(reviewToDelete)).unwrap();
+            toast.success("Review deleted successfully");
+            setShowDeleteModal(false);
+            setReviewToDelete(null);
+        } catch (error) {
+            toast.error("Failed to delete review");
         }
     };
 
@@ -544,16 +564,7 @@ export default function HostelDetailsPage() {
                                                                     variant="outline"
                                                                     size="sm"
                                                                     className="h-7 text-xs text-red-500 hover:text-red-600 hover:bg-red-50"
-                                                                    onClick={async () => {
-                                                                        if (confirm("Are you sure you want to delete this review?")) {
-                                                                            try {
-                                                                                await dispatch(deleteReview(review.id)).unwrap();
-                                                                                toast.success("Review deleted successfully");
-                                                                            } catch (error) {
-                                                                                toast.error("Failed to delete review");
-                                                                            }
-                                                                        }
-                                                                    }}
+                                                                    onClick={() => handleDeleteReviewClick(review.id)}
                                                                 >
                                                                     Delete
                                                                 </Button>
@@ -672,6 +683,44 @@ export default function HostelDetailsPage() {
                     )}
                 </div>
             </div>
+            {/* Delete Confirmation Modal */}
+            {showDeleteModal && (
+                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                    <Card className="w-full max-w-md my-0 shadow-lg border-0">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-destructive">
+                                <Trash2 className="h-5 w-5" />
+                                Delete Review
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-gray-600 mb-4">
+                                Are you sure you want to delete this review?
+                            </p>
+                            <p className="text-sm text-muted-foreground mb-6">
+                                This action is permanent and cannot be undone.
+                            </p>
+                            <div className="flex gap-3 justify-end">
+                                <Button
+                                    variant="ghost"
+                                    onClick={() => {
+                                        setShowDeleteModal(false);
+                                        setReviewToDelete(null);
+                                    }}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    onClick={confirmDeleteReview}
+                                    variant="destructive"
+                                >
+                                    Delete
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
         </div>
     );
 }

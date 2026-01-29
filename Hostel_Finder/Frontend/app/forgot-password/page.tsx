@@ -37,13 +37,11 @@ export default function ForgotPasswordPage() {
   return (
     <div className="h-[100dvh] w-full flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4 relative overflow-hidden">
       
-      {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-blue-400/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
       </div>
 
-      {/* Main Card Container */}
       <div className="w-full max-w-6xl mx-auto relative z-10 grid lg:grid-cols-[40%_60%] gap-0 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden h-auto max-h-[90vh] border border-gray-100 dark:border-gray-700 transition-all duration-500">
         
         {/* Back to Home/Login Button */}

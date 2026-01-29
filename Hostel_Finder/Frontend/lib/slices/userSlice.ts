@@ -24,8 +24,6 @@ export const toggleFavorite = createAsyncThunk(
     async ({ userId, hostelId, isAdding }: { userId: string, hostelId: string, isAdding: boolean }, { dispatch, rejectWithValue }) => {
         try {
             const { data } = await api.post(`/users/favorites/${hostelId}`);
-            // Update auth state with new favorites list
-            // Convert ObjectIds to strings to match normalized hostel IDs
             const normalizedFavorites = data.map((id: any) => typeof id === 'string' ? id : id.toString());
             dispatch(updateCurrentUser({ favoriteHostels: normalizedFavorites }));
             return { userId, hostelId, isAdding };
@@ -151,9 +149,16 @@ export const unblockUser = createAsyncThunk(
 
 export const uploadProfileImage = createAsyncThunk(
     'user/uploadProfileImage',
-    async (image: string, { dispatch, rejectWithValue }) => {
+    async (imageBlob: Blob, { dispatch, rejectWithValue }) => {
         try {
-            const { data } = await api.post('/users/profile-image', { image });
+            const formData = new FormData();
+            formData.append('profileImage', imageBlob, 'profile.jpg');
+
+            const { data } = await api.post('/users/profile-image', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
             dispatch(updateCurrentUser({ profileImage: data.profileImage }));
             return data.profileImage;
         } catch (error: any) {

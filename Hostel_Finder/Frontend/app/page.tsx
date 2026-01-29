@@ -58,13 +58,13 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden font-sans">
 
-      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+      {/* <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-      </div>
+      </div> */}
 
       {/* --- HERO SECTION --- */}
-      <section className="relative z-10 pt-15 md:pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <section className="relative z-10 pt-15 md:pt-38 pb-25 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div className="absolute inset-0 -z-10">
           <img
             // src="https://img.freepik.com/free-photo/cinematic-film-location-decor_23-2151918969.jpg?semt=ais_hybrid&w=740&q=80"
@@ -91,11 +91,7 @@ export default function HomePage() {
               Experience premium living with verified listings and zero hassle.
             </p>
           </div>
-
-          {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
-
-            {/* PRIMARY CTA */}
             <Link
               href="/hostels"
               className="group relative px-7 py-3.5 rounded-xl font-semibold text-base
@@ -137,17 +133,15 @@ export default function HomePage() {
             {stats.map((stat, i) => {
               const Icon = stat.icon;
               return (
-                <>
-                  <div key={i} className="flex flex-col items-center p-4 gap-1 rounded-xl bg-white/5 backdrop-blur-sm border border-blue-500/40 hover:bg-black/20 transition-colors group">
-                    <div className="flex items-center justify-center gap-2">
-                      <Icon className="w-6 h-6 text-blue-300 mb-2 group-hover:scale-110 transition-transform" />
-                      <div className="text-2xl font-bold text-white mb-2">{stat.value}</div>
-                    </div>
-                    <div>
-                      <div className="text-xs font-medium text-blue-200 uppercase tracking-wider">{stat.label}</div>
-                    </div>
+                <div key={i} className="flex flex-col items-center p-4 gap-1 rounded-xl bg-white/5 backdrop-blur-sm border border-blue-500/40 hover:bg-black/20 transition-colors group">
+                  <div className="flex items-center justify-center gap-2">
+                    <Icon className="w-6 h-6 text-blue-300 mb-2 group-hover:scale-110 transition-transform" />
+                    <div className="text-2xl font-bold text-white mb-2">{stat.value}</div>
                   </div>
-                </>
+                  <div>
+                    <div className="text-xs font-medium text-blue-200 uppercase tracking-wider">{stat.label}</div>
+                  </div>
+                </div>
               )
             })}
           </div>

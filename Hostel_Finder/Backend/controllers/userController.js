@@ -238,29 +238,9 @@ const getAllUsers = asyncHandler(async (req, res) => {
 // @route   POST /api/users/profile-image
 // @access  Private
 const uploadProfileImage = asyncHandler(async (req, res) => {
-    const { image } = req.body;
-
-    if (!image) {
+    if (!req.file) {
         res.status(400);
-        throw new Error('No image provided');
-    }
-
-    // Validate Base64 format
-    const matches = image.match(/^data:image\/(jpeg|jpg|png|webp);base64,/);
-    if (!matches) {
-        res.status(400);
-        throw new Error('Invalid image format. Only JPEG, PNG, and WebP are allowed.');
-    }
-
-    // Check file size (Base64 is ~33% larger than original)
-    // Max 2MB original = ~2.67MB Base64
-    const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
-    const sizeInBytes = Buffer.from(base64Data, 'base64').length;
-    const maxSize = 2 * 1024 * 1024; // 2MB
-
-    if (sizeInBytes > maxSize) {
-        res.status(400);
-        throw new Error('Image size must be less than 2MB');
+        throw new Error('No image file provided');
     }
 
     const user = await User.findById(req.user.id);
@@ -270,7 +250,7 @@ const uploadProfileImage = asyncHandler(async (req, res) => {
         throw new Error('User not found');
     }
 
-    user.profileImage = image;
+    user.profileImage = req.file.path; // Cloudinary URL
     await user.save();
 
     res.json({

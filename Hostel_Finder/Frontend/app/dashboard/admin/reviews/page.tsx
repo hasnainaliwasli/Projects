@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea"; // Added
 import { toast } from "sonner";
 import { useState } from "react"; // Added
-import { Star } from "lucide-react";
+import { Star, Trash2 } from "lucide-react";
 
 export default function AdminReviewsPage() {
     const dispatch = useAppDispatch();
@@ -16,15 +16,24 @@ export default function AdminReviewsPage() {
     const { hostels } = useAppSelector((state) => state.hostel);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editForm, setEditForm] = useState({ rating: 0, comment: "" });
+    const [reviewToDelete, setReviewToDelete] = useState<string | null>(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-    const handleDeleteReview = async (reviewId: string) => {
-        if (confirm("Are you sure you want to delete this review?")) {
-            try {
-                await dispatch(deleteReview(reviewId)).unwrap();
-                toast.success("Review deleted successfully");
-            } catch (error: any) {
-                toast.error(typeof error === 'string' ? error : "Failed to delete review");
-            }
+    const handleDeleteClick = (reviewId: string) => {
+        setReviewToDelete(reviewId);
+        setShowDeleteModal(true);
+    };
+
+    const confirmDelete = async () => {
+        if (!reviewToDelete) return;
+
+        try {
+            await dispatch(deleteReview(reviewToDelete)).unwrap();
+            toast.success("Review deleted successfully");
+            setShowDeleteModal(false);
+            setReviewToDelete(null);
+        } catch (error: any) {
+            toast.error(typeof error === 'string' ? error : "Failed to delete review");
         }
     };
 
@@ -52,7 +61,7 @@ export default function AdminReviewsPage() {
         <DashboardLayout role="admin">
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-xl md:text-2xl font-bold mb-2">Manage Reviews</h1>
+                    <h1 className="text-xl md:text-2xl font-bold">Manage Reviews</h1>
                     <p className="text-muted-foreground">
                         {reviews.length} total review{reviews.length !== 1 ? "s" : ""}
                     </p>
@@ -139,7 +148,7 @@ export default function AdminReviewsPage() {
                                                     </div>
                                                     <div className="flex gap-2 w-full sm:w-auto sm:mt-0">
                                                         <Button variant="outline" size="sm" className="flex-1 sm:flex-none h-8" onClick={() => startEdit(review)}>Edit</Button>
-                                                        <Button variant="destructive" size="sm" className="flex-1 sm:flex-none h-8 bg-destructive/10 text-destructive hover:bg-destructive/20 border-transparent shadow-none" onClick={() => handleDeleteReview(review.id)}>Delete</Button>
+                                                        <Button variant="destructive" size="sm" className="flex-1 sm:flex-none h-8 bg-destructive/10 text-destructive hover:bg-destructive/20 border-transparent shadow-none" onClick={() => handleDeleteClick(review.id)}>Delete</Button>
                                                     </div>
                                                 </div>
                                             </CardHeader>
@@ -160,6 +169,44 @@ export default function AdminReviewsPage() {
                                 </Card>
                             );
                         })}
+                    </div>
+                )}
+                {/* Delete Confirmation Modal */}
+                {showDeleteModal && (
+                    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                        <Card className="w-full max-w-md my-0 shadow-lg border-0">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2 text-destructive">
+                                    <Trash2 className="h-5 w-5" />
+                                    Delete Review
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-gray-600 mb-4">
+                                    Are you sure you want to delete this review?
+                                </p>
+                                <p className="text-sm text-muted-foreground mb-6">
+                                    This action is permanent and cannot be undone.
+                                </p>
+                                <div className="flex gap-3 justify-end">
+                                    <Button
+                                        variant="ghost"
+                                        onClick={() => {
+                                            setShowDeleteModal(false);
+                                            setReviewToDelete(null);
+                                        }}
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        onClick={confirmDelete}
+                                        variant="destructive"
+                                    >
+                                        Delete Review
+                                    </Button>
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
                 )}
             </div>

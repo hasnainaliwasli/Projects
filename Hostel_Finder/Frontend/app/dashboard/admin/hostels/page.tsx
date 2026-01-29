@@ -13,6 +13,22 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import { Trash2, MoreVertical, Eye, Edit, CheckCircle, XCircle, Search, Filter } from "lucide-react";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 
 export default function AdminHostelsPage() {
     const dispatch = useAppDispatch();
@@ -42,6 +58,8 @@ export default function AdminHostelsPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [cityFilter, setCityFilter] = useState<string>("all");
     const [statusTab, setStatusTab] = useState("pending");
+    const [hostelToDelete, setHostelToDelete] = useState<{ id: string, name: string } | null>(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     // Get unique cities
     const cities = Array.from(new Set(hostels.map((h) => h.location.city)));
@@ -68,10 +86,17 @@ export default function AdminHostelsPage() {
         return true;
     });
 
-    const handleDeleteHostel = (hostelId: string, hostelName: string) => {
-        if (confirm(`Are you sure you want to delete "${hostelName}"?`)) {
-            dispatch(removeHostel(hostelId) as any);
+    const handleDeleteClick = (hostelId: string, hostelName: string) => {
+        setHostelToDelete({ id: hostelId, name: hostelName });
+        setShowDeleteModal(true);
+    };
+
+    const confirmDelete = () => {
+        if (hostelToDelete) {
+            dispatch(removeHostel(hostelToDelete.id) as any);
             toast.success("Hostel deleted successfully");
+            setShowDeleteModal(false);
+            setHostelToDelete(null);
         }
     };
 
@@ -105,7 +130,7 @@ export default function AdminHostelsPage() {
         <DashboardLayout role="admin">
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-xl md:text-2xl font-bold mb-2">Manage Hostels</h1>
+                    <h1 className="text-xl md:text-2xl font-bold">Manage Hostels</h1>
                     <p className="text-muted-foreground h-6">
                         {isLoading ? (
                             <span className="inline-block w-24 h-4 bg-muted animate-pulse rounded align-middle" />
@@ -115,47 +140,51 @@ export default function AdminHostelsPage() {
                     </p>
                 </div>
 
-                {/* Filters */}
-                <Card>
-                    <CardContent className="pt-6">
-                        <div className="grid md:grid-cols-3 gap-4">
-                            <div className="space-y-2">
-                                <Label>Search</Label>
-                                <Input
-                                    placeholder="Search by name or city"
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                />
-                            </div>
+                {/* Filters Toolbar */}
+                <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-card p-4 rounded-xl shadow-sm border border-border/40">
+                    <div className="relative w-full md:w-auto flex-1 md:max-w-md">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                            placeholder="Search by name or city..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="pl-9 bg-background/50 border-border/60"
+                        />
+                    </div>
 
-                            <div className="space-y-2">
-                                <Label>City</Label>
-                                <select
-                                    value={cityFilter}
-                                    onChange={(e) => setCityFilter(e.target.value)}
-                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                                >
-                                    <option value="all">All Cities</option>
+                    <div className="flex items-center gap-2 w-full md:w-auto">
+                        <div className="flex items-center gap-2 bg-background/50 border border-border/60 rounded-md px-3 h-10 w-full md:w-[200px]">
+                            <Filter className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                            <Select value={cityFilter} onValueChange={setCityFilter}>
+                                <SelectTrigger className="w-full h-full border-none bg-transparent focus:ring-0 focus:ring-offset-0 px-1 text-sm">
+                                    <SelectValue placeholder="All Cities" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Cities</SelectItem>
                                     {cities.map((city) => (
-                                        <option key={city} value={city}>{city}</option>
+                                        <SelectItem key={city} value={city}>{city}</SelectItem>
                                     ))}
-                                </select>
-                            </div>
-
-                            <div className="flex items-end">
-                                <Button
-                                    variant="outline"
-                                    onClick={() => {
-                                        setSearchQuery("");
-                                        setCityFilter("all");
-                                    }}
-                                >
-                                    Clear Filters
-                                </Button>
-                            </div>
+                                </SelectContent>
+                            </Select>
                         </div>
-                    </CardContent>
-                </Card>
+
+                        {/* Clear Filters */}
+                        {(searchQuery || cityFilter !== "all") && (
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                    setSearchQuery("");
+                                    setCityFilter("all");
+                                }}
+                                className="text-muted-foreground hover:text-foreground shrink-0"
+                            >
+                                <XCircle className="mr-2 h-4 w-4" />
+                                Clear
+                            </Button>
+                        )}
+                    </div>
+                </div>
 
                 <Tabs defaultValue="pending" value={statusTab} onValueChange={setStatusTab} className="w-full">
                     <TabsList className="grid w-full grid-cols-3">
@@ -200,12 +229,56 @@ export default function AdminHostelsPage() {
                                     )}
                                 </div>
                                 <CardHeader>
-                                    <CardTitle className="text-lg">{hostel.name}</CardTitle>
-                                    <p className="text-sm text-muted-foreground">
-                                        {hostel.location.area}, {hostel.location.city}
-                                    </p>
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <CardTitle className="text-lg">{hostel.name}</CardTitle>
+                                            <p className="text-sm mb-0 pb-0 text-muted-foreground">
+                                                {hostel.location.area}, {hostel.location.city}
+                                            </p>
+                                        </div>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="ghost" className="h-8 w-8 p-0">
+                                                    <span className="sr-only">Open menu</span>
+                                                    <MoreVertical className="h-4 w-4" />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end" side="bottom">
+                                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                <DropdownMenuItem asChild>
+                                                    <Link href={`/hostels/${hostel.id}`} className="cursor-pointer">
+                                                        <Eye className="mr-2 h-4 w-4 text-slate/80" />
+                                                        View
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem asChild>
+                                                    <Link href={`/dashboard/owner/hostels/edit/${hostel.id}`} className="cursor-pointer">
+                                                        <Edit className="mr-2 h-4 w-4 text-slate" />
+                                                        Edit
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                                {hostel.status === 'pending' && (
+                                                    <>
+                                                        <DropdownMenuItem onClick={() => handleStatusUpdate(hostel.id, 'approved')} className="text-green-600 focus:text-white focus:bg-green-900 cursor-pointer">
+                                                            <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+                                                            Approve
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => handleStatusUpdate(hostel.id, 'rejected')} className="cursor-pointer">
+                                                            <XCircle className="mr-2 h-4 w-4 text-red-500" />
+                                                            Reject
+                                                        </DropdownMenuItem>
+                                                    </>
+                                                )}
+                                                <DropdownMenuSeparator />
+                                                <DropdownMenuItem onClick={() => handleDeleteClick(hostel.id, hostel.name)} className="text-red-600 focus:text-white focus:bg-red-900 cursor-pointer">
+                                                    <Trash2 className="mr-2 h-4 w-4 text-red-600" />
+                                                    Delete
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </div>
                                 </CardHeader>
-                                <CardContent className="space-y-4">
+                                <CardContent className="space-y-2">
                                     <div className="flex items-center gap-2">
                                         <Badge variant={hostel.isFor === "boys" ? "default" : "secondary"}>
                                             {hostel.isFor === "boys" ? "Boys" : "Girls"}
@@ -234,46 +307,51 @@ export default function AdminHostelsPage() {
                                         </div>
                                     </div>
 
-                                    <div className="flex flex-wrap gap-2 mt-auto pt-2 border-t">
-                                        <div className="flex gap-2 w-full sm:w-auto flex-1">
-                                            <Link href={`/hostels/${hostel.id}`} className="flex-1">
-                                                <Button variant="outline" className="w-full" size="sm">
-                                                    View
-                                                </Button>
-                                            </Link>
-                                            <Link href={`/dashboard/owner/hostels/edit/${hostel.id}`} className="flex-1">
-                                                <Button variant="secondary" className="w-full" size="sm">
-                                                    Edit
-                                                </Button>
-                                            </Link>
-                                        </div>
 
-                                        {hostel.status === 'pending' && (
-                                            <div className="flex gap-2 w-full sm:w-auto">
-                                                <Button size="sm" className="flex-1 sm:flex-none" onClick={() => handleStatusUpdate(hostel.id, 'approved')}>
-                                                    Approve
-                                                </Button>
-                                                <Button size="sm" variant="destructive" className="flex-1 sm:flex-none" onClick={() => handleStatusUpdate(hostel.id, 'rejected')}>
-                                                    Reject
-                                                </Button>
-                                            </div>
-                                        )}
-
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            className="w-full border border-destructive sm:w-auto text-destructive hover:bg-destructive/10 hover:text-destructive"
-                                            onClick={() => handleDeleteHostel(hostel.id, hostel.name)}
-                                        >
-                                            Delete
-                                        </Button>
-                                    </div>
                                 </CardContent>
                             </Card>
                         ))}
                     </div>
                 )}
             </div>
+            {/* Delete Confirmation Modal */}
+            {showDeleteModal && hostelToDelete && (
+                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                    <Card className="w-full max-w-md my-0 shadow-lg border-0">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-destructive">
+                                <Trash2 className="h-5 w-5" />
+                                Delete Hostel
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-gray-600 mb-4">
+                                Are you sure you want to delete <strong>{hostelToDelete.name}</strong>?
+                            </p>
+                            <p className="text-sm text-muted-foreground mb-6">
+                                This action is permanent and cannot be undone. All associated data will be removed.
+                            </p>
+                            <div className="flex gap-3 justify-end">
+                                <Button
+                                    variant="ghost"
+                                    onClick={() => {
+                                        setShowDeleteModal(false);
+                                        setHostelToDelete(null);
+                                    }}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    onClick={confirmDelete}
+                                    variant="destructive"
+                                >
+                                    Delete Hostel
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
         </DashboardLayout>
     );
 }

@@ -4,7 +4,6 @@ import hostelReducer from "./slices/hostelSlice";
 import reviewReducer from "./slices/reviewSlice";
 import userReducer from "./slices/userSlice";
 import reportReducer from "./slices/reportSlice";
-
 import notificationReducer from './slices/notificationSlice';
 import chatReducer from './slices/chatSlice';
 

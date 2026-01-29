@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { Trash2 } from "lucide-react";
 
 export default function StudentReviewsPage() {
     const dispatch = useAppDispatch();
@@ -21,6 +22,8 @@ export default function StudentReviewsPage() {
         rating: 5,
         comment: "",
     });
+    const [reviewToDelete, setReviewToDelete] = useState<string | null>(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     const myReviews = reviews.filter((r) => r.userId === currentUser?.id);
 
@@ -55,14 +58,21 @@ export default function StudentReviewsPage() {
         setEditingReviewId(null);
     };
 
-    const handleDeleteReview = async (reviewId: string) => {
-        if (confirm("Are you sure you want to delete this review?")) {
-            try {
-                await dispatch(deleteReview(reviewId)).unwrap();
-                toast.success("Review deleted successfully!");
-            } catch (error: any) {
-                toast.error(typeof error === 'string' ? error : "Failed to delete review");
-            }
+    const handleDeleteClick = (reviewId: string) => {
+        setReviewToDelete(reviewId);
+        setShowDeleteModal(true);
+    };
+
+    const confirmDelete = async () => {
+        if (!reviewToDelete) return;
+
+        try {
+            await dispatch(deleteReview(reviewToDelete)).unwrap();
+            toast.success("Review deleted successfully!");
+            setShowDeleteModal(false);
+            setReviewToDelete(null);
+        } catch (error: any) {
+            toast.error(typeof error === 'string' ? error : "Failed to delete review");
         }
     };
 
@@ -119,7 +129,7 @@ export default function StudentReviewsPage() {
                                                     <Button
                                                         variant="destructive"
                                                         size="sm"
-                                                        onClick={() => handleDeleteReview(review.id)}
+                                                        onClick={() => handleDeleteClick(review.id)}
                                                     >
                                                         Delete
                                                     </Button>
@@ -174,6 +184,44 @@ export default function StudentReviewsPage() {
                                 </Card>
                             );
                         })}
+                    </div>
+                )}
+                {/* Delete Confirmation Modal */}
+                {showDeleteModal && (
+                    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                        <Card className="w-full max-w-md my-0 shadow-lg border-0">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2 text-destructive">
+                                    <Trash2 className="h-5 w-5" />
+                                    Delete Review
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-gray-600 mb-4">
+                                    Are you sure you want to delete this review?
+                                </p>
+                                <p className="text-sm text-muted-foreground mb-6">
+                                    This action is permanent and cannot be undone.
+                                </p>
+                                <div className="flex gap-3 justify-end">
+                                    <Button
+                                        variant="ghost"
+                                        onClick={() => {
+                                            setShowDeleteModal(false);
+                                            setReviewToDelete(null);
+                                        }}
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        onClick={confirmDelete}
+                                        variant="destructive"
+                                    >
+                                        Delete Review
+                                    </Button>
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
                 )}
             </div>

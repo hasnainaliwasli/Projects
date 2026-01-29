@@ -21,6 +21,11 @@ export interface User {
     createdAt: string;
 }
 
+export type loginCredentials = {
+    email: string;
+    password: string;
+}
+
 // Location Interface
 export interface Location {
     city: string;

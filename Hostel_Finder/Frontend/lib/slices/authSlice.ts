@@ -1,21 +1,22 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { AuthState, User } from "@/lib/types";
+import { AuthState, User, loginCredentials } from "@/lib/types";
 import api from "@/lib/api";
+import { LogsIcon } from "lucide-react";
 
-// Async Thunks
-export const login = createAsyncThunk(
+export const login = createAsyncThunk<User, loginCredentials>(
     'auth/login',
-    async (credentials: any, { rejectWithValue }) => {
+    async (credentials, { rejectWithValue }) => {
         try {
             const { data } = await api.post('/auth/login', credentials);
             localStorage.setItem('token', data.token);
-            // Don't store token in Redux state to keep it serializable/clean
             return { ...data, id: data._id };
         } catch (error: any) {
             return rejectWithValue(error.response?.data?.error || error.response?.data?.message || 'Login failed');
         }
     }
 );
+
+
 
 export const register = createAsyncThunk(
     'auth/register',
@@ -30,11 +31,14 @@ export const register = createAsyncThunk(
     }
 );
 
-// Load User (Verify Token on App Start)
 export const loadUser = createAsyncThunk(
     'auth/loadUser',
     async (_, { rejectWithValue }) => {
         try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                return rejectWithValue('No token found');
+            }
             const { data } = await api.get('/auth/me');
             return data;
         } catch (error: any) {

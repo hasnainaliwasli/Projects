@@ -17,7 +17,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 
-export function NotificationsDropdown() {
+export function NotificationsDropdown({ className }: { className?: string }) {
     const dispatch = useAppDispatch();
     const { notifications, unreadCount, loading } = useAppSelector((state) => state.notification);
     const [open, setOpen] = useState(false);
@@ -60,8 +60,8 @@ export function NotificationsDropdown() {
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
-                <Button variant="ghost" size="icon" className="relative">
-                    <Bell className="h-5 w-5 text-muted-foreground" />
+                <Button variant="ghost" size="icon" className={cn("relative", className)}>
+                    <Bell className="h-5 w-5" />
                     {unreadCount > 0 && (
                         <span className="absolute top-2 right-2 flex h-2.5 w-2.5 items-center justify-center">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75"></span>

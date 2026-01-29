@@ -74,7 +74,7 @@ export default function ProfileImageUploader({ currentImage, defaultImage = "htt
         setCrop(centerAspectCrop(width, height, 1));
     }, []);
 
-    const getCroppedImage = useCallback(async (): Promise<string | null> => {
+    const getCroppedImage = useCallback(async (): Promise<Blob | null> => {
         if (!imgRef.current || !completedCrop) return null;
 
         const canvas = document.createElement("canvas");
@@ -101,19 +101,27 @@ export default function ProfileImageUploader({ currentImage, defaultImage = "htt
             outputSize
         );
 
-        return canvas.toDataURL("image/jpeg", 0.9);
+        return new Promise((resolve) => {
+            canvas.toBlob(
+                (blob) => {
+                    resolve(blob);
+                },
+                "image/jpeg",
+                0.95
+            );
+        });
     }, [completedCrop]);
 
     const handleUpload = async () => {
-        const croppedImage = await getCroppedImage();
-        if (!croppedImage) {
+        const croppedImageBlob = await getCroppedImage();
+        if (!croppedImageBlob) {
             toast.error("Please select a crop area");
             return;
         }
 
         setUploading(true);
         try {
-            await dispatch(uploadProfileImage(croppedImage)).unwrap();
+            await dispatch(uploadProfileImage(croppedImageBlob)).unwrap();
             toast.success("Profile image updated successfully!");
             setIsOpen(false);
             setImgSrc("");
