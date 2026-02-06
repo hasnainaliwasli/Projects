@@ -15,7 +15,11 @@ import {
   ArrowRight,
   MapPin,
   Coffee,
-  Wifi
+  Wifi,
+  Facebook,
+  Twitter,
+  Instagram,
+  Linkedin
 } from "lucide-react";
 
 export default function HomePage() {
@@ -68,25 +72,27 @@ export default function HomePage() {
         <div className="absolute inset-0 -z-10">
           <img
             // src="https://img.freepik.com/free-photo/cinematic-film-location-decor_23-2151918969.jpg?semt=ais_hybrid&w=740&q=80"
-            src="https://cdn.qwenlm.ai/output/3e5c29e8-48be-4933-bc7d-19c7556beefe/t2i/3516911f-1a2a-4882-a6b3-2423830fc051/1769163268.png?key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXNvdXJjZV91c2VyX2lkIjoiM2U1YzI5ZTgtNDhiZS00OTMzLWJjN2QtMTljNzU1NmJlZWZlIiwicmVzb3VyY2VfaWQiOiIxNzY5MTYzMjY4IiwicmVzb3VyY2VfY2hhdF9pZCI6IjJiYzUxNjVkLTJlMmEtNDNlNC1iMDBhLTk0ZmY4NDFmMjJhNSJ9.gVyd3NhBjHtJvByhypPgAzZfF1yt7iOJaQjMh7Unhko"
+            // src="https://cdn.qwenlm.ai/output/3e5c29e8-48be-4933-bc7d-19c7556beefe/t2i/3516911f-1a2a-4882-a6b3-2423830fc051/1769163268.png?key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXNvdXJjZV91c2VyX2lkIjoiM2U1YzI5ZTgtNDhiZS00OTMzLWJjN2QtMTljNzU1NmJlZWZlIiwicmVzb3VyY2VfaWQiOiIxNzY5MTYzMjY4IiwicmVzb3VyY2VfY2hhdF9pZCI6IjJiYzUxNjVkLTJlMmEtNDNlNC1iMDBhLTk0ZmY4NDFmMjJhNSJ9.gVyd3NhBjHtJvByhypPgAzZfF1yt7iOJaQjMh7Unhko"
+            // src="https://i.ibb.co/wNM0J12c/Chat-GPT-Image-Feb-6-2026-11-41-46-AM.png"
+            src="https://i.ibb.co/k2X82pQ8/Gemini-Generated-Image-q1rkdvq1rkdvq1rk.png"
             alt="background"
             className="w-full h-full object-cover"
           />
 
-          <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-yellow-500/15 to-green-500/20" />
+          <div className="absolute inset-0 dark:bg-black/40 bg-black/30 " />
         </div>
 
         <div className="max-w-7xl mx-auto text-center">
-          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-serif font-semibold tracking-tight leading-tight text-white drop-shadow-2xl">
+          <div className="space-y-6 animate-in mt-10 fade-in slide-in-from-bottom-8 duration-1000">
+            <h1 className="text-3xl sm:text-5xl lg:text-7xl font-serif font-semibold tracking-tight leading-tight text-white drop-shadow-2xl">
 
               Find Home <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-blue-100 to-white">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-200 via-white to-sky-200">
                 Away From Home
               </span>
             </h1>
 
-            <p className="text-lg tracking-wide text-blue-100 max-w-2xl mx-auto leading-relaxed  drop-shadow-md">
+            <p className="text-base sm:text-lg tracking-wide text-gray-100 max-w-2xl mx-auto leading-relaxed drop-shadow-lg font-medium">
               Connecting students with <span className="font-medium text-white">safe</span>, <span className="font-medium text-white">comfortable</span>, and <span className="font-medium text-white">affordable</span> hostels.
               Experience premium living with verified listings and zero hassle.
             </p>
@@ -94,7 +100,7 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
             <Link
               href="/hostels"
-              className="group relative px-7 py-3.5 rounded-xl font-semibold text-base
+              className="group relative px-5 py-2.5 sm:px-7 sm:py-3.5 rounded-xl font-semibold text-sm sm:text-base
                bg-gradient-to-r from-white to-blue-50 text-blue-900
                shadow-[0_10px_30px_-10px_rgba(255,255,255,0.6)]
                hover:shadow-[0_15px_40px_-10px_rgba(255,255,255,0.9)]
@@ -112,7 +118,7 @@ export default function HomePage() {
             {!isAuthenticated && (
               <Link
                 href="/register"
-                className="group px-7 py-3.5 rounded-xl font-medium text-base text-white
+                className="group px-5 py-2.5 sm:px-7 sm:py-3.5 rounded-xl font-medium text-sm sm:text-base text-white
                  bg-white/10 backdrop-blur-lg
                  border border-white/20
                  hover:bg-white/20 hover:border-white/40
@@ -133,13 +139,13 @@ export default function HomePage() {
             {stats.map((stat, i) => {
               const Icon = stat.icon;
               return (
-                <div key={i} className="flex flex-col items-center p-4 gap-1 rounded-xl bg-white/5 backdrop-blur-sm border border-blue-500/40 hover:bg-black/20 transition-colors group">
+                <div key={i} className="flex flex-col items-center p-4 gap-1 rounded-xl bg-black/40 backdrop-blur-md border border-white/20 hover:bg-black/50 transition-colors group">
                   <div className="flex items-center justify-center gap-2">
-                    <Icon className="w-6 h-6 text-blue-300 mb-2 group-hover:scale-110 transition-transform" />
-                    <div className="text-2xl font-bold text-white mb-2">{stat.value}</div>
+                    <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-sky-400 mb-2 group-hover:scale-110 transition-transform" />
+                    <div className="text-xl sm:text-2xl font-bold text-white mb-2">{stat.value}</div>
                   </div>
                   <div>
-                    <div className="text-xs font-medium text-blue-200 uppercase tracking-wider">{stat.label}</div>
+                    <div className="text-xs font-bold text-sky-200 uppercase tracking-wider">{stat.label}</div>
                   </div>
                 </div>
               )
@@ -152,8 +158,8 @@ export default function HomePage() {
       <section className="py-24 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16 space-y-4">
-            <h2 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white">Why Choose Us?</h2>
-            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">We're revolutionizing the way students find accommodation.</p>
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white">Why Choose Us?</h2>
+            <p className="text-base sm:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">We're revolutionizing the way students find accommodation.</p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -165,8 +171,8 @@ export default function HomePage() {
                   <div className={`w-14 h-14 rounded-2xl ${feature.color} flex items-center justify-center text-white shadow-lg mb-6 group-hover:scale-110 transition-transform duration-300`}>
                     <Icon className="w-7 h-7" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{feature.title}</h3>
-                  <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{feature.description}</p>
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-3">{feature.title}</h3>
+                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 leading-relaxed">{feature.description}</p>
                 </div>
               )
             })}
@@ -185,11 +191,11 @@ export default function HomePage() {
               <img
                 src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=2670&auto=format&fit=crop"
                 alt="Happy Students"
-                className="relative rounded-3xl shadow-2xl w-full object-cover h-[500px] hover:rotate-1 transition-transform duration-500"
+                className="relative rounded-3xl shadow-2xl w-full object-cover h-[auto] hover:rotate-1 transition-transform duration-500"
               />
 
               {/* Floating Card 1 */}
-              <div className="absolute -bottom-6 -right-6 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 flex items-center gap-3 animate-bounce" style={{ animationDuration: '3s' }}>
+              <div className="absolute -bottom-4 -right-4 bg-white dark:bg-gray-800 p-1 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 flex items-center gap-3 animate-bounce" style={{ animationDuration: '3s' }}>
                 <div className="p-2 bg-red-100 text-red-600 rounded-full">
                   <Heart className="w-5 h-5 fill-current" />
                 </div>
@@ -204,10 +210,10 @@ export default function HomePage() {
               <div className="inline-flex px-4 py-1.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 text-sm font-bold tracking-wide uppercase">
                 For Students
               </div>
-              <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white leading-tight">
+              <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white leading-tight">
                 Live Your Best <br />Student Life
               </h2>
-              <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
+              <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
                 Struggling to find a place? We make it easy. Compare prices, check distance from your university,
                 and see what other students are saying before you book.
               </p>
@@ -224,8 +230,8 @@ export default function HomePage() {
                 ))}
               </ul>
               <Link href="/register">
-                <button className="mt-4 px-8 py-3.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold rounded-xl hover:opacity-90 transition-all flex items-center gap-2">
-                  Join for Free <ArrowRight className="w-5 h-5" />
+                <button className="mt-4 px-6 py-3 sm:px-8 sm:py-3.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold rounded-xl hover:opacity-90 transition-all flex items-center gap-2 text-sm sm:text-base">
+                  Join for Free <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               </Link>
             </div>
@@ -237,10 +243,10 @@ export default function HomePage() {
               <div className="inline-flex px-4 py-1.5 rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 text-sm font-bold tracking-wide uppercase">
                 For Hostel Owners
               </div>
-              <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white leading-tight">
+              <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white leading-tight">
                 Fill Your Rooms <br />Faster Than Ever
               </h2>
-              <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
+              <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
                 Stop relying on posters and word of-mouth. List your property on Hostel Finder
                 and get direct inquiries from thousands of students looking for a place right now.
               </p>
@@ -257,8 +263,8 @@ export default function HomePage() {
               </div>
 
               <Link href="/register">
-                <button className="mt-4 px-8 py-3.5 border-2 border-gray-900 dark:border-white text-gray-900 dark:text-white font-bold rounded-xl hover:bg-gray-900 hover:text-white dark:hover:bg-white dark:hover:text-gray-900 transition-all flex items-center gap-2">
-                  List Property <ArrowRight className="w-5 h-5" />
+                <button className="mt-4 px-4 py-2 sm:px-8 sm:py-3.5 border-2 border-gray-900 dark:border-white text-gray-900 dark:text-white font-bold rounded-xl hover:bg-gray-900 hover:text-white dark:hover:bg-white dark:hover:text-gray-900 transition-all flex items-center gap-2 text-sm sm:text-base">
+                  List Property <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               </Link>
             </div>
@@ -268,10 +274,10 @@ export default function HomePage() {
               <img
                 src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=2670&auto=format&fit=crop"
                 alt="Hostel Owner Dashboard"
-                className="relative rounded-3xl shadow-2xl w-full object-cover h-[500px] hover:rotate-1 transition-transform duration-500"
+                className="relative rounded-3xl shadow-2xl w-full object-cover h-[auto] hover:rotate-1 transition-transform duration-500"
               />
               {/* Floating Card 2 */}
-              <div className="absolute -top-6 -left-6 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 flex items-center gap-3 animate-bounce" style={{ animationDuration: '4s' }}>
+              <div className="absolute -top-4 -left-3 bg-white dark:bg-gray-800 p-1 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 flex items-center gap-3 animate-bounce" style={{ animationDuration: '4s' }}>
                 <div className="p-2 bg-green-100 text-green-600 rounded-full">
                   <TrendingUp className="w-5 h-5" />
                 </div>
@@ -302,9 +308,22 @@ export default function HomePage() {
                 The most trusted platform for students to find affordable and safe hostels near their universities.
               </p>
               <div className="flex gap-4">
-                {/* Social Placeholders */}
-                {[1, 2, 3].map((_, i) => (
-                  <div key={i} className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors cursor-pointer"></div>
+                {[
+                  { icon: Facebook, href: "https://facebook.com", label: "Facebook" },
+                  { icon: Twitter, href: "https://twitter.com", label: "Twitter" },
+                  { icon: Instagram, href: "https://instagram.com", label: "Instagram" },
+                  { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" }
+                ].map(({ icon: Icon, href, label }, i) => (
+                  <a
+                    key={i}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors cursor-pointer flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+                  >
+                    <Icon className="w-4 h-4" />
+                  </a>
                 ))}
               </div>
             </div>
@@ -342,7 +361,6 @@ export default function HomePage() {
                 </li>
               </ul>
             </div>
-
           </div>
 
           <div className="border-t border-gray-100 dark:border-gray-800 pt-8 text-center">
@@ -356,3 +374,4 @@ export default function HomePage() {
     </div>
   );
 }
+

@@ -7,7 +7,8 @@ const connectDB = require('./config/db');
 dotenv.config();
 
 // Connect to database
-connectDB();
+// Connect to database
+// connectDB(); // Called before server listen
 
 const http = require('http');
 const { Server } = require('socket.io');
@@ -92,6 +93,8 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
-server.listen(PORT, () => {
-    console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+connectDB().then(() => {
+    server.listen(PORT, () => {
+        console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+    });
 });

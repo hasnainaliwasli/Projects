@@ -41,11 +41,11 @@ export default function HostelsPage() {
     const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
     const [filters, setFilters] = useState({
         searchQuery: "",
-        city: "All Cities", // Default value for Select
-        genderType: "All Genders", // Default value for Select
+        city: "All Cities",
+        genderType: "All Genders",
         minRent: "",
         maxRent: "",
-        rating: "0", // String for Select compatibility
+        rating: "0",
         roomTypes: {
             Single: false,
             Double: false,
@@ -177,6 +177,51 @@ export default function HostelsPage() {
                         </div>
 
                         <div className="flex-1 overflow-y-auto p-6 space-y-8">
+                            {/* Mobile-only visible filters (City, Type, Rating) */}
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pb-6 border-b border-border/50">
+                                <div className="space-y-2">
+                                    <Label>City</Label>
+                                    <Select value={filters.city} onValueChange={(val) => setFilters({ ...filters, city: val })}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="City" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="All Cities">All Cities</SelectItem>
+                                            {cities.map((city) => (
+                                                <SelectItem key={city} value={city}>{city}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Hostel Type</Label>
+                                    <Select value={filters.genderType} onValueChange={(val) => setFilters({ ...filters, genderType: val })}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Type" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="All Genders">All Types</SelectItem>
+                                            <SelectItem value="boys">Boys Hostel</SelectItem>
+                                            <SelectItem value="girls">Girls Hostel</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Minimum Rating</Label>
+                                    <Select value={filters.rating} onValueChange={(val) => setFilters({ ...filters, rating: val })}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Rating" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="0">Any Rating</SelectItem>
+                                            <SelectItem value="3">3+ Stars</SelectItem>
+                                            <SelectItem value="4">4+ Stars</SelectItem>
+                                            <SelectItem value="4.5">4.5+ Stars</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
+
                             {/* Price Range */}
                             <div className="space-y-4">
                                 <Label className="text-base font-semibold">Price Range (PKR)</Label>
@@ -280,13 +325,13 @@ export default function HostelsPage() {
                 <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-500/20 rounded-full blur-[100px]" />
 
                 <div className="container mx-auto px-4 relative z-10 text-center space-y-6">
-                    <Badge variant="secondary" className="bg-white/10 text-white hover:bg-white/20 border-0 mb-4 px-4 py-1.5 backdrop-blur-sm">
+                    <Badge variant="secondary" className="bg-white/10 text-white hover:bg-white/20 border-0 mb-4 px-3 py-1 sm:px-4 sm:py-1.5 backdrop-blur-sm text-xs sm:text-sm">
                         ✨ Over {hostels.length} verified listings
                     </Badge>
-                    <h1 className="text-4xl md:text-6xl font-bold tracking-tight bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent">
+                    <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent px-2">
                         Find Your Perfect Student Home
                     </h1>
-                    <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
+                    <p className="text-base sm:text-lg md:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed px-4">
                         Discover comfortable, safe, and affordable hostels near your university.
                         Book instantly with trusted owners.
                     </p>
@@ -305,66 +350,70 @@ export default function HostelsPage() {
                             value={filters.searchQuery}
                             onChange={(e) => setFilters({ ...filters, searchQuery: e.target.value })}
                             placeholder="Search by name, area, or city..."
-                            className="w-full pl-10 pr-4 h-12 rounded-lg border bg-muted/30 focus:bg-background transition-all focus:ring-2 ring-primary/20 outline-none text-base"
+                            className="w-full pl-10 pr-4 h-10 sm:h-12 rounded-lg border bg-muted/30 focus:bg-background transition-all focus:ring-2 ring-primary/20 outline-none text-sm sm:text-base"
                         />
                     </div>
 
-                    <div className="flex w-full md:w-auto gap-3 overflow-x-auto pb-2 md:pb-0 hide-scrollbar">
-                        {/* City Select */}
-                        <Select value={filters.city} onValueChange={(val) => setFilters({ ...filters, city: val })}>
-                            <SelectTrigger className="w-[140px] h-12">
-                                <div className="flex items-center gap-2">
-                                    <MapPin className="h-4 w-4 text-muted-foreground" />
-                                    <SelectValue placeholder="City" />
-                                </div>
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="All Cities">All Cities</SelectItem>
-                                {cities.map((city) => (
-                                    <SelectItem key={city} value={city}>{city}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                    <div className="flex w-full md:w-auto gap-2 md:gap-3 items-center">
+                        {/* Desktop Filters (Hidden on Mobile) */}
+                        <div className="hidden md:flex gap-3">
+                            {/* City Select */}
+                            <Select value={filters.city} onValueChange={(val) => setFilters({ ...filters, city: val })}>
+                                <SelectTrigger className="w-[140px] h-10 sm:h-12 text-sm sm:text-base">
+                                    <div className="flex items-center gap-2">
+                                        <MapPin className="h-4 w-4 text-muted-foreground" />
+                                        <SelectValue placeholder="City" />
+                                    </div>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="All Cities">All Cities</SelectItem>
+                                    {cities.map((city) => (
+                                        <SelectItem key={city} value={city}>{city}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
 
-                        {/* Gender Select */}
-                        <Select value={filters.genderType} onValueChange={(val) => setFilters({ ...filters, genderType: val })}>
-                            <SelectTrigger className="w-[140px] h-12">
-                                <div className="flex items-center gap-2">
-                                    <Building2 className="h-4 w-4 text-muted-foreground" />
-                                    <SelectValue placeholder="Type" />
-                                </div>
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="All Genders">All Types</SelectItem>
-                                <SelectItem value="boys">Boys Hostel</SelectItem>
-                                <SelectItem value="girls">Girls Hostel</SelectItem>
-                            </SelectContent>
-                        </Select>
+                            {/* Gender Select */}
+                            <Select value={filters.genderType} onValueChange={(val) => setFilters({ ...filters, genderType: val })}>
+                                <SelectTrigger className="w-[140px] h-10 sm:h-12 text-sm sm:text-base">
+                                    <div className="flex items-center gap-2">
+                                        <Building2 className="h-4 w-4 text-muted-foreground" />
+                                        <SelectValue placeholder="Type" />
+                                    </div>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="All Genders">All Types</SelectItem>
+                                    <SelectItem value="boys">Boys Hostel</SelectItem>
+                                    <SelectItem value="girls">Girls Hostel</SelectItem>
+                                </SelectContent>
+                            </Select>
 
-                        {/* Rating Select */}
-                        <Select value={filters.rating} onValueChange={(val) => setFilters({ ...filters, rating: val })}>
-                            <SelectTrigger className="w-[130px] h-12">
-                                <div className="flex items-center gap-2">
-                                    <Star className="h-4 w-4 text-muted-foreground" />
-                                    <SelectValue placeholder="Rating" />
-                                </div>
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="0">Any Rating</SelectItem>
-                                <SelectItem value="3">3+ Stars</SelectItem>
-                                <SelectItem value="4">4+ Stars</SelectItem>
-                                <SelectItem value="4.5">4.5+ Stars</SelectItem>
-                            </SelectContent>
-                        </Select>
+                            {/* Rating Select */}
+                            <Select value={filters.rating} onValueChange={(val) => setFilters({ ...filters, rating: val })}>
+                                <SelectTrigger className="w-[130px] h-10 sm:h-12 text-sm sm:text-base">
+                                    <div className="flex items-center gap-2">
+                                        <Star className="h-4 w-4 text-muted-foreground" />
+                                        <SelectValue placeholder="Rating" />
+                                    </div>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="0">Any Rating</SelectItem>
+                                    <SelectItem value="3">3+ Stars</SelectItem>
+                                    <SelectItem value="4">4+ Stars</SelectItem>
+                                    <SelectItem value="4.5">4.5+ Stars</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
 
-                        {/* More Filters Button */}
+
+                        {/* Filters Button (Visible always, but primary on mobile) */}
                         <Button
                             variant="outline"
-                            className={`h-12 px-4 gap-2 ${activeFilterCount > 0 ? "border-primary text-primary bg-primary/5" : "border-dashed"}`}
+                            className={`h-10 sm:h-12 px-4 gap-2 w-full md:w-auto ${activeFilterCount > 0 ? "border-primary text-primary bg-primary/5" : "border-dashed"}`}
                             onClick={() => setIsFilterModalOpen(true)}
                         >
                             <SlidersHorizontal className="h-4 w-4" />
-                            Filters
+                            <span className="md:inline">Filters</span>
                             {activeFilterCount > 0 && (
                                 <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
                                     {activeFilterCount}
@@ -376,9 +425,9 @@ export default function HostelsPage() {
 
                 {/* Results Stats */}
                 <div className="mt-8 mb-6 flex items-center justify-between">
-                    <h2 className="text-xl font-semibold text-foreground">
+                    <h2 className="text-lg sm:text-xl font-semibold text-foreground">
                         Available Hostels
-                        <span className="ml-2 text-sm font-normal text-muted-foreground">({filteredHostels.length} found)</span>
+                        <span className="ml-2 text-xs sm:text-sm font-normal text-muted-foreground">({filteredHostels.length} found)</span>
                     </h2>
 
                     {activeFilterCount > 0 && (
@@ -394,8 +443,8 @@ export default function HostelsPage() {
                         <div className="bg-muted p-4 rounded-full mb-4">
                             <Search className="h-8 w-8 text-muted-foreground" />
                         </div>
-                        <h3 className="text-xl font-semibold">No hostels found</h3>
-                        <p className="text-muted-foreground max-w-md mt-2 mb-6">
+                        <h3 className="text-lg sm:text-xl font-semibold">No hostels found</h3>
+                        <p className="text-sm sm:text-base text-muted-foreground max-w-md mt-2 mb-6 px-4">
                             We couldn't find any hostels matching your criteria. Try adjusting your filters or search for a different city.
                         </p>
                         <Button onClick={clearFilters}>Reset Search</Button>

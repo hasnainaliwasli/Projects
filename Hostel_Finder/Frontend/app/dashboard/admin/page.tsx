@@ -41,7 +41,7 @@ export default function AdminDashboardPage() {
                             <Users className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold">{users.length > 0 ? users.length - 1 : 0}</div>
+                            <div className="text-2xl md:text-3xl font-bold">{users.length > 0 ? users.length - 1 : 0}</div>
                             <p className="text-xs text-muted-foreground mt-1">
                                 {students.length} students • {owners.length} owners
                             </p>
@@ -56,7 +56,7 @@ export default function AdminDashboardPage() {
                             <Building2 className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold">{approvedHostels.length}</div>
+                            <div className="text-2xl md:text-3xl font-bold">{approvedHostels.length}</div>
                             <p className="text-xs text-muted-foreground mt-1">
                                 Across {new Set(approvedHostels.map(h => h.location.city)).size} cities
                             </p>
@@ -71,7 +71,7 @@ export default function AdminDashboardPage() {
                             <Star className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold">{reviews.length}</div>
+                            <div className="text-2xl md:text-3xl font-bold">{reviews.length}</div>
                             <p className="text-xs text-muted-foreground mt-1">
                                 Avg Rating: {(reviews.reduce((acc, r) => acc + r.rating, 0) / (reviews.length || 1)).toFixed(1)}
                             </p>
@@ -86,7 +86,7 @@ export default function AdminDashboardPage() {
                             <Bed className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold">
+                            <div className="text-2xl md:text-3xl font-bold">
                                 {approvedHostels.reduce((sum, h) => sum + h.availableBeds, 0)}
                             </div>
                             <p className="text-xs text-muted-foreground mt-1">

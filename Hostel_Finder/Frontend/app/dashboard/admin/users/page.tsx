@@ -77,6 +77,7 @@ export default function AdminUsersPage() {
     // Block state
     const [showBlockModal, setShowBlockModal] = useState(false);
     const [blockReason, setBlockReason] = useState("");
+    const [blockTarget, setBlockTarget] = useState<{ id: string, email: string } | null>(null);
 
     // Unblock state
     const [showUnblockModal, setShowUnblockModal] = useState(false);
@@ -128,23 +129,24 @@ export default function AdminUsersPage() {
         }
     };
 
-    const handleBlockToggle = async () => {
-        if (!selectedUser) return;
+    const handleBlockToggle = async (userToBlock?: any) => {
+        // Use provided user or fallback to selectedUser (for detail view)
+        const targetUser = userToBlock || (selectedUser ? users.find(u => u.id === selectedUser) : null);
 
-        const user = users.find(u => u.id === selectedUser);
-        if (!user) return;
+        if (!targetUser) return;
 
-        const isBlocked = blockedUsers.some((u: any) => u.email === user.email);
+        const isBlocked = blockedUsers.some((u: any) => u.email === targetUser.email);
 
         if (isBlocked) {
             // Find blocked user ID
-            const blockedRecord = blockedUsers.find((u: any) => u.email === user.email);
-            if (!blockedRecord) return; // Should not happen given check above
+            const blockedRecord = blockedUsers.find((u: any) => u.email === targetUser.email);
+            if (!blockedRecord) return;
 
-            setUnblockTarget({ id: blockedRecord._id, email: user.email });
+            setUnblockTarget({ id: blockedRecord._id, email: targetUser.email });
             setShowUnblockModal(true);
         } else {
-            // Show block modal
+            // Set block target and show modal
+            setBlockTarget({ id: targetUser.id || targetUser._id, email: targetUser.email });
             setShowBlockModal(true);
         }
     };
@@ -164,16 +166,14 @@ export default function AdminUsersPage() {
     };
 
     const handleBlockUser = async () => {
-        if (!selectedUser) return;
-
-        const user = users.find(u => u.id === selectedUser);
-        if (!user) return;
+        if (!blockTarget) return;
 
         try {
-            await dispatch(blockUser({ email: user.email, reason: blockReason })).unwrap();
+            await dispatch(blockUser({ email: blockTarget.email, reason: blockReason })).unwrap();
             toast.success("User blocked successfully");
             setShowBlockModal(false);
             setBlockReason("");
+            setBlockTarget(null);
             dispatch(fetchBlockedUsers()); // Refresh list
         } catch (error: any) {
             toast.error(typeof error === 'string' ? error : "Failed to block user");
@@ -205,7 +205,7 @@ export default function AdminUsersPage() {
                         />
                     </div>
 
-                    <div className="flex items-center gap-2 w-full md:w-auto">
+                    <div className="flex items-center gap-1 w-full md:w-auto">
                         <div className="flex items-center gap-2 bg-background/50 border border-border/60 rounded-md px-3">
                             <Filter className="h-4 w-4 text-muted-foreground" />
 
@@ -235,7 +235,7 @@ export default function AdminUsersPage() {
                                 setSearchQuery("");
                                 setRoleFilter("all");
                             }}
-                            className="text-muted-foreground border hover:text-white"
+                            className="text-muted-foreground border px-2 hover:text-white"
                         >
                             Reset
                         </Button>
@@ -314,9 +314,34 @@ export default function AdminUsersPage() {
                                                                 )}
                                                             </TableCell>
                                                             <TableCell className="text-right">
-                                                                <Button variant="ghost" size="icon" className="h-8 w-8">
-                                                                    <MoreHorizontal className="h-4 w-4" />
-                                                                </Button>
+                                                                <DropdownMenu>
+                                                                    <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                                                                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                                                                            <MoreHorizontal className="h-4 w-4" />
+                                                                        </Button>
+                                                                    </DropdownMenuTrigger>
+                                                                    <DropdownMenuContent align="end">
+                                                                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                                        <DropdownMenuItem onClick={(e) => { e.stopPropagation(); setSelectedUser(user.id); }}>
+                                                                            <User className="mr-2 h-4 w-4" /> View Profile
+                                                                        </DropdownMenuItem>
+                                                                        <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleBlockToggle(user); }}>
+                                                                            {isBlocked ? (
+                                                                                <>
+                                                                                    <CheckCircle className="mr-2 h-4 w-4 text-green-600" /> Unblock User
+                                                                                </>
+                                                                            ) : (
+                                                                                <>
+                                                                                    <ShieldAlert className="mr-2 h-4 w-4 text-orange-600" /> Block User
+                                                                                </>
+                                                                            )}
+                                                                        </DropdownMenuItem>
+                                                                        <DropdownMenuSeparator />
+                                                                        <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={(e) => { e.stopPropagation(); handleDeleteUser(user.id); }}>
+                                                                            <Trash2 className="mr-2 h-4 w-4" /> Delete User
+                                                                        </DropdownMenuItem>
+                                                                    </DropdownMenuContent>
+                                                                </DropdownMenu>
                                                             </TableCell>
                                                         </TableRow>
                                                     );
@@ -355,9 +380,34 @@ export default function AdminUsersPage() {
                                                                 <div className="text-xs text-muted-foreground">{user.email}</div>
                                                             </div>
                                                         </div>
-                                                        <Button variant="ghost" size="icon" className="h-8 w-8 -mr-2">
-                                                            <MoreHorizontal className="h-4 w-4" />
-                                                        </Button>
+                                                        <DropdownMenu>
+                                                            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                                                                <Button variant="ghost" size="icon" className="h-8 w-8 -mr-2">
+                                                                    <MoreHorizontal className="h-4 w-4" />
+                                                                </Button>
+                                                            </DropdownMenuTrigger>
+                                                            <DropdownMenuContent align="end">
+                                                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); setSelectedUser(user.id); }}>
+                                                                    <User className="mr-2 h-4 w-4" /> View Profile
+                                                                </DropdownMenuItem>
+                                                                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleBlockToggle(user); }}>
+                                                                    {isBlocked ? (
+                                                                        <>
+                                                                            <CheckCircle className="mr-2 h-4 w-4 text-green-600" /> Unblock User
+                                                                        </>
+                                                                    ) : (
+                                                                        <>
+                                                                            <ShieldAlert className="mr-2 h-4 w-4 text-orange-600" /> Block User
+                                                                        </>
+                                                                    )}
+                                                                </DropdownMenuItem>
+                                                                <DropdownMenuSeparator />
+                                                                <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={(e) => { e.stopPropagation(); handleDeleteUser(user.id); }}>
+                                                                    <Trash2 className="mr-2 h-4 w-4" /> Delete User
+                                                                </DropdownMenuItem>
+                                                            </DropdownMenuContent>
+                                                        </DropdownMenu>
                                                     </div>
 
                                                     <div className="flex items-center justify-between pt-2 border-t">

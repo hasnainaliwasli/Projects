@@ -111,7 +111,6 @@ export default function ReportsPage() {
                 <div className="flex justify-between items-center">
                     <div>
                         <h1 className="text-xl md:text-2xl font-bold flex items-center gap-2">
-                            <Flag className="h-5 w-5 md:h-8 md:w-8 text-primary" />
                             User Reports
                         </h1>
                         <p className="text-muted-foreground">Review and manage user submitted reports</p>
@@ -193,16 +192,23 @@ export default function ReportsPage() {
 
                     {/* Detail Column */}
                     {selectedReport ? (
-                        <Card className="flex-[2] flex flex-col overflow-hidden h-full border-l shadow-xl md:shadow-none z-10 absolute inset-0 md:static bg-background">
-                            <div className="p-4 border-b flex justify-between items-center bg-muted/30">
-                                <div className="flex items-center gap-2">
-                                    <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setSelectedReportId(null)}>
-                                        <ArrowLeft className="h-4 w-4" />
-                                    </Button>
-                                    <h2 className="font-semibold text-lg flex items-center gap-2">
-                                        {getTypeIcon(selectedReport.type)}
-                                        <span className="capitalize">{selectedReport.type} Report</span>
-                                    </h2>
+                        <Card className="flex-[2] flex flex-col overflow-hidden h-full border-l shadow-xl md:shadow-none z-10 md:static bg-background w-full">
+                            <div className="p-1 border-b flex flex-col md:flex-row justify-between items-start md:items-center md:gap-0 bg-muted/30">
+                                <div className="flex items-center justify-between w-full gap-2">
+                                    <div className="flex items-center gap-2">
+                                        <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setSelectedReportId(null)}>
+                                            <ArrowLeft className="h-4 w-4" />
+                                        </Button>
+                                        <h2 className="font-semibold text-md flex items-center gap-2">
+                                            {getTypeIcon(selectedReport.type)}
+                                            <span className="capitalize">{selectedReport.type} Report</span>
+                                        </h2>
+                                    </div>
+                                    <div>
+                                        <Button size="sm" variant="ghost" className="text-destructive hover:bg-destructive/10" onClick={(e) => handleDeleteClick(selectedReport._id, e)}>
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    </div>
                                 </div>
                                 <div className="flex gap-2">
                                     {selectedReport.status !== 'resolved' && (
@@ -210,15 +216,13 @@ export default function ReportsPage() {
                                             <CheckCircle className="mr-2 h-4 w-4" /> Resolve
                                         </Button>
                                     )}
-                                    <Button size="sm" variant="ghost" className="text-destructive hover:bg-destructive/10" onClick={(e) => handleDeleteClick(selectedReport._id, e)}>
-                                        <Trash2 className="h-4 w-4" />
-                                    </Button>
+
                                 </div>
                             </div>
 
-                            <ScrollArea className="flex-1 p-6">
-                                <div className="space-y-6 max-w-3xl">
-                                    <div className="flex items-center justify-between">
+                            <ScrollArea className="flex-1 p-4 md:p-6">
+                                <div className="space-y-6 max-w-4xl">
+                                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                                         <div className="flex items-center gap-3">
                                             <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
                                                 <User className="h-5 w-5 text-primary" />
@@ -226,21 +230,21 @@ export default function ReportsPage() {
                                             <div>
                                                 <h3 className="font-medium">{selectedReport.name}</h3>
                                                 <p className="text-sm text-muted-foreground">{selectedReport.email}</p>
+                                                <div className="text-sm text-muted-foreground">
+                                                    ID: {selectedReport._id.slice(-8)}
+                                                </div>
                                             </div>
                                         </div>
-                                        <div className="text-right text-sm text-muted-foreground">
-                                            <div className="flex items-center gap-1 justify-end">
+                                        <div className="text-left md:text-right text-sm text-muted-foreground w-full md:w-auto">
+                                            <div className="flex items-center gap-1 justify-start md:justify-end">
                                                 <Clock className="h-3 w-3" />
                                                 {new Date(selectedReport.createdAt).toLocaleString()}
-                                            </div>
-                                            <div className="mt-1">
-                                                ID: {selectedReport._id.slice(-8)}
                                             </div>
                                         </div>
                                     </div>
 
                                     <div className="bg-muted/30 p-4 rounded-lg border space-y-3">
-                                        <div className="grid grid-cols-2 gap-4 text-sm">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                                             <div>
                                                 <span className="text-muted-foreground block text-xs uppercase tracking-wider mb-1">Status</span>
                                                 <Badge
