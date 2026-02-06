@@ -127,6 +127,7 @@ export function MapViewer({ latitude, longitude, name }: MapViewerProps) {
     return (
         <div className="h-[350px] w-full rounded-xl overflow-hidden border z-0 relative shadow-md ring-1 ring-border/50">
             <MapContainer
+                key={`${position.lat}-${position.lng}`}
                 center={position}
                 zoom={15}
                 scrollWheelZoom={true}

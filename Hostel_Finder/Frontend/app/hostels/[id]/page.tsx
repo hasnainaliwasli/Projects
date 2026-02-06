@@ -279,6 +279,14 @@ export default function HostelDetailsPage() {
             </header>
 
             <main className="container mx-auto px-4 py-8 pb-32 lg:pb-8">
+                <Button
+                    variant="ghost"
+                    className="mb-4 pl-0 gap-2 text-muted-foreground hover:text-foreground hover:bg-transparent"
+                    onClick={() => router.back()}
+                >
+                    <ArrowLeft className="h-4 w-4" />
+                    Back
+                </Button>
                 <div className="grid lg:grid-cols-3 gap-4 lg:gap-8">
 
                     {/* Left Column: Media & Details */}
@@ -400,7 +408,7 @@ export default function HostelDetailsPage() {
                                             {hostel.rooms.map((room, idx) => (
                                                 <div key={idx} className="flex justify-between items-center p-3 rounded-lg bg-secondary/20">
                                                     <span className="font-medium">{room.type}</span>
-                                                    <span className="font-bold text-primary">Rs. {room.rentPerBed || room.rentPerRoom}<span className="text-xs text-muted-foreground font-normal">/bed</span></span>
+                                                    <span className="font-bold text-primary">Rs. {Math.floor(room.rentPerBed || room.rentPerRoom)}<span className="text-xs text-muted-foreground font-normal">/bed</span></span>
                                                 </div>
                                             ))}
                                         </div>

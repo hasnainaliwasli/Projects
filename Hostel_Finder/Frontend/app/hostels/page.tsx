@@ -162,7 +162,7 @@ export default function HostelsPage() {
             {/* --- Filter Modal Overlay --- */}
             {isFilterModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-                    <Card className="w-full max-w-2xl max-h-[85vh] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200 flex flex-col">
+                    <Card className="w-full max-w-2xl mt-15 max-h-[75vh] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200 flex flex-col">
                         <div className="flex items-center justify-between p-5 border-b bg-muted/30">
                             <div>
                                 <h2 className="text-xl font-bold flex items-center gap-2">
