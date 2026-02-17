@@ -132,10 +132,6 @@ Hostel_Finder/
 
 ---
 
-## 📄 License
+## 👨‍💻 Developed By 
 
-This project is licensed under the **ISC License**.
-
----
-
-Designed and Developed by [Hasnain Ali Wasli](https://github.com/hasnainaliwasli) 🚀
+Designed and Developed by [Hasnain Ali](https://github.com/hasnainaliwasli) 🚀

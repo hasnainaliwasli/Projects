@@ -1,35 +1,60 @@
-# Research Lab — AI-Powered Research Workflow Assistant
+# 🧠 Research Lab — AI-Powered Research Assistant
 
-A full-stack application for managing research projects, papers, notes, experiments, and tasks — powered by AI for automated paper summarization and keyword extraction.
+[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-green?logo=node.js)](https://nodejs.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Latest-green?logo=mongodb)](https://www.mongodb.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
 
-## 🎯 Features
+**Research Lab** is a sophisticated full-stack application designed to streamline the academic and professional research workflow. It leverages AI to automate monotonous tasks like paper summarization and keyword extraction, allowing researchers to focus on what matters most: discovery.
 
-| Module | Description |
-|--------|-------------|
-| **Dashboard** | Analytics overview with Recharts (papers/project, tasks by status, experiment runs) |
-| **Project Management** | CRUD with status tracking, progress bars, tags, collaborators |
-| **Smart Literature Manager** | PDF upload, AI-powered summaries (Gemini API + fallback), keyword extraction, similar paper detection via cosine similarity |
-| **Structured Notes** | Idea, critique, literature gap, future extension, quote references with auto-save and version history |
-| **Experiment Tracker** | Log experiments with parameters/metrics, visualize runs with line charts |
-| **Kanban Task Board** | Drag-and-drop task management (To Do → In Progress → Review → Done), deadline tracking, priority badges |
-| **Dark Mode** | Full dark/light theme with CSS variables |
+---
+
+## 🎯 Key Features
+
+### 📊 Comprehensive Dashboard
+- **Analytics at a Glance:** Monitor project progress, paper counts, and task statuses.
+- **Visual Insights:** Dynamic charts powered by **Recharts** for visualizing experiment runs and trends.
+
+### 📁 Advanced Project Management
+- **Full CRUD Support:** Organize research into distinct projects with tags and status tracking.
+- **Collaborative Workflow:** Track progress bars and manage collaborators seamlessly.
+
+### 🧠 Smart Literature Manager
+- **AI Summarization:** Get instant summaries of complex papers (Gemini AI with robust fallbacks).
+- **Metadata Extraction:** Automated keyword and reference detection.
+- **Similarity Detection:** Find related research using advanced cosine similarity algorithms.
+- **PDF Integration:** Seamlessly upload and manage research papers via Cloudinary.
+
+### 📝 Structured Research Notes
+- **Contextual Organization:** Categorize notes into Ideas, Critiques, Literature Gaps, and Future Extensions.
+- **Version Control:** Automatic save history to track the evolution of your thoughts.
+
+### 📊 Experiment Tracker
+- **Parameter Logging:** Record every detail of your experiment runs.
+- **Visualization:** Compare results visually through intuitive line charts.
+
+### 📋 Kanban Task Board
+- **Drag-and-Drop:** Intuitive task management from *To Do* to *Done*.
+- **Priority Tracking:** Set deadlines and priority badges to stay on schedule.
+
+---
 
 ## 🏗 Tech Stack
 
-### Backend
-- **Runtime:** Node.js + Express + TypeScript
-- **Database:** MongoDB + Mongoose
-- **Auth:** JWT (access + refresh tokens), bcrypt
-- **AI:** Google Gemini API (with TextRank/TF-IDF/RAKE fallback)
-- **Storage:** Cloudinary (PDF/image uploads)
-- **Validation:** Zod
-
 ### Frontend
-- **Framework:** Next.js 16 (App Router) + TypeScript
-- **Styling:** Tailwind CSS + CSS custom properties
-- **State:** TanStack Query v5 + React Context
-- **Charts:** Recharts
-- **Icons:** react-icons
+- **Framework:** Next.js 16 (App Router)
+- **State Management:** TanStack Query v5 & React Context
+- **Styling:** Tailwind CSS 4.0
+- **Visuals:** Recharts & React Icons
+- **Editor:** @uiw/react-md-editor
+
+### Backend
+- **Runtime:** Node.js, Express, TypeScript
+- **Database:** MongoDB (Mongoose ODM)
+- **Authentication:** JWT (Access/Refresh Tokens) with bcrypt security
+- **AI Core:** Google Gemini API
+- **Utilities:** Zod (Validation), Multer (File Handling)
 
 ---
 
@@ -37,202 +62,79 @@ A full-stack application for managing research projects, papers, notes, experime
 
 ### Prerequisites
 - Node.js 18+
-- MongoDB (local or [MongoDB Atlas](https://www.mongodb.com/atlas))
-- [Cloudinary account](https://cloudinary.com/) (free tier)
-- [Google AI Studio API Key](https://aistudio.google.com/) (free tier)
+- MongoDB instance (Local or Atlas)
+- Cloudinary Account (for storage)
+- Google AI Studio API Key (for Gemini)
 
-### 1. Clone & Install
+### 1. Installation
 
 ```bash
+# Clone the repository
 git clone <repo-url>
-cd Research_Assistant
+cd Research_Lab
 
-# Install backend
+# Install Backend Dependencies
 cd backend
 npm install
 
-# Install frontend
+# Install Frontend Dependencies
 cd ../frontend
 npm install
 ```
 
-### 2. Environment Variables
+### 2. Configuration
 
-**Backend** — copy `.env.example` to `.env`:
-```bash
-cd backend
-cp .env.example .env
-```
-
-Then fill in your values:
+**Backend (`backend/.env`):**
 ```env
 PORT=5000
-NODE_ENV=development
-CLIENT_URL=http://localhost:3000
-MONGODB_URI=mongodb+srv://<user>:<pass>@cluster.mongodb.net/research_assistant
-JWT_SECRET=your-secret-key-here
-JWT_REFRESH_SECRET=your-refresh-secret-here
-JWT_EXPIRE=15m
-JWT_REFRESH_EXPIRE=7d
-CLOUDINARY_CLOUD_NAME=your-cloud-name
-CLOUDINARY_API_KEY=your-api-key
-CLOUDINARY_API_SECRET=your-api-secret
-GEMINI_API_KEY=your-gemini-api-key
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+JWT_REFRESH_SECRET=your_refresh_secret
+CLOUDINARY_CLOUD_NAME=your_name
+CLOUDINARY_API_KEY=your_key
+CLOUDINARY_API_SECRET=your_secret
+GEMINI_API_KEY=your_gemini_key
 ```
 
-**Frontend** — `.env.local` is pre-configured:
+**Frontend (`frontend/.env.local`):**
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:5000/api
 ```
 
-### 3. Run Development Servers
+### 3. Running the App
 
 ```bash
-# Terminal 1 — Backend
+# Start Backend (Terminal 1)
 cd backend
 npm run dev
 
-# Terminal 2 — Frontend
+# Start Frontend (Terminal 2)
 cd frontend
 npm run dev
 ```
 
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:5000/api
-
 ---
 
-## 📡 API Reference
+## 📂 Architecture
 
-All endpoints are prefixed with `/api`.
-
-### Auth
-| Method | Route | Description |
-|--------|-------|-------------|
-| POST | `/auth/register` | Register new user |
-| POST | `/auth/login` | Login |
-| POST | `/auth/refresh` | Refresh access token |
-| POST | `/auth/logout` | Logout |
-| GET | `/auth/me` | Get current user |
-
-### Projects
-| Method | Route | Description |
-|--------|-------|-------------|
-| GET | `/projects` | List projects (search, status filter, pagination) |
-| POST | `/projects` | Create project |
-| GET | `/projects/:id` | Get project details |
-| PUT | `/projects/:id` | Update project |
-| DELETE | `/projects/:id` | Delete project |
-
-### Papers
-| Method | Route | Description |
-|--------|-------|-------------|
-| GET | `/papers` | List papers (search, project filter, pagination) |
-| POST | `/papers/upload` | Upload paper (PDF + metadata) |
-| GET | `/papers/:id` | Get paper with AI summary |
-| DELETE | `/papers/:id` | Delete paper |
-| POST | `/papers/bulk-delete` | Bulk delete papers |
-| GET | `/papers/:id/similar` | Find similar papers |
-| POST | `/papers/:id/regenerate-summary` | Regenerate AI summary |
-
-### Notes
-| Method | Route | Description |
-|--------|-------|-------------|
-| GET | `/notes` | List notes |
-| POST | `/notes` | Create note |
-| PUT | `/notes/:id` | Update note (auto-saves version) |
-| DELETE | `/notes/:id` | Delete note |
-| GET | `/notes/:id/versions` | Get version history |
-
-### Experiments
-| Method | Route | Description |
-|--------|-------|-------------|
-| GET | `/experiments` | List experiments |
-| POST | `/experiments` | Create experiment |
-| GET | `/experiments/:id` | Get experiment + runs |
-| DELETE | `/experiments/:id` | Delete experiment |
-| POST | `/experiments/runs` | Add experiment run |
-
-### Tasks
-| Method | Route | Description |
-|--------|-------|-------------|
-| GET | `/tasks` | List tasks |
-| POST | `/tasks` | Create task |
-| PUT | `/tasks/:id` | Update task |
-| PATCH | `/tasks/:id/status` | Update task status (Kanban) |
-| DELETE | `/tasks/:id` | Delete task |
-
-### Dashboard
-| Method | Route | Description |
-|--------|-------|-------------|
-| GET | `/dashboard/stats` | Get aggregated statistics |
-
----
-
-## 📁 Project Structure
-
-```
-Research_Assistant/
-├── backend/
+```text
+Research_Lab/
+├── backend/            # Express.js API with TypeScript
 │   ├── src/
-│   │   ├── config/           # DB, Cloudinary, env config
-│   │   ├── controllers/      # Route handlers
-│   │   ├── middleware/        # Auth, error, validation, upload
-│   │   ├── models/            # Mongoose schemas (7 models)
-│   │   ├── routes/            # Express route definitions
-│   │   ├── services/          # AI service, Cloudinary service
-│   │   ├── utils/             # TextRank, TF-IDF, RAKE, cosine
-│   │   ├── app.ts             # Express app setup
-│   │   ├── server.ts          # Entry point
-│   │   └── seed.ts            # Sample data script
-│   ├── .env.example
-│   ├── tsconfig.json
-│   └── package.json
-│
-├── frontend/
-│   ├── src/
-│   │   ├── app/               # Next.js App Router pages
-│   │   │   ├── dashboard/     # Dashboard with analytics
-│   │   │   ├── projects/      # Project list + detail
-│   │   │   ├── papers/        # Paper list + AI detail
-│   │   │   ├── notes/         # Structured note editor
-│   │   │   ├── experiments/   # Experiment tracker
-│   │   │   ├── tasks/         # Kanban board
-│   │   │   ├── login/         # Auth
-│   │   │   └── register/      # Auth
-│   │   ├── components/layout/ # Sidebar, Topbar, AppLayout
-│   │   ├── hooks/             # TanStack Query hooks
-│   │   ├── lib/               # API, Auth, Theme, Providers
-│   │   └── types/             # TypeScript interfaces
-│   ├── .env.local
-│   └── package.json
+│   │   ├── controllers/# Logic handlers
+│   │   ├── models/     # Database schemas
+│   │   ├── routes/     # API endpoints
+│   │   └── services/   # AI & File storage services
+└── frontend/           # Next.js Application
+    ├── src/
+    │   ├── app/        # Modern App Router pages
+    │   ├── components/ # Reusable UI components
+    │   └── hooks/      # Custom React Query hooks
 ```
 
 ---
 
-## 🔐 Authentication Flow
+## 👨‍💻 Developed By
 
-1. User registers/logs in → receives `accessToken` (15min) + `refreshToken` (7d httpOnly cookie)
-2. Frontend stores `accessToken` in localStorage
-3. Axios interceptor attaches token to all requests
-4. On 401, interceptor automatically refreshes token
-5. Protected routes redirect to `/login` if unauthenticated
+Designed and Developed by [Hasnain Ali](https://github.com/hasnainaliwasli) 🚀
 
----
-
-## 🌐 Deployment
-
-### Frontend (Vercel)
-1. Push to GitHub
-2. Import in [Vercel](https://vercel.com)
-3. Set `NEXT_PUBLIC_API_URL` to your backend URL
-
-### Backend (Render)
-1. Push to GitHub
-2. Create Web Service on [Render](https://render.com)
-3. Set environment variables from `.env.example`
-4. Build: `npm run build` | Start: `npm start`
-
-### Database (MongoDB Atlas)
-1. Create free M0 cluster at [MongoDB Atlas](https://www.mongodb.com/atlas)
-2. Add connection string to `MONGODB_URI`
