@@ -44,8 +44,7 @@ export default function LoginPage() {
                 <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-slate-200/50 rounded-full blur-3xl"></div>
                 <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gray-200/50 rounded-full blur-3xl"></div>
             </div>
-
-            {/* Main Card Container - Added -translate-y-10 to move it up */}
+            
             <div className="w-full max-w-6xl mx-auto relative z-10 grid lg:grid-cols-2 gap-0 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden h-auto border border-gray-100 dark:border-gray-700 transition-transform duration-500">
 
                 {/* --- BACK TO HOME BUTTON --- */}
