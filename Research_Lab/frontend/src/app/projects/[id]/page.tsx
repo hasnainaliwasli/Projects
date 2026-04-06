@@ -10,6 +10,7 @@ import { useExperiments } from '@/hooks/useExperiments';
 import { useNotes } from '@/hooks/useNotes';
 import { HiOutlineUpload, HiOutlineTrash, HiOutlineExternalLink, HiOutlineDocumentText, HiOutlineBeaker, HiOutlineClipboardList, HiOutlinePencilAlt } from 'react-icons/hi';
 import Link from 'next/link';
+import { ProjectDetailSkeleton } from '@/components/PageSkeletons';
 
 export default function ProjectDetailPage() {
     const { id } = useParams() as { id: string };
@@ -65,7 +66,14 @@ export default function ProjectDetailPage() {
         setEditing(false);
     };
 
-    if (isLoading) return <AppLayout><div className="loading-spinner"><div className="spinner" /></div></AppLayout>;
+    if (isLoading) {
+        return (
+            <AppLayout>
+                <ProjectDetailSkeleton />
+            </AppLayout>
+        );
+    }
+
     if (!project) return <AppLayout><div className="page-container"><h2>Project not found</h2></div></AppLayout>;
 
     const tabs = [

@@ -6,6 +6,7 @@ import AppLayout from '@/components/layout/AppLayout';
 import { useExperiment, useCreateExperimentRun } from '@/hooks/useExperiments';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { HiOutlinePlus } from 'react-icons/hi';
+import { ExperimentDetailSkeleton } from '@/components/PageSkeletons';
 
 export default function ExperimentDetailPage() {
     const { id } = useParams() as { id: string };
@@ -15,7 +16,7 @@ export default function ExperimentDetailPage() {
     const [runForm, setRunForm] = useState({ parameters: '', metrics: '', resultSummary: '' });
     const [graphFile, setGraphFile] = useState<File | null>(null);
 
-    if (isLoading) return <AppLayout><div className="loading-spinner"><div className="spinner" /></div></AppLayout>;
+    if (isLoading) return <AppLayout><div className="page-container"><ExperimentDetailSkeleton /></div></AppLayout>;
     if (!data) return <AppLayout><div className="page-container"><h2>Experiment not found</h2></div></AppLayout>;
 
     const { experiment, runs } = data;

@@ -6,6 +6,7 @@ import { usePapers, useUploadPaper, useDeletePaper, useBulkDeletePapers } from '
 import { useProjects } from '@/hooks/useProjects';
 import { HiOutlineSearch, HiOutlineUpload, HiOutlineTrash, HiOutlineExternalLink } from 'react-icons/hi';
 import Link from 'next/link';
+import { PaperListSkeleton } from '@/components/PageSkeletons';
 
 export default function PapersPage() {
     const [search, setSearch] = useState('');
@@ -13,7 +14,7 @@ export default function PapersPage() {
     const [page, setPage] = useState(1);
     const [selected, setSelected] = useState<string[]>([]);
     const [showUpload, setShowUpload] = useState(false);
-    const [uploadForm, setUploadForm] = useState({ projectId: '', title: '', authors: '', year: '', journal: '', doi: '' });
+    const [uploadForm, setUploadForm] = useState({ projectId: '', title: '', authors: '', year: '', journal: '', doi: '', keywords: '' });
     const [file, setFile] = useState<File | null>(null);
 
     const { data: papersData, isLoading } = usePapers({ search: search || undefined, projectId: projectFilter || undefined, page, limit: 12 });
@@ -33,7 +34,7 @@ export default function PapersPage() {
         if (file) formData.append('file', file);
         await uploadPaper.mutateAsync(formData);
         setShowUpload(false);
-        setUploadForm({ projectId: '', title: '', authors: '', year: '', journal: '', doi: '' });
+        setUploadForm({ projectId: '', title: '', authors: '', year: '', journal: '', doi: '', keywords: '' });
         setFile(null);
     };
 
@@ -69,7 +70,7 @@ export default function PapersPage() {
                 </div>
 
                 {isLoading ? (
-                    <div className="loading-spinner"><div className="spinner" /></div>
+                    <PaperListSkeleton />
                 ) : papersData?.data?.length === 0 ? (
                     <div className="empty-state">
                         <div className="empty-state-icon">📄</div>
@@ -103,7 +104,7 @@ export default function PapersPage() {
                                     </Link>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid var(--border-color)' }}>
                                         <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                                            {typeof paper.projectId === 'object' ? paper.projectId.title : ''}
+                                            {paper.projectId && typeof paper.projectId === 'object' ? (paper.projectId as any).title : 'No Project'}
                                         </span>
                                         <div style={{ display: 'flex', gap: '0.25rem' }}>
                                             {paper.fileUrl && (
@@ -154,6 +155,10 @@ export default function PapersPage() {
                                     <div className="form-group">
                                         <label className="form-label">Authors (comma separated)</label>
                                         <input className="form-input" value={uploadForm.authors} onChange={e => setUploadForm({ ...uploadForm, authors: e.target.value })} />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">Key Findings</label>
+                                        <input className="form-input" value={uploadForm.keywords} onChange={e => setUploadForm({ ...uploadForm, keywords: e.target.value })} placeholder="Comma separated keywords" />
                                     </div>
                                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                                         <div className="form-group">

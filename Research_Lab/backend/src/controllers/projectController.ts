@@ -1,8 +1,14 @@
 import { Response, NextFunction } from 'express';
+import mongoose from 'mongoose';
 import Project from '../models/Project';
 import Task from '../models/Task';
+import Paper from '../models/Paper';
+import Note from '../models/Note';
+import Experiment from '../models/Experiment';
+import ExperimentRun from '../models/ExperimentRun';
 import { AuthRequest } from '../middleware/auth';
 import { ApiError } from '../middleware/errorHandler';
+import { deleteFromCloudinary } from '../services/cloudinaryService';
 
 export const createProject = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -72,7 +78,8 @@ export const getProjects = async (req: AuthRequest, res: Response, next: NextFun
 
 export const getProject = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const project = await Project.findById(req.params.id)
+        const { id } = req.params;
+        const project = await Project.findById(id as string)
             .populate('owner', 'name email')
             .populate('collaborators', 'name email');
 
@@ -88,7 +95,8 @@ export const getProject = async (req: AuthRequest, res: Response, next: NextFunc
 
 export const updateProject = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const project = await Project.findById(req.params.id);
+        const { id } = req.params;
+        const project = await Project.findById(id as string);
         if (!project) {
             throw new ApiError(404, 'Project not found');
         }
@@ -97,7 +105,7 @@ export const updateProject = async (req: AuthRequest, res: Response, next: NextF
             throw new ApiError(403, 'Not authorized to update this project');
         }
 
-        const updated = await Project.findByIdAndUpdate(req.params.id, req.body, {
+        const updated = await Project.findByIdAndUpdate(id as string, req.body, {
             new: true,
             runValidators: true,
         })
@@ -112,7 +120,8 @@ export const updateProject = async (req: AuthRequest, res: Response, next: NextF
 
 export const deleteProject = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const project = await Project.findById(req.params.id);
+        const projectId = req.params.id as string;
+        const project = await Project.findById(projectId);
         if (!project) {
             throw new ApiError(404, 'Project not found');
         }
@@ -121,8 +130,41 @@ export const deleteProject = async (req: AuthRequest, res: Response, next: NextF
             throw new ApiError(403, 'Not authorized to delete this project');
         }
 
+        // Use valid ObjectId for queries
+        const projectObjectId = new mongoose.Types.ObjectId(projectId);
+
+        // 1. Delete associated Tasks
+        await Task.deleteMany({ projectId: projectObjectId });
+
+        // 2. Delete associated Papers (and their files on Cloudinary)
+        const papers = await Paper.find({ projectId: projectObjectId });
+        for (const paper of papers) {
+            if (paper.filePublicId) {
+                await deleteFromCloudinary(paper.filePublicId, 'raw');
+            }
+        }
+        await Paper.deleteMany({ projectId: projectObjectId });
+
+        // 3. Delete associated Notes
+        await Note.deleteMany({ projectId: projectObjectId });
+
+        // 4. Delete associated Experiments (and their Runs + files)
+        const experiments = await Experiment.find({ projectId: projectObjectId });
+        for (const exp of experiments) {
+            const runs = await ExperimentRun.find({ experimentId: exp._id });
+            for (const run of runs) {
+                if (run.resultGraphPublicId) {
+                    await deleteFromCloudinary(run.resultGraphPublicId, 'image');
+                }
+            }
+            await ExperimentRun.deleteMany({ experimentId: exp._id });
+        }
+        await Experiment.deleteMany({ projectId: projectObjectId });
+
+        // 5. Finally delete the project
         await project.deleteOne();
-        res.status(200).json({ success: true, message: 'Project deleted' });
+
+        res.status(200).json({ success: true, message: 'Project deleted and all associated data cleared' });
     } catch (error) {
         next(error);
     }

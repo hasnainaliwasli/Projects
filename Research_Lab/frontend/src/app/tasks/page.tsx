@@ -6,6 +6,7 @@ import { useTasks, useCreateTask, useUpdateTaskStatus, useDeleteTask } from '@/h
 import { useProjects } from '@/hooks/useProjects';
 import { HiOutlinePlus, HiOutlineTrash, HiOutlineClock } from 'react-icons/hi';
 import { format, isPast } from 'date-fns';
+import { TaskSkeleton } from '@/components/PageSkeletons';
 
 const columns = [
     { id: 'To Do', label: 'To Do', color: '#6366f1' },
@@ -75,7 +76,7 @@ export default function TasksPage() {
                 </div>
 
                 {isLoading ? (
-                    <div className="loading-spinner"><div className="spinner" /></div>
+                    <TaskSkeleton />
                 ) : (
                     <div className="kanban-board">
                         {columns.map(col => (

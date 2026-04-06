@@ -1,6 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 interface INoteVersion {
+    title: string;
     sections: {
         idea: string;
         critique: string;
@@ -14,6 +15,7 @@ interface INoteVersion {
 export interface INote extends Document {
     projectId: mongoose.Types.ObjectId;
     paperId: mongoose.Types.ObjectId;
+    title: string;
     sections: {
         idea: string;
         critique: string;
@@ -28,6 +30,7 @@ export interface INote extends Document {
 
 const noteVersionSchema = new Schema(
     {
+        title: { type: String, default: 'Untitled Note' },
         sections: {
             idea: { type: String, default: '' },
             critique: { type: String, default: '' },
@@ -51,6 +54,10 @@ const noteSchema = new Schema<INote>(
             type: Schema.Types.ObjectId,
             ref: 'Paper',
             required: true,
+        },
+        title: {
+            type: String,
+            default: 'Untitled Note',
         },
         sections: {
             idea: { type: String, default: '' },

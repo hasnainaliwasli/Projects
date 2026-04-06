@@ -69,6 +69,7 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) => {
+    // console.log(`loginUser called: ${req.method} ${req.url}`);
     const { email, password } = req.body;
 
     const blocked = await BlockedUser.findOne({ email });

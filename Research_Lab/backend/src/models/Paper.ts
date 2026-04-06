@@ -11,10 +11,6 @@ export interface IPaper extends Document {
     fileUrl: string;
     filePublicId: string;
     extractedText: string;
-    summaryShort: string;
-    summaryMethodology: string;
-    keyFindings: string;
-    limitations: string;
     embeddingVector: number[];
     createdAt: Date;
     updatedAt: Date;
@@ -59,22 +55,6 @@ const paperSchema = new Schema<IPaper>(
             default: '',
         },
         extractedText: {
-            type: String,
-            default: '',
-        },
-        summaryShort: {
-            type: String,
-            default: '',
-        },
-        summaryMethodology: {
-            type: String,
-            default: '',
-        },
-        keyFindings: {
-            type: String,
-            default: '',
-        },
-        limitations: {
             type: String,
             default: '',
         },

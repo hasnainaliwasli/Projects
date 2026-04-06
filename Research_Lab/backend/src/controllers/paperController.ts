@@ -3,14 +3,12 @@ import Paper from '../models/Paper';
 import { AuthRequest } from '../middleware/auth';
 import { ApiError } from '../middleware/errorHandler';
 import { uploadToCloudinary, deleteFromCloudinary } from '../services/cloudinaryService';
-import { generateAISummary } from '../services/aiService';
 import { generateSimpleEmbedding, cosineSimilarity } from '../utils/cosine';
-import { tfidfKeywords } from '../utils/tfidf';
-import { rakeKeywords } from '../utils/rake';
+const pdf = require('pdf-parse');
 
 export const uploadPaper = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const { projectId, title, authors, year, journal, doi } = req.body;
+        const { projectId, title, authors, year, journal, doi, keywords } = req.body;
 
         let fileUrl = '';
         let filePublicId = '';
@@ -27,29 +25,32 @@ export const uploadPaper = async (req: AuthRequest, res: Response, next: NextFun
                 // Continue without file URL - paper will still be created
             }
 
-            // Simple text extraction from PDF buffer (basic approach)
+            // Improved text extraction using pdf-parse
             try {
-                extractedText = req.file.buffer.toString('utf-8').replace(/[^\x20-\x7E\n]/g, ' ').substring(0, 50000);
+                // Version 2.4.5 in CJS requires .default
+                const pdfParser = pdf.default || pdf;
+                const data = await pdfParser(req.file.buffer);
+                // Detect garbage in the extracted text with regex
+                const text = data.text ? data.text.trim() : "";
+                const pdfPatterns = [
+                    /%PDF-/i, /%%EOF/i, /endobj/i, /endstream/i, /obj\s*<</i,
+                    /\/Type\s*\//i, /xref\s*\d+\s+\d+/i, /trailer\s*<</i,
+                    /startxref/i, /\/Root\s*\d+\s+\d+/i, /\[\s*\d+\s+\d+\s+\d+\s*\]/i,
+                    /\/Border/i, /\/Rect/i, /\/Annots/i, /\/URI/i, /\d+\s+\d+\s+R/i
+                ];
+                const matchedPatterns = pdfPatterns.filter(pattern => pattern.test(text));
+                const isGarbage = matchedPatterns.length >= 1;
+
+                if (text && text.length > 50 && !isGarbage) {
+                    extractedText = text.substring(0, 50000);
+                } else {
+                    console.warn(`[UPLOAD-GARBAGE] Extracted text appears to be garbage or empty (${matchedPatterns.length} markers matched).`);
+                    extractedText = "";
+                }
             } catch (err) {
                 console.error('Text extraction failed:', err);
-            }
-        }
-
-        // Generate AI summary if we have text
-        let aiResult = {
-            summaryShort: '',
-            summaryMethodology: '',
-            keyFindings: '',
-            limitations: '',
-            suggestedTags: [] as string[],
-            keywords: [] as string[],
-        };
-
-        if (extractedText.length > 100) {
-            try {
-                aiResult = await generateAISummary(extractedText);
-            } catch (err) {
-                console.error('AI summary generation failed:', err);
+                // Don't fall back to binary-to-string, it results in garbage
+                extractedText = "";
             }
         }
 
@@ -65,16 +66,10 @@ export const uploadPaper = async (req: AuthRequest, res: Response, next: NextFun
 
         const parsedAuthors = typeof authors === 'string' ? authors.split(',').map((a: string) => a.trim()) : authors || [];
 
-        // Get keywords safely
-        let finalKeywords = aiResult.keywords;
-        if (finalKeywords.length === 0 && extractedText.length > 100) {
-            try {
-                finalKeywords = tfidfKeywords(extractedText, 10);
-            } catch (err) {
-                console.error('TF-IDF keyword extraction failed:', err);
-                finalKeywords = [];
-            }
-        }
+        // Manual keywords only
+        const parsedKeywords = typeof keywords === 'string'
+            ? keywords.split(',').map((k: string) => k.trim()).filter((k: string) => k.length > 0)
+            : Array.isArray(keywords) ? keywords : [];
 
         const paper = await Paper.create({
             title,
@@ -82,15 +77,11 @@ export const uploadPaper = async (req: AuthRequest, res: Response, next: NextFun
             year: year ? Number(year) : undefined,
             journal: journal || '',
             doi: doi || '',
-            keywords: finalKeywords,
+            keywords: parsedKeywords,
             projectId,
             fileUrl,
             filePublicId,
             extractedText: extractedText.substring(0, 50000),
-            summaryShort: aiResult.summaryShort,
-            summaryMethodology: aiResult.summaryMethodology,
-            keyFindings: aiResult.keyFindings,
-            limitations: aiResult.limitations,
             embeddingVector,
         });
 
@@ -228,38 +219,9 @@ export const getSimilarPapers = async (req: AuthRequest, res: Response, next: Ne
             }))
             .filter((s) => s.similarity > 0.1)
             .sort((a, b) => b.similarity - a.similarity)
-            .slice(0, 5);
+            .slice(0, 15); // Increased from 5 to 15
 
         res.status(200).json({ success: true, data: similarities });
-    } catch (error) {
-        next(error);
-    }
-};
-
-export const regenerateSummary = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
-    try {
-        const paper = await Paper.findById(req.params.id);
-        if (!paper) {
-            throw new ApiError(404, 'Paper not found');
-        }
-
-        if (!paper.extractedText || paper.extractedText.length < 100) {
-            throw new ApiError(400, 'Not enough text to generate summary');
-        }
-
-        const aiResult = await generateAISummary(paper.extractedText);
-
-        paper.summaryShort = aiResult.summaryShort;
-        paper.summaryMethodology = aiResult.summaryMethodology;
-        paper.keyFindings = aiResult.keyFindings;
-        paper.limitations = aiResult.limitations;
-        if (aiResult.keywords.length > 0) {
-            paper.keywords = aiResult.keywords;
-        }
-
-        await paper.save();
-
-        res.status(200).json({ success: true, data: paper });
     } catch (error) {
         next(error);
     }

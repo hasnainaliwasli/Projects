@@ -6,6 +6,7 @@ import { useExperiments, useCreateExperiment, useDeleteExperiment } from '@/hook
 import { useProjects } from '@/hooks/useProjects';
 import { HiOutlinePlus, HiOutlineTrash } from 'react-icons/hi';
 import Link from 'next/link';
+import { ExperimentSkeleton } from '@/components/PageSkeletons';
 
 export default function ExperimentsPage() {
     const [projectFilter, setProjectFilter] = useState('');
@@ -45,7 +46,7 @@ export default function ExperimentsPage() {
                 </div>
 
                 {isLoading ? (
-                    <div className="loading-spinner"><div className="spinner" /></div>
+                    <ExperimentSkeleton />
                 ) : experiments?.length === 0 ? (
                     <div className="empty-state">
                         <div className="empty-state-icon">🧪</div>

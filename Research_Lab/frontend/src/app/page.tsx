@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
+import { GlobalLayoutSkeleton } from '@/components/PageSkeletons';
 
 export default function Home() {
   const { isAuthenticated, loading } = useAuth();
@@ -18,9 +19,5 @@ export default function Home() {
     }
   }, [isAuthenticated, loading, router]);
 
-  return (
-    <div className="loading-spinner" style={{ minHeight: '100vh' }}>
-      <div className="spinner" />
-    </div>
-  );
+  return <GlobalLayoutSkeleton />;
 }

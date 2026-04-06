@@ -2,13 +2,13 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
+const helmet = require('helmet');
+const { rateLimit } = require('express-rate-limit');
 
 // Load environment variables
 dotenv.config();
 
-// Connect to database
-// Connect to database
-// connectDB(); // Called before server listen
+// Database connection is handled at the bottom of the file
 
 const http = require('http');
 const { Server } = require('socket.io');
@@ -19,7 +19,7 @@ const server = http.createServer(app);
 // Initialize Socket.io
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:3000", // Frontend URL
+        origin: process.env.FRONTEND_URL || "http://localhost:3000",
         methods: ["GET", "POST"]
     }
 });
@@ -62,8 +62,27 @@ io.on('connection', (socket) => {
 });
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    credentials: true
+}));
 app.use(express.json());
+
+// Set secure HTTP headers
+app.use(helmet());
+
+// Global Rate Limiter: 100 requests per 15 minutes for all /api routes
+const generalLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 100,
+    standardHeaders: 'draft-7',
+    legacyHeaders: false,
+    message: {
+        message: "Too many requests from this IP, please try again after 15 minutes."
+    }
+});
+
+app.use('/api', generalLimiter);
 
 // Basic Route
 app.get('/', (req, res) => {
@@ -97,4 +116,7 @@ connectDB().then(() => {
     server.listen(PORT, () => {
         console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
     });
+}).catch(err => {
+    console.error('MongoDB connection failed:', err.message);
+    process.exit(1);
 });

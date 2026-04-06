@@ -6,6 +6,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { HiOutlineDocumentText, HiOutlineBeaker, HiOutlineFolder, HiOutlineChartBar, HiOutlineClock } from 'react-icons/hi';
 import { format } from 'date-fns';
 import Link from 'next/link';
+import { DashboardSkeleton } from '@/components/PageSkeletons';
 
 const COLORS = ['#6366f1', '#8b5cf6', '#a78bfa', '#c4b5fd'];
 
@@ -15,7 +16,7 @@ export default function DashboardPage() {
     if (isLoading) {
         return (
             <AppLayout>
-                <div className="loading-spinner"><div className="spinner" /></div>
+                <DashboardSkeleton />
             </AppLayout>
         );
     }

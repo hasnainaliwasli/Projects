@@ -5,6 +5,7 @@ import AppLayout from '@/components/layout/AppLayout';
 import { useProjects, useCreateProject, useDeleteProject } from '@/hooks/useProjects';
 import { HiOutlinePlus, HiOutlineSearch, HiOutlineTrash } from 'react-icons/hi';
 import Link from 'next/link';
+import { ProjectListSkeleton } from '@/components/PageSkeletons';
 
 const statusColors: Record<string, string> = {
     'Proposal': 'badge-info',
@@ -33,6 +34,14 @@ export default function ProjectsPage() {
         setForm({ title: '', description: '', objectives: '', researchQuestion: '', tags: '' });
     };
 
+    if (isLoading) {
+        return (
+            <AppLayout>
+                <ProjectListSkeleton />
+            </AppLayout>
+        );
+    }
+
     return (
         <AppLayout>
             <div className="page-container">
@@ -60,9 +69,7 @@ export default function ProjectsPage() {
                     </select>
                 </div>
 
-                {isLoading ? (
-                    <div className="loading-spinner"><div className="spinner" /></div>
-                ) : data?.data?.length === 0 ? (
+                {data?.data?.length === 0 ? (
                     <div className="empty-state">
                         <div className="empty-state-icon">📁</div>
                         <h3>No projects yet</h3>

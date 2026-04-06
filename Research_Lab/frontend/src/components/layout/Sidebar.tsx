@@ -9,7 +9,6 @@ const navItems = [
     { href: '/dashboard', label: 'Dashboard', icon: HiOutlineHome },
     { href: '/projects', label: 'Projects', icon: HiOutlineFolder },
     { href: '/papers', label: 'Papers', icon: HiOutlineDocumentText },
-    { href: '/notes', label: 'Notes', icon: HiOutlinePencilAlt },
     { href: '/experiments', label: 'Experiments', icon: HiOutlineBeaker },
     { href: '/tasks', label: 'Task Board', icon: HiOutlineClipboardList },
 ];

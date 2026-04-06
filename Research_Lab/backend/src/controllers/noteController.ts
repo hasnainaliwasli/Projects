@@ -55,6 +55,7 @@ export const updateNote = async (req: AuthRequest, res: Response, next: NextFunc
 
         // Save current version to history before updating
         note.versionHistory.push({
+            title: note.title,
             sections: { ...note.sections },
             updatedAt: new Date(),
         });
@@ -64,7 +65,10 @@ export const updateNote = async (req: AuthRequest, res: Response, next: NextFunc
             note.versionHistory = note.versionHistory.slice(-20);
         }
 
-        // Update sections
+        // Update title and sections
+        if (req.body.title) {
+            note.title = req.body.title;
+        }
         if (req.body.sections) {
             note.sections = { ...note.sections, ...req.body.sections };
         }

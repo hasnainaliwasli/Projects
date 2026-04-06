@@ -605,6 +605,24 @@ body {
   animation: spin 0.8s linear infinite;
 }
 
+.skeleton {
+  background: var(--bg-tertiary);
+  background: linear-gradient(
+    90deg,
+    var(--bg-tertiary) 25%,
+    var(--border-color) 50%,
+    var(--bg-tertiary) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 /* Table */
 .table-wrapper {
   overflow-x: auto;

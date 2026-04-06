@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Technical Skills Grid - Hasnain Ali</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "primary": "#0f1729",
+                "accent-blue": "#3b82f6",
+                "background-light": "#f6f7f8",
+                "background-dark": "#14171e",
+              },
+              fontFamily: {
+                "display": ["Inter", "sans-serif"]
+              },
+              borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .skill-badge:hover {
+            transform: translateY(-2px);
+            background-color: #0f1729;
+            color: white;
+        }
+        .skill-badge:hover span {
+            color: white;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden pb-24">
+<header class="flex items-center bg-white dark:bg-primary/10 border-b border-slate-200 dark:border-slate-800 p-4 sticky top-0 z-10 backdrop-blur-md">
+<div class="text-primary dark:text-accent-blue flex size-12 shrink-0 items-center justify-start">
+<span class="material-symbols-outlined text-2xl">menu</span>
+</div>
+<div class="flex-1 text-center">
+<h2 class="text-primary dark:text-slate-100 text-lg font-bold leading-tight tracking-tight">Technical Skills</h2>
+<p class="text-xs text-slate-500 font-medium">Hasnain Ali • Portfolio</p>
+</div>
+<div class="flex w-12 items-center justify-end">
+<button class="flex items-center justify-center rounded-full size-10 bg-primary text-white">
+<span class="material-symbols-outlined text-xl">person</span>
+</button>
+</div>
+</header>
+<main class="flex flex-col gap-6 px-4 pt-6">
+<section>
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-accent-blue">terminal</span>
+<h3 class="text-primary dark:text-slate-100 text-xl font-bold leading-tight">Frontend Development</h3>
+</div>
+<div class="flex gap-3 flex-wrap">
+<div class="skill-badge flex h-10 items-center justify-center gap-x-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 pl-3 pr-4 transition-all duration-200 shadow-sm">
+<span class="material-symbols-outlined text-accent-blue text-[20px]">javascript</span>
+<p class="text-sm font-semibold">Next.js</p>
+</div>
+<div class="skill-badge flex h-10 items-center justify-center gap-x-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 pl-3 pr-4 transition-all duration-200 shadow-sm">
+<span class="material-symbols-outlined text-accent-blue text-[20px]">javascript</span>
+<p class="text-sm font-semibold">React.js</p>
+</div>
+<div class="skill-badge flex h-10 items-center justify-center gap-x-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 pl-3 pr-4 transition-all duration-200 shadow-sm">
+<span class="material-symbols-outlined text-accent-blue text-[20px]">code</span>
+<p class="text-sm font-semibold">TypeScript</p>
+</div>
+<div class="skill-badge flex h-10 items-center justify-center gap-x-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 pl-3 pr-4 transition-all duration-200 shadow-sm">
+<span class="material-symbols-outlined text-accent-blue text-[20px]">palette</span>
+<p class="text-sm font-semibold">Tailwind CSS</p>
+</div>
+<div class="skill-badge flex h-10 items-center justify-center gap-x-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 pl-3 pr-4 transition-all duration-200 shadow-sm">
+<span class="material-symbols-outlined text-accent-blue text-[20px]">view_quilt</span>
+<p class="text-sm font-semibold">Redux Toolkit</p>
+</div>
+</div>
+</section>
+<section>
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-accent-blue">dns</span>
+<h3 class="text-primary dark:text-slate-100 text-xl font-bold leading-tight">Backend &amp; Database</h3>
+</div>
+<div class="flex gap-3 flex-wrap">
+<div class="skill-badge flex h-10 items-center justify-center gap-x-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 pl-3 pr-4 transition-all duration-200 shadow-sm">
+<span class="material-symbols-outlined text-accent-blue text-[20px]">settings_ethernet</span>
+<p class="text-sm font-semibold">Node.js</p>
+</div>
+<div class="skill-badge flex h-10 items-center justify-center gap-x-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 pl-3 pr-4 transition-all duration-200 shadow-sm">
+<span class="material-symbols-outlined text-accent-blue text-[20px]">api</span>
+<p class="text-sm font-semibold">Express.js</p>
+</div>
+<div class="skill-badge flex h-10 items-center justify-center gap-x-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 pl-3 pr-4 transition-all duration-200 shadow-sm">
+<span class="material-symbols-outlined text-accent-blue text-[20px]">database</span>
+<p class="text-sm font-semibold">MongoDB</p>
+</div>
+<div class="skill-badge flex h-10 items-center justify-center gap-x-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 pl-3 pr-4 transition-all duration-200 shadow-sm">
+<span class="material-symbols-outlined text-accent-blue text-[20px]">storage</span>
+<p class="text-sm font-semibold">PostgreSQL</p>
+</div>
+<div class="skill-badge flex h-10 items-center justify-center gap-x-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 pl-3 pr-4 transition-all duration-200 shadow-sm">
+<span class="material-symbols-outlined text-accent-blue text-[20px]">cloud</span>
+<p class="text-sm font-semibold">Firebase</p>
+</div>
+</div>
+</section>
+<section>
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-accent-blue">psychology</span>
+<h3 class="text-primary dark:text-slate-100 text-xl font-bold leading-tight">AI &amp; Machine Learning</h3>
+</div>
+<div class="flex gap-3 flex-wrap">
+<div class="skill-badge flex h-10 items-center justify-center gap-x-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 pl-3 pr-4 transition-all duration-200 shadow-sm">
+<span class="material-symbols-outlined text-accent-blue text-[20px]">functions</span>
+<p class="text-sm font-semibold">Python</p>
+</div>
+<div class="skill-badge flex h-10 items-center justify-center gap-x-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 pl-3 pr-4 transition-all duration-200 shadow-sm">
+<span class="material-symbols-outlined text-accent-blue text-[20px]">forum</span>
+<p class="text-sm font-semibold">NLP</p>
+</div>
+<div class="skill-badge flex h-10 items-center justify-center gap-x-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 pl-3 pr-4 transition-all duration-200 shadow-sm">
+<span class="material-symbols-outlined text-accent-blue text-[20px]">smart_toy</span>
+<p class="text-sm font-semibold">TensorFlow</p>
+</div>
+<div class="skill-badge flex h-10 items-center justify-center gap-x-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 pl-3 pr-4 transition-all duration-200 shadow-sm">
+<span class="material-symbols-outlined text-accent-blue text-[20px]">neurology</span>
+<p class="text-sm font-semibold">PyTorch</p>
+</div>
+</div>
+</section>
+<section class="mb-8">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-accent-blue">handyman</span>
+<h3 class="text-primary dark:text-slate-100 text-xl font-bold leading-tight">Tools &amp; DevOps</h3>
+</div>
+<div class="flex gap-3 flex-wrap">
+<div class="skill-badge flex h-10 items-center justify-center gap-x-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 pl-3 pr-4 transition-all duration-200 shadow-sm">
+<span class="material-symbols-outlined text-accent-blue text-[20px]">account_tree</span>
+<p class="text-sm font-semibold">Git/GitHub</p>
+</div>
+<div class="skill-badge flex h-10 items-center justify-center gap-x-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 pl-3 pr-4 transition-all duration-200 shadow-sm">
+<span class="material-symbols-outlined text-accent-blue text-[20px]">token</span>
+<p class="text-sm font-semibold">Docker</p>
+</div>
+<div class="skill-badge flex h-10 items-center justify-center gap-x-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 pl-3 pr-4 transition-all duration-200 shadow-sm">
+<span class="material-symbols-outlined text-accent-blue text-[20px]">hub</span>
+<p class="text-sm font-semibold">AWS</p>
+</div>
+</div>
+</section>
+</main>
+<nav class="fixed bottom-0 left-0 right-0 z-50 flex h-20 items-center border-t border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-primary/90 backdrop-blur-xl px-4">
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">home</span>
+<p class="text-[10px] font-bold uppercase tracking-wider">Home</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">work</span>
+<p class="text-[10px] font-bold uppercase tracking-wider">Projects</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-primary dark:text-accent-blue" href="#">
+<span class="material-symbols-outlined fill-1">build_circle</span>
+<p class="text-[10px] font-bold uppercase tracking-wider">Skills</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">alternate_email</span>
+<p class="text-[10px] font-bold uppercase tracking-wider">Contact</p>
+</a>
+</nav>
+</div>
+</body></html>

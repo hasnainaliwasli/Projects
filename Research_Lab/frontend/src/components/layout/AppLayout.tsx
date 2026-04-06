@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 import Sidebar from '@/components/layout/Sidebar';
 import Topbar from '@/components/layout/Topbar';
+import { GlobalLayoutSkeleton } from '@/components/PageSkeletons';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
     const { isAuthenticated, loading } = useAuth();
@@ -18,11 +19,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     }, [isAuthenticated, loading, router]);
 
     if (loading) {
-        return (
-            <div className="loading-spinner" style={{ minHeight: '100vh' }}>
-                <div className="spinner" />
-            </div>
-        );
+        return <GlobalLayoutSkeleton />;
     }
 
     if (!isAuthenticated) return null;

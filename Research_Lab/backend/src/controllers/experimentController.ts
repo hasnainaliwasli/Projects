@@ -3,7 +3,7 @@ import Experiment from '../models/Experiment';
 import ExperimentRun from '../models/ExperimentRun';
 import { AuthRequest } from '../middleware/auth';
 import { ApiError } from '../middleware/errorHandler';
-import { uploadToCloudinary } from '../services/cloudinaryService';
+import { uploadToCloudinary, deleteFromCloudinary } from '../services/cloudinaryService';
 
 // Experiment CRUD
 export const createExperiment = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
@@ -73,6 +73,12 @@ export const deleteExperiment = async (req: AuthRequest, res: Response, next: Ne
             throw new ApiError(404, 'Experiment not found');
         }
 
+        const runs = await ExperimentRun.find({ experimentId: experiment._id });
+        for (const run of runs) {
+            if (run.resultGraphPublicId) {
+                await deleteFromCloudinary(run.resultGraphPublicId, 'image');
+            }
+        }
         await ExperimentRun.deleteMany({ experimentId: experiment._id });
         await experiment.deleteOne();
 
@@ -151,6 +157,9 @@ export const deleteExperimentRun = async (req: AuthRequest, res: Response, next:
             throw new ApiError(404, 'Experiment run not found');
         }
 
+        if (run.resultGraphPublicId) {
+            await deleteFromCloudinary(run.resultGraphPublicId, 'image');
+        }
         await run.deleteOne();
         res.status(200).json({ success: true, message: 'Run deleted' });
     } catch (error) {
