@@ -497,7 +497,7 @@ export default function AdminUsersPage() {
                                             </div>
                                         </div>
 
-                                        {userDetails.phoneNumbers.length > 0 && (
+                                        {userDetails.phoneNumbers && userDetails.phoneNumbers.length > 0 && (
                                             <div className="flex items-center gap-3 p-3 bg-muted/40 rounded-lg">
                                                 <div className="bg-primary/10 p-2 rounded-md">
                                                     <Phone className="h-4 w-4 text-primary" />

@@ -70,7 +70,7 @@ export default function AddHostelPage() {
         if (currentUser?.phoneNumbers?.length) {
             setFormData(prev => ({
                 ...prev,
-                contactNumbers: currentUser.phoneNumbers
+                contactNumbers: currentUser.phoneNumbers || [""]
             }));
         }
     }, [currentUser]);

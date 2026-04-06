@@ -408,7 +408,7 @@ export default function HostelDetailsPage() {
                                             {hostel.rooms.map((room, idx) => (
                                                 <div key={idx} className="flex justify-between items-center p-3 rounded-lg bg-secondary/20">
                                                     <span className="font-medium">{room.type}</span>
-                                                    <span className="font-bold text-primary">Rs. {Math.floor(room.rentPerBed || room.rentPerRoom)}<span className="text-xs text-muted-foreground font-normal">/bed</span></span>
+                                                    <span className="font-bold text-primary">Rs. {Math.floor(room.rentPerBed || room.rentPerRoom || 0)}<span className="text-xs text-muted-foreground font-normal">/bed</span></span>
                                                 </div>
                                             ))}
                                         </div>

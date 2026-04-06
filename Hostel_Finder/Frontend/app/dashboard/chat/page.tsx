@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { fetchChats, fetchMessages, sendMessage, editMessage, deleteMessage, deleteChat, setCurrentChat, addMessage, updateMessage, removeMessage, removeChat, addNotification, accessChat, markChatAsRead } from "@/lib/slices/chatSlice";
 import { useSocket } from "@/context/SocketProvider";
@@ -30,7 +30,7 @@ import {
 import { toast } from "sonner";
 import { format } from "date-fns";
 
-export default function ChatPage() {
+function ChatPageContent() {
     const dispatch = useAppDispatch();
     const { chats, currentChat, messages, loading } = useAppSelector((state) => state.chat);
     const { currentUser } = useAppSelector((state) => state.auth);
@@ -563,5 +563,17 @@ export default function ChatPage() {
                 </div>
             </div>
         </DashboardLayout>
+    );
+}
+
+export default function ChatPage() {
+    return (
+        <Suspense fallback={
+            <div className="h-screen w-full flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            </div>
+        }>
+            <ChatPageContent />
+        </Suspense>
     );
 }
