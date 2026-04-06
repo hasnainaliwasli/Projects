@@ -415,9 +415,9 @@ Contributions are welcome! Here's how to get started:
 
 **Hasnain Ali**
 
-[![GitHub](https://img.shields.io/badge/GitHub-hasnainaliwasli-181717?style=for-the-badge&logo=github)](https://github.com/hasnainaliwasli)
+[![GitHub](https://img.shields.io/badge/GitHub-hasnain_Ali-181717?style=for-the-badge&logo=github)](https://github.com/hasnainaliwasli)
 
-[![LinkedIn](https://img.shields.io/badge/GitHub-hasnainaliwasli-181717?style=for-the-badge&logo=github)](https://www.linkedin.com/in/hasnainali123)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-hasnain_Ali-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/hasnainali123)
 
 ---
 
