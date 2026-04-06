@@ -409,12 +409,6 @@ Contributions are welcome! Here's how to get started:
 
 ---
 
-## 📄 License
-
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
-
----
-
 <div align="center">
 
 ## 👨‍💻 Author
@@ -422,6 +416,8 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 **Hasnain Ali**
 
 [![GitHub](https://img.shields.io/badge/GitHub-hasnainaliwasli-181717?style=for-the-badge&logo=github)](https://github.com/hasnainaliwasli)
+
+[![LinkedIn](https://img.shields.io/badge/GitHub-hasnainaliwasli-181717?style=for-the-badge&logo=github)](https://www.linkedin.com/in/hasnainali123)
 
 ---
 
