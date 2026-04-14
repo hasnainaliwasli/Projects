@@ -1,8 +1,9 @@
 import axios from 'axios';
 
 // Create an Axios instance
+const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 const api = axios.create({
-    baseURL: (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000') + '/api',
+    baseURL: rawApiUrl.replace(/\/+$/, '') + '/api',
     headers: {
         'Content-Type': 'application/json',
     },
