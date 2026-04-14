@@ -1,7 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
-
-const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000") + "/api/chat";
+import api from "../api";
 
 import { UserRole } from "../types";
 
@@ -57,13 +55,7 @@ export const accessChat = createAsyncThunk(
     "chat/accessChat",
     async (userId: string, { rejectWithValue }) => {
         try {
-            const token = localStorage.getItem("token");
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            };
-            const response = await axios.post(API_URL, { userId }, config);
+            const response = await api.post("/chat", { userId });
             return response.data;
         } catch (error: any) {
             return rejectWithValue(
@@ -80,13 +72,7 @@ export const fetchChats = createAsyncThunk(
     "chat/fetchChats",
     async (_, { rejectWithValue }) => {
         try {
-            const token = localStorage.getItem("token");
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            };
-            const response = await axios.get(API_URL, config);
+            const response = await api.get("/chat");
             return response.data;
         } catch (error: any) {
             return rejectWithValue(
@@ -103,13 +89,7 @@ export const fetchMessages = createAsyncThunk(
     "chat/fetchMessages",
     async (chatId: string, { rejectWithValue }) => {
         try {
-            const token = localStorage.getItem("token");
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            };
-            const response = await axios.get(`${API_URL}/${chatId}`, config);
+            const response = await api.get(`/chat/${chatId}`);
             return response.data;
         } catch (error: any) {
             return rejectWithValue(
@@ -126,13 +106,7 @@ export const sendMessage = createAsyncThunk(
     "chat/sendMessage",
     async ({ content, chatId }: { content: string; chatId: string }, { rejectWithValue }) => {
         try {
-            const token = localStorage.getItem("token");
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            };
-            const response = await axios.post(`${API_URL}/message`, { content, chatId }, config);
+            const response = await api.post(`/chat/message`, { content, chatId });
             return response.data;
         } catch (error: any) {
             return rejectWithValue(
@@ -317,13 +291,7 @@ export const editMessage = createAsyncThunk(
     "chat/editMessage",
     async ({ content, messageId }: { content: string; messageId: string }, { rejectWithValue }) => {
         try {
-            const token = localStorage.getItem("token");
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            };
-            const response = await axios.put(`${API_URL}/message/${messageId}`, { content }, config);
+            const response = await api.put(`/chat/message/${messageId}`, { content });
             return response.data;
         } catch (error: any) {
             return rejectWithValue(
@@ -340,14 +308,7 @@ export const deleteMessage = createAsyncThunk(
     "chat/deleteMessage",
     async ({ messageId, mode }: { messageId: string; mode: 'everyone' | 'me' }, { rejectWithValue }) => {
         try {
-            const token = localStorage.getItem("token");
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-                params: { mode }
-            };
-            const response = await axios.delete(`${API_URL}/message/${messageId}`, config);
+            const response = await api.delete(`/chat/message/${messageId}`, { params: { mode } });
             return { messageId, mode, ...response.data };
         } catch (error: any) {
             return rejectWithValue(
@@ -364,14 +325,7 @@ export const deleteChat = createAsyncThunk(
     "chat/deleteChat",
     async ({ chatId, mode }: { chatId: string; mode: 'everyone' | 'me' }, { rejectWithValue }) => {
         try {
-            const token = localStorage.getItem("token");
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-                params: { mode }
-            };
-            const response = await axios.delete(`${API_URL}/${chatId}`, config);
+            const response = await api.delete(`/chat/${chatId}`, { params: { mode } });
             return { chatId, mode, ...response.data };
         } catch (error: any) {
             return rejectWithValue(
@@ -388,14 +342,8 @@ export const markChatAsRead = createAsyncThunk(
     "chat/markChatAsRead",
     async (chatId: string, { rejectWithValue, getState }) => {
         try {
-            const token = localStorage.getItem("token");
             const { auth } = getState() as any; // Access auth state to get userId
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            };
-            const response = await axios.put(`${API_URL}/${chatId}/read`, {}, config);
+            const response = await api.put(`/chat/${chatId}/read`, {});
             return { chatId, userId: auth.currentUser?.id, ...response.data };
         } catch (error: any) {
             return rejectWithValue(

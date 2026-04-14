@@ -1,7 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
-
-const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000") + "/api/reports";
+import api from "../api";
 
 export interface Report {
     _id: string;
@@ -38,13 +36,7 @@ export const fetchReports = createAsyncThunk(
     "reports/fetchReports",
     async (_, { getState, rejectWithValue }) => {
         try {
-            const token = localStorage.getItem("token");
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            };
-            const response = await axios.get(API_URL, config);
+            const response = await api.get("/reports");
             return response.data;
         } catch (error: any) {
             return rejectWithValue(
@@ -61,13 +53,7 @@ export const fetchUserReports = createAsyncThunk(
     "reports/fetchUserReports",
     async (_, { rejectWithValue }) => {
         try {
-            const token = localStorage.getItem("token");
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            };
-            const response = await axios.get(`${API_URL}/my-reports`, config);
+            const response = await api.get(`/reports/my-reports`);
             return response.data;
         } catch (error: any) {
             return rejectWithValue(
@@ -84,13 +70,7 @@ export const createReport = createAsyncThunk(
     "reports/createReport",
     async (reportData: Partial<Report>, { rejectWithValue }) => {
         try {
-            const token = localStorage.getItem("token");
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            };
-            const response = await axios.post(API_URL, reportData, config);
+            const response = await api.post("/reports", reportData);
             return response.data;
         } catch (error: any) {
             return rejectWithValue(
@@ -107,13 +87,7 @@ export const updateReportStatus = createAsyncThunk(
     "reports/updateReportStatus",
     async ({ id, status }: { id: string; status: string }, { getState, rejectWithValue }) => {
         try {
-            const token = localStorage.getItem("token");
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            };
-            const response = await axios.patch(`${API_URL}/${id}/status`, { status }, config);
+            const response = await api.patch(`/reports/${id}/status`, { status });
             return response.data;
         } catch (error: any) {
             return rejectWithValue(
@@ -130,13 +104,7 @@ export const deleteReport = createAsyncThunk(
     "reports/deleteReport",
     async (id: string, { getState, rejectWithValue }) => {
         try {
-            const token = localStorage.getItem("token");
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            };
-            await axios.delete(`${API_URL}/${id}`, config);
+            await api.delete(`/reports/${id}`);
             return id;
         } catch (error: any) {
             return rejectWithValue(
