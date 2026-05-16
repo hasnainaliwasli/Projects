@@ -15,7 +15,11 @@ const app = express();
 // ─── Middleware ───────────────────────────────────────────────
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:3000",
+    origin: [
+      process.env.CLIENT_URL,
+      "http://localhost:3000",
+      "https://semantischolar-frontend.vercel.app"
+    ].filter(Boolean),
     credentials: true,
   })
 );
